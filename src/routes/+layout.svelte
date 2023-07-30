@@ -14,6 +14,7 @@
 	import { auth } from '$lib/firebase/firebase.client';
 	import { authStore } from '../stores/authStore';
 	import Navbar from '../components/Navbar.svelte';
+	import { browser } from '$app/environment';
 
 	onMount(() => {
 		const unsubscribe = auth.onAuthStateChanged((user) => {
@@ -21,8 +22,17 @@
 
 			authStore.update((curr) => {
 				return {...curr, isLoading: false, currentUser: user}
-			})
+			});
+
+			if (browser) {
+				console.log($authStore)
+				if (!$authStore?.currentUser && !$authStore.isLoading && window.location.pathname !== '/') {
+					window.location.href = '/'
+				}
+			}
 		});
+
+		return unsubscribe;
 	});
 
 </script>
@@ -36,7 +46,7 @@
 	<!-- <svelte:fragment slot="sidebarLeft">Sidebar Left</svelte:fragment> -->
 	<!-- <svelte:fragment slot="sidebarRight">Sidebar Right</svelte:fragment> -->
 	<!-- Router Slot -->
-	<div class="m-2">
+	<div class="m-3">
 		<slot />
 	</div>
 	<!-- ---- / ---- -->

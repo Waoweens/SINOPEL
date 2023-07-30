@@ -12,7 +12,7 @@ import {
 
 interface AuthState {
     isLoading: boolean;
-    currentUser: User | null;
+    currentUser: Partial<User> | null;
 }
 
 export const authStore = writable<AuthState>({
@@ -34,6 +34,14 @@ export const authHandlers = {
 		await sendPasswordResetEmail(auth, email);
 	},
 	updateEmail: async (email: string) => {
+		authStore.update((curr) => {
+			return {
+				...curr,
+				currentUser: {
+					...curr.currentUser, email: email
+				}
+			}
+		});
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		await updateEmail(auth as any, email);
 	},

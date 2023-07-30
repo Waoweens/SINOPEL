@@ -1,10 +1,12 @@
 <script lang="ts">
-	import { authHandlers, authStore } from '../stores/authStore';
+	import { FirebaseError } from 'firebase/app';
+	import { authHandlers } from '../stores/authStore';
 
 	let register: boolean = false;
 	let email: string;
 	let password: string;
 	let confirmPassword: string;
+	let error: string;
 
 	async function handleSubmit() {
 		console.log(email, password, confirmPassword);
@@ -16,20 +18,36 @@
 		if (register && password === confirmPassword) {
 			try {
 				await authHandlers.register(email, password);
-			} catch (err) {
-				console.log(err);
+			} catch (err: unknown) {
+				if (err instanceof FirebaseError) {
+					console.log(err.message);
+					handleErrors(err);
+				}
 			}
 		} else {
 			try {
 				await authHandlers.login(email, password);
-			} catch (err) {
-				console.log(err);
+			} catch (err: unknown) {
+				if (err instanceof FirebaseError) {
+					console.log(err.message);
+					handleErrors(err);
+				}
 			}
 		}
 	}
 
-	if ($authStore.currentUser !== null) {
-		window.location.href='/dashboard'
+	function handleErrors(err: FirebaseError) {
+		switch (err.code) {
+			case 'auth/user-not-found':
+				error = 'Account not found';
+				break;
+			case 'auth/wrong-password':
+				error = 'Incorrect password';
+				break;
+			case 'auth/email-already-in-use':
+				error = 'Account already exists';
+				break;
+		}
 	}
 </script>
 
@@ -39,7 +57,10 @@
 	</h1>
 	<form on:submit|preventDefault={handleSubmit}>
 		<label class="label">
-			<span>Email</span>
+			<div class="flex">
+				<span>Email</span>
+				<span>test</span>
+			</div>
 			<input
 				bind:value={email}
 				class="input"
@@ -56,7 +77,7 @@
 				class="input"
 				name="password"
 				type="password"
-				placeholder="At least 8 characters"
+				placeholder="Enter password"
 			/>
 		</label>
 
@@ -68,9 +89,13 @@
 					class="input"
 					name="confirmPassword"
 					type="password"
-					placeholder="Confirm password"
+					placeholder="Enter passowrd again"
 				/>
 			</label>
+		{/if}
+
+		{#if error}
+			<p class="text-red-500 mt-2">{error}</p>
 		{/if}
 
 		<button type="submit" class="btn variant-filled mt-2">
