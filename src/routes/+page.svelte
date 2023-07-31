@@ -3,10 +3,6 @@
 	import Auth from "../components/Auth.svelte";
 	import { authStore } from "../stores/authStore";
 
-	if ($authStore.currentUser !== null) {
-		window.location.href = '/dashboard';
-	}
-
 </script>
 <h1>Welcome to SvelteKit</h1>
 <p>Visit <a href="https://kit.svelte.dev">kit.svelte.dev</a> to read the documentation</p>

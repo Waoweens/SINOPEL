@@ -1,12 +1,16 @@
 <script lang="ts">
 	import { FirebaseError } from 'firebase/app';
-	import { authHandlers } from '../stores/authStore';
+	import { authHandlers, authStore } from '../stores/authStore';
 
 	let register: boolean = false;
 	let email: string;
 	let password: string;
 	let confirmPassword: string;
 	let error: string;
+
+	$: if ($authStore.currentUser !== null) {
+		window.location.href = '/dashboard';
+	}
 
 	async function handleSubmit() {
 		console.log(email, password, confirmPassword);
