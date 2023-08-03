@@ -1,7 +1,7 @@
 <script>
 
-	import Auth from "../components/Auth.svelte";
-	import { authStore } from "../stores/authStore";
+	import Auth from "$components/Auth.svelte";
+	import { authStore } from "$stores/authStore";
 
 </script>
 <h1>Welcome to SvelteKit</h1>

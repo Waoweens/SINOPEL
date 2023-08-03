@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { ProgressRadial, Step, Stepper } from '@skeletonlabs/skeleton';
-	import { authHandlers, authStore } from '../../stores/authStore';
-	import Calendar from '../../components/dashboard/Calendar.svelte';
+	import { authHandlers, authStore } from '$stores/authStore';
+	import Calendar from '$components/dashboard/Calendar.svelte';
 
 	let email: string;
 	authStore.subscribe((curr) => {

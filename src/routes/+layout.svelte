@@ -13,11 +13,11 @@
 
 	import { onMount } from 'svelte';
 	import { auth } from '$lib/firebase/firebase.client';
-	import { authStore } from '../stores/authStore';
-	import Navbar from '../components/Navbar.svelte';
+	import { authStore } from '$stores/authStore';
+	import Navbar from '$components/Navbar.svelte';
 	import { browser } from '$app/environment';
-	import { appname } from '../stores/static';
-	import Navrail from '../components/Navrail.svelte';
+	import { appname } from '$stores/static';
+	import Navrail from '$components/Navrail.svelte';
 
 	storePopup.set({ computePosition, autoUpdate, offset, shift, flip, arrow });
 

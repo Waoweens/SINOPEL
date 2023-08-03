@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { appname } from "../../stores/static";
+	import { appname } from "$stores/static";
 </script>
 
 <svelte:head>
