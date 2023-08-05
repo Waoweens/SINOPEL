@@ -10,8 +10,8 @@
 </script>
 
 {#if $authStore.currentUser}
-	<h1 class="text-2xl font-bold">Welcome, {email}</h1>
-	<div class="max-w-2xl rounded-lg p-4 bg-white">
+	<h1 class="text-2xl font-bold">Selamat datang, {'{'}username{'}'}</h1>
+	<div class="max-w-3xl mt-2 max-h-none rounded-lg p-4 bg-white">
 		<Calendar />
 	</div>
 {:else}
