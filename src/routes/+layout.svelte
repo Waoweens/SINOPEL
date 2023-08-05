@@ -8,7 +8,7 @@
 	import '../app.postcss';
 	import '../app.css';
 
-	import { AppBar, AppShell, storePopup } from '@skeletonlabs/skeleton';
+	import { AppBar, AppShell, Modal, Toast, drawerStore, storePopup, type DrawerSettings } from '@skeletonlabs/skeleton';
 	import { computePosition, autoUpdate, offset, shift, flip, arrow } from '@floating-ui/dom';
 
 	import { onMount } from 'svelte';
@@ -18,6 +18,8 @@
 	import { browser } from '$app/environment';
 	import { appname } from '$stores/static';
 	import Navrail from '$components/Navrail.svelte';
+	import { navrailState } from '$stores/states';
+	import Drawers from '$components/Drawers.svelte';
 
 	storePopup.set({ computePosition, autoUpdate, offset, shift, flip, arrow });
 
@@ -41,11 +43,44 @@
 
 		return unsubscribe;
 	});
+
+	let style: string;
+	let innerWidth: number;
+
+	let lastNavState: boolean;
+	$: {
+		$navrailState.small = innerWidth < 768;
+		if (lastNavState !== $navrailState.small) {
+			$navrailState.toggle = !$navrailState.small;
+			lastNavState = $navrailState.small;
+		}
+		if ($navrailState.toggle) {
+			if ($navrailState.small) {
+				drawerStore.open({ id: 'navrail' });
+			} else {
+				style = 'grid';
+			}
+		} else {
+			style = 'hidden';
+		}
+	}
+
+	$: drawerStore.subscribe((curr) => {
+		if (curr.id == 'navrail' && !curr.open) $navrailState.toggle = false;
+	});
+
 </script>
 
 <svelte:head>
 	<title>{appname}</title>
 </svelte:head>
+
+<svelte:window bind:innerWidth />
+
+<!-- Overlays -->
+<Modal />
+<Toast />
+<Drawers />
 
 <AppShell>
 	<svelte:fragment slot="header">
@@ -54,7 +89,7 @@
 	<!-- <svelte:fragment slot="pageHeader">Page Header</svelte:fragment> -->
 	<svelte:fragment slot="sidebarLeft">
 		{#if isLoggedIn}
-			<Navrail />
+			<Navrail {style} />
 		{/if}
 	</svelte:fragment>
 	<!-- <svelte:fragment slot="sidebarRight">Sidebar Right</svelte:fragment> -->

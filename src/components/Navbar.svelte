@@ -1,26 +1,33 @@
 <script lang="ts">
 	import { AppBar, Avatar, popup, type PopupSettings } from '@skeletonlabs/skeleton';
-	import { appname } from '../stores/static';
-	import IconAccount from '~icons/ic/baseline-account-circle'
-	import IconApps from '~icons/ic/baseline-apps'
-	import { authHandlers, authStore } from '../stores/authStore';
+	import { appname } from '$stores/static';
+	import IconAccount from '~icons/ic/baseline-account-circle';
+	import IconApps from '~icons/ic/baseline-apps';
+	import { authHandlers, authStore } from '$stores/authStore';
+	import { navrailState } from '$stores/states';
 
 	const popupUser: PopupSettings = {
 		event: 'click',
 		target: 'popupUser',
 		placement: 'bottom-end'
-	}
+	};
 
 	let email: string;
-	authStore.subscribe(curr => {
-		email = curr?.currentUser?.email || "";
+	authStore.subscribe((curr) => {
+		email = curr?.currentUser?.email || '';
 	});
-
 </script>
 
 <AppBar>
 	<svelte:fragment slot="lead">
-		<IconApps class="text-2xl -my-2" />
+		<button
+			class="btn p-0 -my-2"
+			on:click={() => {
+				$navrailState.toggle = !$navrailState.toggle;
+			}}
+		>
+			<IconApps class="text-2xl" />
+		</button>
 	</svelte:fragment>
 	{appname}
 	<svelte:fragment slot="trail">
@@ -30,7 +37,7 @@
 
 		<div class="card p-4 w-60 shadow-xl" data-popup="popupUser">
 			<p>{email}</p>
-			<hr class="my-3">
+			<hr class="my-3" />
 			<nav class="list-nav m-0 p-0">
 				<ul class="m-0 p-0">
 					<li class="m-0 p-0">

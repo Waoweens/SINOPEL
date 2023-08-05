@@ -10,7 +10,10 @@
 </script>
 
 {#if $authStore.currentUser}
-	<Calendar />
+	<h1 class="text-2xl font-bold">Welcome, {email}</h1>
+	<div class="max-w-2xl rounded-lg p-4 bg-white">
+		<Calendar />
+	</div>
 {:else}
 	<div class="flex h-screen">
 		<div class="m-auto">

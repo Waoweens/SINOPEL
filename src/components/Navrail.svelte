@@ -1,9 +1,22 @@
 <script lang="ts">
-	import { AppRail } from "@skeletonlabs/skeleton";
+	import { AppRail, AppRailAnchor } from '@skeletonlabs/skeleton';
+	import { page } from '$app/stores';
+	import IconCalendar from '~icons/ic/baseline-calendar-month';
+	import IconDescription from '~icons/ic/outline-description';
 
-
+	export let style: string;
 </script>
 
-<AppRail>
-
+<AppRail class={style}>
+	<AppRailAnchor href="/dashboard" selected={$page.url.pathname === '/dashboard'}>
+		<IconCalendar class="text-2xl block m-auto md:text-start" />
+		<span>Kalender</span>
+	</AppRailAnchor>
+	<AppRailAnchor
+		href="/dashboard/documents"
+		selected={$page.url.pathname === '/dashboard/documents'}
+	>
+		<IconDescription class="text-2xl block m-auto" />
+		<span>Dokumen</span>
+	</AppRailAnchor>
 </AppRail>
