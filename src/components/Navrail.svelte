@@ -4,11 +4,11 @@
 	import IconCalendar from '~icons/ic/baseline-calendar-month';
 	import IconDescription from '~icons/ic/outline-description';
 
-	export let style: string;
+	export let display: string;
 </script>
 
-<AppRail class={style}>
-	<AppRailAnchor href="/dashboard" selected={$page.url.pathname === '/dashboard'}>
+<AppRail class={"" + display}>
+	<AppRailAnchor href="/dashboard/calendar" selected={$page.url.pathname === '/dashboard/calendar'}>
 		<IconCalendar class="text-2xl block m-auto md:text-start" />
 		<span>Kalender</span>
 	</AppRailAnchor>

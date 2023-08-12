@@ -44,7 +44,7 @@
 		return unsubscribe;
 	});
 
-	let style: string;
+	let railStyle: string;
 	let innerWidth: number;
 
 	let lastNavState: boolean;
@@ -58,10 +58,10 @@
 			if ($navrailState.small) {
 				drawerStore.open({ id: 'navrail' });
 			} else {
-				style = 'grid';
+				railStyle = 'grid';
 			}
 		} else {
-			style = 'hidden';
+			railStyle = 'hidden';
 		}
 	}
 
@@ -89,7 +89,7 @@
 	<!-- <svelte:fragment slot="pageHeader">Page Header</svelte:fragment> -->
 	<svelte:fragment slot="sidebarLeft">
 		{#if isLoggedIn}
-			<Navrail {style} />
+			<Navrail display={railStyle} />
 		{/if}
 	</svelte:fragment>
 	<!-- <svelte:fragment slot="sidebarRight">Sidebar Right</svelte:fragment> -->
