@@ -3,20 +3,22 @@
 	import { page } from '$app/stores';
 	import IconCalendar from '~icons/ic/baseline-calendar-month';
 	import IconDescription from '~icons/ic/outline-description';
+	import IconDashboard from '~icons/ic/round-dashboard';
 
 	export let display: string;
 </script>
 
-<AppRail class={"" + display}>
+<AppRail class={'' + display}>
+	<AppRailAnchor href="/dashboard" selected={$page.url.pathname === '/dashboard'}>
+		<IconDashboard class="text-2xl block m-auto md:text-start" />
+		<span>Dasbor</span>
+	</AppRailAnchor>
 	<AppRailAnchor href="/dashboard/calendar" selected={$page.url.pathname === '/dashboard/calendar'}>
 		<IconCalendar class="text-2xl block m-auto md:text-start" />
 		<span>Kalender</span>
 	</AppRailAnchor>
-	<AppRailAnchor
-		href="/dashboard/documents"
-		selected={$page.url.pathname === '/dashboard/documents'}
-	>
+	<AppRailAnchor href="/dashboard/meeting" selected={$page.url.pathname === '/dashboard/meeting'}>
 		<IconDescription class="text-2xl block m-auto" />
-		<span>Dokumen</span>
+		<span>Notulen<br />Rapat</span>
 	</AppRailAnchor>
 </AppRail>

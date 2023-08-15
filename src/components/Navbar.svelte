@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { AppBar, Avatar, popup, type PopupSettings } from '@skeletonlabs/skeleton';
+	import { AppBar, Avatar, LightSwitch, popup, type PopupSettings } from '@skeletonlabs/skeleton';
 	import { appname } from '$stores/static';
 	import IconAccount from '~icons/ic/baseline-account-circle';
 	import IconApps from '~icons/ic/baseline-apps';
@@ -31,6 +31,9 @@
 	</svelte:fragment>
 	{appname}
 	<svelte:fragment slot="trail">
+
+		<LightSwitch />
+
 		<button class="btn p-0 -my-2" use:popup={popupUser}>
 			<IconAccount class="text-3xl" />
 		</button>

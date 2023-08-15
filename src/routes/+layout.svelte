@@ -6,9 +6,8 @@
 	import '@skeletonlabs/skeleton/styles/skeleton.css';
 	// Finally, your application's global stylesheet (sometimes labeled 'app.css')
 	import '../app.postcss';
-	import '../app.css';
 
-	import { AppBar, AppShell, Modal, Toast, drawerStore, storePopup, type DrawerSettings } from '@skeletonlabs/skeleton';
+	import { AppShell, Modal, Toast, drawerStore, storePopup } from '@skeletonlabs/skeleton';
 	import { computePosition, autoUpdate, offset, shift, flip, arrow } from '@floating-ui/dom';
 
 	import { onMount } from 'svelte';
@@ -33,12 +32,6 @@
 				return { ...curr, isLoading: false, currentUser: user };
 			});
 
-			if (browser) {
-				console.log($authStore);
-				if (!$authStore?.currentUser && !$authStore.isLoading && window.location.pathname !== '/') {
-					window.location.href = '/';
-				}
-			}
 		});
 
 		return unsubscribe;
@@ -68,7 +61,6 @@
 	$: drawerStore.subscribe((curr) => {
 		if (curr.id == 'navrail' && !curr.open) $navrailState.toggle = false;
 	});
-
 </script>
 
 <svelte:head>

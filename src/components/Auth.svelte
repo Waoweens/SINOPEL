@@ -147,7 +147,7 @@
 	}
 </script>
 
-<div class="bg-white p-3 rounded-lg max-w-sm">
+<div class="bg-surface-50-900-token p-3 rounded-lg max-w-sm">
 	<h1 class="text-2xl font-bold mb-2">
 		{auth.register ? 'Register' : 'Login'}
 	</h1>
@@ -156,7 +156,7 @@
 			<div class="flex">
 				<span class="flex-grow">Email</span>
 				{#if auth.error.element.includes('email')}
-					<span class="text-red-500">Required</span>
+					<span class="text-error-500">Required</span>
 				{/if}
 			</div>
 			<input
@@ -173,7 +173,7 @@
 			<div class="flex">
 				<span class="flex-grow">Password</span>
 				{#if auth.error.element.includes('password')}
-					<span class="text-red-500">Required</span>
+					<span class="text-error-500">Required</span>
 				{/if}
 			</div>
 			<input
@@ -191,7 +191,7 @@
 				<div class="flex">
 					<span class="flex-grow">Confirm Password</span>
 					{#if auth.error.element.includes('passmatch')}
-						<span class="text-red-500">Must match</span>
+						<span class="text-error-500">Must match</span>
 					{/if}
 				</div>
 				<input
@@ -206,7 +206,7 @@
 		{/if}
 
 		{#if auth.error.all}
-			<p class="text-red-500 mt-2">{@html auth.error.all}</p>
+			<p class="text-error-500 mt-2">{@html auth.error.all}</p>
 		{/if}
 
 		<div class="flex my-2">
