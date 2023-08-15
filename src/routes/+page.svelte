@@ -6,6 +6,11 @@
 
 </script>
 
+<!--
+	TODO: Use Semantic HTML for all pages
+	currently, <div>s are used everywhere
+-->
+
 <h1>{appname}</h1>
 <p>{appnameLong}</p>
 
