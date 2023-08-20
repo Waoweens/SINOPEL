@@ -7,11 +7,25 @@ body {
 }
 
 .paper-F4 {
+	$original-width: 210;
+	$px-per-mm: 3.7795; // 96dpi / 25.4mm (rounded)
+	$aspect-ratio: 1.5714; // 330mm / 210mm (rounded)
+	$original-width-px: $original-width * $px-per-mm;
+	
 	all: initial;
 	display: block;
 	box-sizing: border-box;
-	width: 210mm;
-	height: 330mm;
+
+	// width: 210mm;
+	// height: 330mm;
+	width: #{$original-width-px}px;
+	height: calc(#{$original-width-px}px * 1.5714);
+
+	transform: scale(var(--paper-scale));
+	// transform-origin: top left;
+	margin: calc(var(--paper-margin-y) * -1px) calc(var(--paper-margin-x) * -1px);
+	
+
 	font-family: 'Bookman Old Style', Georgia, Cambria, serif !important;
 	> header {
 		padding-top: 5mm;
@@ -45,7 +59,7 @@ body {
 		font-weight: 800;
 	}
 
-	.biodata {
+	.kepala-surat {
 		list-style-type: none;
 		display: table;
 		font-size: 12pt;

@@ -21,10 +21,11 @@
 
 	// TODO: load data from database
 	let data = {
-		namaPejabat: []
+		namaPejabat: [],
+		sifat: ['Biasa', 'Segera', 'Rahasia', 'Sangat Rahasia', 'Penting', 'Konfidensial']
 	};
 
-	let biodata = {
+	let kepalaSurat = {
 		kepada: '',
 		dari: email,
 		tanggal: '',
@@ -34,43 +35,96 @@
 		hal: ''
 	};
 
+	let isiSurat = [
+		{ name: 'Dasar Hukum', content: '', type: 'text' },
+		{ name: 'Peserta Kegiatan', content: '', type: 'text' },
+		{ name: 'Narasumber', content: '', type: 'text' },
+		{ name: 'Materi', content: '', type: 'text' },
+		{ name: 'Hasil Kegiatan', content: '', type: 'text' },
+		{ name: 'Dokumentasi Kegiatan', content: '', type: 'multimedia' }
+	];
+
+	let dateBind: string;
+
+	let vw: number;
+	let vh: number;
+	let paperScale: number = 1;
+	let paperMarginX: number;
+	let paperMarginY: number;
+
+	$: if (vw) {
+		let desiredWidth = vw * 0.5;
+		paperScale = desiredWidth / (210 * 3.7795)
+		paperMarginX = ((210 * 3.7795) - ((210 * 3.7795) * paperScale)) / 2;
+		paperMarginY = (((210 * 1.5714) * 3.7795) - (((210 * 1.5714) * 3.7795) * paperScale)) / 2;
+	}
+
+	$: if (dateBind) {
+		const date: Date = new Date(dateBind);
+		// format: 01 Januari 1970 (id-ID)
+
+		kepalaSurat.tanggal = date.toLocaleDateString('id-ID', {
+			year: 'numeric',
+			month: 'long',
+			day: '2-digit'
+		});
+	}
+
 	function handleSubmit() {}
 </script>
 
-<div>
+<div bind:offsetWidth={vw} bind:offsetHeight={vh}>
 	<div class="lg:flex flex-grow-0">
 		<div class="w-full p-3 border-8 max-lg:border-b-0 lg:border-r-0 border-surface-900-50-token">
 			<h1 class="text-2xl pb-2">Buat surat</h1>
 
-			
-
 			<form on:submit|preventDefault={handleSubmit}>
+
 				<h2 class="text-xl">Kepala Surat</h2>
 				<div class="2xl:grid grid-cols-2 gap-4">
 					<label class="label">
 						<span>Kepada</span>
-						<select class="select">
+						<select class="select" bind:value={kepalaSurat.kepada}>
 							<option value="1">Nama 1</option>
 							<option value="2">Nama 2</option>
 							<option value="3">Nama 3</option>
 							<option value="4">Nama 4</option>
 						</select>
 					</label>
-	
+
 					<label class="label">
 						<span>Tanggal</span>
-						<input class="input" type="date" />
+						<input class="input" type="date" bind:value={dateBind} />
 					</label>
-	
+
 					<label class="label">
 						<span>Nomor</span>
-						<input class="input" type="text" />
+						<div class="md:flex">
+							<input class="input" type="text">
+							<input class="input" type="text">
+							<input class="input" type="text">
+							<input class="input" type="text">
+							<input class="input" type="text">
+							<input class="input" type="text">
+						</div>
+					</label>
+
+					<label class="label">
+						<span>Sifat</span>
+						<select class="select" bind:value={kepalaSurat.sifat}>
+							{#each data.sifat as sifat}
+								<option value={sifat}>{sifat}</option>
+							{/each}
+						</select>
 					</label>
 				</div>
-				<h2 class="text-xl">Isi Surat</h2>
-			</form>
 
-			
+				<h2 class="text-xl">Isi Surat</h2>
+				<div>
+
+				</div>
+
+			</form>
 		</div>
 		<div class="p-2 border-8 border-surface-900-50-token">
 			<h1 class="text-2xl pb-2">Preview Surat</h1>
@@ -83,7 +137,7 @@
 					</p>
 				</aside>
 			{/if}
-			<article class="paper-F4 bg-white">
+			<article class="paper-scale-desktop paper-F4 bg-white" style="--paper-scale: {paperScale}; --paper-margin-x: {paperMarginX}; --paper-margin-y: {paperMarginY}">
 				<header>
 					<div class="flex text-center justify-center items-center">
 						<div class="inline-block w-24">
@@ -119,14 +173,14 @@
 				<section>
 					<h1 class="text-center" style="font-size: 12pt">NOTA - DINAS</h1>
 
-					<ul class="biodata items-center">
-						<li><span>Kepada</span>: {biodata.kepada}</li>
-						<li><span>Dari</span>: {biodata.dari}</li>
-						<li><span>Tanggal</span>: {biodata.tanggal}</li>
-						<li><span>Nomor</span>: {biodata.nomor}</li>
-						<li><span>Sifat</span>: {biodata.sifat}</li>
-						<li><span>Lampiran</span>: {biodata.lampiran}</li>
-						<li><span>Hal</span>: {biodata.hal}</li>
+					<ul class="kepala-surat items-center">
+						<li><span>Kepada</span>: {kepalaSurat.kepada}</li>
+						<li><span>Dari</span>: {kepalaSurat.dari}</li>
+						<li><span>Tanggal</span>: {kepalaSurat.tanggal}</li>
+						<li><span>Nomor</span>: {kepalaSurat.nomor}</li>
+						<li><span>Sifat</span>: {kepalaSurat.sifat}</li>
+						<li><span>Lampiran</span>: {kepalaSurat.lampiran}</li>
+						<li><span>Hal</span>: {kepalaSurat.hal}</li>
 					</ul>
 
 					<svg
@@ -143,30 +197,16 @@
 					</svg>
 
 					<ol class="list-bold list-decimal">
-						<li>
-							<span>Dasar Hukum:</span>
-							<p>CONTENT</p>
-						</li>
-						<li>
-							<span>Peserta kegiatan:</span>
-							<p>CONTENT</p>
-						</li>
-						<li>
-							<span>Narasumber:</span>
-							<p>CONTENT</p>
-						</li>
-						<li>
-							<span>Materi:</span>
-							<p>CONTENT</p>
-						</li>
-						<li>
-							<span>Hasil Kegiatan:</span>
-							<p>CONTENT</p>
-						</li>
-						<li>
-							<span>Dokumentasi Kegiatan:</span>
-							<p>CONTENT</p>
-						</li>
+						{#each isiSurat as isi}
+							<li>
+								<span>{isi.name}:</span>
+								{#if isi.type === 'text'}
+									<p>{isi.content}</p>
+								{:else if isi.type === 'multimedia'}
+									<div>{@html isi.content}</div>
+								{/if}
+							</li>
+						{/each}
 					</ol>
 				</section>
 				<footer />
