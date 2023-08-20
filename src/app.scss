@@ -1,0 +1,63 @@
+@use './lib/assets/normalize' as *;
+
+/* Write your global styles here, in PostCSS syntax */
+html,
+body {
+	@apply h-full overflow-hidden;
+}
+
+.paper-F4 {
+	all: initial;
+	display: block;
+	box-sizing: border-box;
+	width: 210mm;
+	height: 330mm;
+	font-family: 'Bookman Old Style', Georgia, Cambria, serif !important;
+	> header {
+		padding-top: 5mm;
+		padding-right: 15mm;
+		padding-left: 15mm;
+	}
+
+	> section {
+		padding-left: 20mm;
+		padding-right: 20mm;
+		padding-top: 5mm;
+		padding-bottom: 10mm;
+		line-height: 1.5;
+		font-size: 11pt;
+	}
+
+	> footer {
+		background-color: red;
+	}
+
+
+	ol {
+		list-style-type: decimal;
+	}
+
+	ul {
+		list-style-type: disc;
+	}
+
+	.list-bold li span, .list-bold li::marker {
+		font-weight: 800;
+	}
+
+	.biodata {
+		list-style-type: none;
+		display: table;
+		font-size: 12pt;
+	
+		li {
+			display: table-row;
+		}
+	
+		span {
+			display: table-cell;
+			padding-right: 1rem;
+		}
+	}
+}
+
