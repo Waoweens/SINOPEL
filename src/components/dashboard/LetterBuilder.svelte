@@ -1,19 +1,79 @@
 <script lang="ts">
+	import pemkot from '$lib/assets/Lambang_Kota_Bandung.svg';
+	import { authStore } from '$stores/authStore';
+
 	import { onMount } from 'svelte';
 
 	let bookmanAvailable: boolean = false;
 
 	onMount(() => {
-		// bookmanAvailable = document.fonts.check('1rem Bookman Old Style');
+		// TODO: doesn't work on mac
+		bookmanAvailable = document.fonts.check('1rem Bookman Old Style');
+
+		// let shadowRoot = document.getElementById('shadowDom').attachShadow({mode: 'open'});
 	});
+
+	// TODO: load name instead of email
+	let email: string = '';
+	authStore.subscribe((curr) => {
+		email = curr?.currentUser?.email || '';
+	});
+
+	// TODO: load data from database
+	let data = {
+		namaPejabat: []
+	};
+
+	let biodata = {
+		kepada: '',
+		dari: email,
+		tanggal: '',
+		nomor: '',
+		sifat: '',
+		lampiran: '',
+		hal: ''
+	};
+
+	function handleSubmit() {}
 </script>
 
 <div>
 	<div class="lg:flex flex-grow-0">
 		<div class="w-full p-3 border-8 max-lg:border-b-0 lg:border-r-0 border-surface-900-50-token">
-			WIP
+			<h1 class="text-2xl pb-2">Buat surat</h1>
+
+			
+
+			<form on:submit|preventDefault={handleSubmit}>
+				<h2 class="text-xl">Kepala Surat</h2>
+				<div class="2xl:grid grid-cols-2 gap-4">
+					<label class="label">
+						<span>Kepada</span>
+						<select class="select">
+							<option value="1">Nama 1</option>
+							<option value="2">Nama 2</option>
+							<option value="3">Nama 3</option>
+							<option value="4">Nama 4</option>
+						</select>
+					</label>
+	
+					<label class="label">
+						<span>Tanggal</span>
+						<input class="input" type="date" />
+					</label>
+	
+					<label class="label">
+						<span>Nomor</span>
+						<input class="input" type="text" />
+					</label>
+				</div>
+				<h2 class="text-xl">Isi Surat</h2>
+			</form>
+
+			
 		</div>
 		<div class="p-2 border-8 border-surface-900-50-token">
+			<h1 class="text-2xl pb-2">Preview Surat</h1>
 			{#if !bookmanAvailable}
 				<aside aria-live="assertive" role="alert" class="bg-error-500 text-surface-50 p-2">
 					<h1>Cek font gagal</h1>
@@ -23,50 +83,97 @@
 					</p>
 				</aside>
 			{/if}
-			<div class="paper-container">
-				<article class="paper-F4 bg-white paper-scale">
-					<header class="p-2" />
-					<section>
-						Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum ullamcorper urna eu
-						arcu eleifend rutrum. Vivamus ultrices porta sem id semper. Curabitur ac eleifend eros.
-						Donec venenatis, metus placerat suscipit auctor, lectus est volutpat ipsum, id semper
-						dui metus eu nunc. Duis vulputate posuere metus, quis pretium justo sodales a.
-						Vestibulum dolor arcu, vestibulum ac tincidunt id, rhoncus quis purus. Vivamus
-						vestibulum efficitur molestie. Sed ac interdum tellus. Vivamus aliquam consequat
-						malesuada. Curabitur lectus ipsum, ullamcorper id euismod ac, molestie sit amet nunc.
-						Donec eu urna rutrum, egestas libero vel, venenatis eros. Vivamus dictum et sem vitae
-						laoreet. Vivamus accumsan, est in sollicitudin fringilla, diam libero porttitor purus,
-						ut ullamcorper magna justo vitae ipsum. Vivamus fermentum nulla nec sapien facilisis
-						suscipit. Cras laoreet eros eget fringilla tempor. Sed et sagittis velit. Quisque
-						ornare, arcu et eleifend mollis, mi magna semper leo, eget mollis turpis nisi commodo
-						metus. Ut ultricies, risus eget tincidunt pretium, eros ligula porta velit, ac
-						sollicitudin nulla felis sit amet turpis. Duis convallis efficitur dui eu malesuada. Sed
-						ac consectetur felis. Integer augue elit, venenatis ut cursus vel, vehicula nec lorem.
-						Proin libero nibh, tempus a congue in, laoreet non nisi. Sed scelerisque arcu nec erat
-						iaculis, nec interdum lorem rhoncus. Cras a efficitur erat, quis posuere ipsum. Nulla
-						sit amet sodales purus. Pellentesque dignissim mi pretium purus efficitur ultricies.
-						Praesent et mi blandit, tempor quam malesuada, sagittis mauris. Suspendisse auctor nisl
-						quis nisl dictum, a placerat mauris pellentesque. Nullam nec nulla vel nisi varius
-						molestie ut sit amet elit. Vestibulum vel eros eget lorem vestibulum iaculis. Sed
-						congue, libero sit amet interdum ullamcorper, nulla arcu vulputate neque, sed aliquam
-						odio lorem eget ex. Donec posuere justo eget velit cursus viverra. Donec aliquet id mi
-						nec commodo. Pellentesque habitant morbi tristique senectus et netus et malesuada fames
-						ac turpis egestas. Quisque euismod lorem eleifend ipsum luctus fringilla. Fusce interdum
-						neque dolor, a viverra ipsum semper non. Duis nisi risus, rhoncus sed rutrum id, aliquet
-						ut tortor. Maecenas iaculis justo eget lacinia fringilla. Donec sit amet nunc at risus
-						dictum ornare. In ac mauris eu nunc viverra rhoncus et at sapien. Nam venenatis sapien
-						felis, ut eleifend lorem condimentum non. Proin rhoncus sagittis lorem, a feugiat dui
-						tempus dapibus. Etiam iaculis ac risus sit amet bibendum. Phasellus at nisl vel ante
-						vehicula malesuada. Cras eu augue tellus. Ut non lacinia turpis, condimentum volutpat
-						libero. Sed laoreet lorem quis fermentum commodo. Nam ut finibus ex, eget eleifend nibh.
-						Vivamus molestie vitae nibh in fringilla. Praesent laoreet placerat est, et ornare elit.
-						In bibendum lorem vel lacus pharetra, ut rutrum tortor pulvinar. Praesent accumsan
-						imperdiet euismod. Suspendisse id nulla quis lectus luctus ultricies. Proin sed leo
-						nulla. Morbi semper nisl nec tempus condimentum.
-					</section>
-					<footer />
-				</article>
-			</div>
+			<article class="paper-F4 bg-white">
+				<header>
+					<div class="flex text-center justify-center items-center">
+						<div class="inline-block w-24">
+							<img src={pemkot} alt="Lambang Kota Bandung" />
+						</div>
+						<div>
+							<h1 style="font-size: 14pt">PEMERINTAH KOTA BANDUNG</h1>
+							<h2 style="font-size: 15pt">DINAS KEBAKARAN DAN PENANGGULANGAN BENCANA</h2>
+							<address class="not-italic" style="font-size: 10pt">
+								Jalan Sukabumi Nomor 17, Bandung, Telepon 022-7207113
+								<br />
+								e - mail: diskarbandung@gmail.com
+							</address>
+						</div>
+					</div>
+					<svg
+						role="separator"
+						class="mt-2"
+						xmlns="http://www.w3.org/2000/svg"
+						width="100%"
+						height="10"
+						viewBox="0 0 100 10"
+						preserveAspectRatio="none"
+					>
+						<!-- Top thin line -->
+						<line x1="0" y1="1" x2="100" y2="1" stroke="black" stroke-width="1.5" />
+						<!-- Middle thick line -->
+						<line x1="0" y1="5" x2="100" y2="5" stroke="black" stroke-width="3" />
+						<!-- Bottom thin line -->
+						<line x1="0" y1="9" x2="100" y2="9" stroke="black" stroke-width="1.5" />
+					</svg>
+				</header>
+				<section>
+					<h1 class="text-center" style="font-size: 12pt">NOTA - DINAS</h1>
+
+					<ul class="biodata items-center">
+						<li><span>Kepada</span>: {biodata.kepada}</li>
+						<li><span>Dari</span>: {biodata.dari}</li>
+						<li><span>Tanggal</span>: {biodata.tanggal}</li>
+						<li><span>Nomor</span>: {biodata.nomor}</li>
+						<li><span>Sifat</span>: {biodata.sifat}</li>
+						<li><span>Lampiran</span>: {biodata.lampiran}</li>
+						<li><span>Hal</span>: {biodata.hal}</li>
+					</ul>
+
+					<svg
+						role="separator"
+						class="my-2"
+						style="margin-left: -5mm; width: calc(100% + 10mm);"
+						xmlns="http://www.w3.org/2000/svg"
+						height="5"
+						viewBox="0 0 100 10"
+						preserveAspectRatio="none"
+					>
+						<!-- Top thin line -->
+						<line x1="0" y1="1" x2="100" y2="1" stroke="black" stroke-width="10" />
+					</svg>
+
+					<ol class="list-bold list-decimal">
+						<li>
+							<span>Dasar Hukum:</span>
+							<p>CONTENT</p>
+						</li>
+						<li>
+							<span>Peserta kegiatan:</span>
+							<p>CONTENT</p>
+						</li>
+						<li>
+							<span>Narasumber:</span>
+							<p>CONTENT</p>
+						</li>
+						<li>
+							<span>Materi:</span>
+							<p>CONTENT</p>
+						</li>
+						<li>
+							<span>Hasil Kegiatan:</span>
+							<p>CONTENT</p>
+						</li>
+						<li>
+							<span>Dokumentasi Kegiatan:</span>
+							<p>CONTENT</p>
+						</li>
+					</ol>
+				</section>
+				<footer />
+			</article>
 		</div>
 	</div>
 </div>
+
+<style lang="scss">
+</style>
