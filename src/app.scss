@@ -6,6 +6,16 @@ body {
 	@apply h-full overflow-hidden;
 }
 
+.input-multi-border:focus {
+	--tw-ring-color: rgb(var(--color-primary-500) / var(--tw-border-opacity)) !important;
+	border-color: rgb(var(--color-primary-500) / var(--tw-border-opacity)) !important;
+    transition-property: color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter, -webkit-backdrop-filter;
+    transition-property: color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter, backdrop-filter;
+    transition-property: color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter, backdrop-filter, -webkit-backdrop-filter;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    transition-duration: 200ms;
+}
+
 .paper-F4 {
 	$original-width: 210;
 	$px-per-mm: 3.7795; // 96dpi / 25.4mm (rounded)
@@ -68,7 +78,7 @@ body {
 			display: table-row;
 		}
 	
-		span {
+		.list-title {
 			display: table-cell;
 			padding-right: 1rem;
 		}

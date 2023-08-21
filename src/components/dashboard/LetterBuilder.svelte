@@ -22,17 +22,19 @@
 	// TODO: load data from database
 	let data = {
 		namaPejabat: [],
-		sifat: ['Biasa', 'Segera', 'Rahasia', 'Sangat Rahasia', 'Penting', 'Konfidensial']
+		formatNomor: ['Sifat', 'Klasifikasi', 'Nomor Naskah', 'Dinas', 'Bulan', 'Tahun'],
+		sifat: ['Biasa', 'Segera', 'Rahasia', 'Sangat Rahasia', 'Penting', 'Konfidensial'],
+		lampiran: ['Tidak ada (-)', '1 (satu) berkas']
 	};
 
 	let kepalaSurat = {
 		kepada: '',
 		dari: email,
 		tanggal: '',
-		nomor: '',
+		nomor: [],
 		sifat: '',
 		lampiran: '',
-		hal: ''
+		perihal: ''
 	};
 
 	let isiSurat = [
@@ -54,9 +56,9 @@
 
 	$: if (vw) {
 		let desiredWidth = vw * 0.5;
-		paperScale = desiredWidth / (210 * 3.7795)
-		paperMarginX = ((210 * 3.7795) - ((210 * 3.7795) * paperScale)) / 2;
-		paperMarginY = (((210 * 1.5714) * 3.7795) - (((210 * 1.5714) * 3.7795) * paperScale)) / 2;
+		paperScale = desiredWidth / (210 * 3.7795);
+		paperMarginX = (210 * 3.7795 - 210 * 3.7795 * paperScale) / 2;
+		paperMarginY = (210 * 1.5714 * 3.7795 - 210 * 1.5714 * 3.7795 * paperScale) / 2;
 	}
 
 	$: if (dateBind) {
@@ -79,8 +81,7 @@
 			<h1 class="text-2xl pb-2">Buat surat</h1>
 
 			<form on:submit|preventDefault={handleSubmit}>
-
-				<h2 class="text-xl">Kepala Surat</h2>
+				<h2 class="text-xl mb-2">Kepala Surat</h2>
 				<div class="2xl:grid grid-cols-2 gap-4">
 					<label class="label">
 						<span>Kepada</span>
@@ -97,15 +98,27 @@
 						<input class="input" type="date" bind:value={dateBind} />
 					</label>
 
-					<label class="label">
-						<span>Nomor</span>
-						<div class="md:flex">
-							<input class="input" type="text">
-							<input class="input" type="text">
-							<input class="input" type="text">
-							<input class="input" type="text">
-							<input class="input" type="text">
-							<input class="input" type="text">
+					<label class="label col-span-2">
+						<span>Nomor Surat</span>
+
+						<div class="input focus-within:border-transparent">
+							<div class="flex">
+								{#each data.formatNomor as format, i}
+									<input
+										class="bg-transparent border-none input-multi-border {i == 0 ? 'rounded-l-full' : ''} {i ==
+										data.formatNomor.length - 1
+											? 'rounded-r-full'
+											: ''} w-0 grow shrink basis-auto"
+										type="text"
+										placeholder={format}
+										title={format}
+										bind:value={kepalaSurat.nomor[i]}
+									/>
+									{#if i < data.formatNomor.length - 1}
+										<span role="separator" class="text-lg my-2 mx-1 leading-6">/</span>
+									{/if}
+								{/each}
+							</div>
 						</div>
 					</label>
 
@@ -117,13 +130,35 @@
 							{/each}
 						</select>
 					</label>
+
+					<label class="label">
+						<span>Lampiran</span>
+						<select class="select" bind:value={kepalaSurat.lampiran}>
+							{#each data.lampiran as lampiran, i}
+								<option value={i == 0 ? '-' : lampiran}>{lampiran}</option>
+							{/each}
+						</select>
+					</label>
+
+					<label class="label col-span-2">
+						<span>Perihal</span>
+						<input class="input" type="text" bind:value={kepalaSurat.perihal} />
+					</label>
 				</div>
 
-				<h2 class="text-xl">Isi Surat</h2>
+				<h2 class="text-xl my-2">Isi Surat</h2>
 				<div>
-
+					{#each isiSurat as isi, i}
+						<label class="label">
+							<span>{isi.name}</span>
+							{#if isi.type === 'text'}
+								<textarea class="textarea" bind:value={isi.content} />
+							{:else if isi.type === 'multimedia'}
+								<input class="input" type="file" />
+							{/if}
+						</label>
+					{/each}
 				</div>
-
 			</form>
 		</div>
 		<div class="p-2 border-8 border-surface-900-50-token">
@@ -137,16 +172,19 @@
 					</p>
 				</aside>
 			{/if}
-			<article class="paper-scale-desktop paper-F4 bg-white" style="--paper-scale: {paperScale}; --paper-margin-x: {paperMarginX}; --paper-margin-y: {paperMarginY}">
+			<article
+				class="paper-scale-desktop paper-F4 bg-white"
+				style="--paper-scale: {paperScale}; --paper-margin-x: {paperMarginX}; --paper-margin-y: {paperMarginY}"
+			>
 				<header>
 					<div class="flex text-center justify-center items-center">
 						<div class="inline-block w-24">
 							<img src={pemkot} alt="Lambang Kota Bandung" />
 						</div>
 						<div>
-							<h1 style="font-size: 14pt">PEMERINTAH KOTA BANDUNG</h1>
-							<h2 style="font-size: 15pt">DINAS KEBAKARAN DAN PENANGGULANGAN BENCANA</h2>
-							<address class="not-italic" style="font-size: 10pt">
+							<h1 class="text-[14pt]">PEMERINTAH KOTA BANDUNG</h1>
+							<h2 class="text-[15pt]">DINAS KEBAKARAN DAN PENANGGULANGAN BENCANA</h2>
+							<address class="not-italic text-[10pt]">
 								Jalan Sukabumi Nomor 17, Bandung, Telepon 022-7207113
 								<br />
 								e - mail: diskarbandung@gmail.com
@@ -174,13 +212,23 @@
 					<h1 class="text-center" style="font-size: 12pt">NOTA - DINAS</h1>
 
 					<ul class="kepala-surat items-center">
-						<li><span>Kepada</span>: {kepalaSurat.kepada}</li>
-						<li><span>Dari</span>: {kepalaSurat.dari}</li>
-						<li><span>Tanggal</span>: {kepalaSurat.tanggal}</li>
-						<li><span>Nomor</span>: {kepalaSurat.nomor}</li>
-						<li><span>Sifat</span>: {kepalaSurat.sifat}</li>
-						<li><span>Lampiran</span>: {kepalaSurat.lampiran}</li>
-						<li><span>Hal</span>: {kepalaSurat.hal}</li>
+						<li><span class="list-title">Kepada</span>: {kepalaSurat.kepada}</li>
+						<li><span class="list-title">Dari</span>: {kepalaSurat.dari}</li>
+						<li><span class="list-title">Tanggal</span>: {kepalaSurat.tanggal}</li>
+						<li>
+							<span class="list-title">Nomor</span>:
+							{#each kepalaSurat.nomor as nomor, i}
+								{#if nomor}
+									<span>{nomor}</span>
+									{#if i < kepalaSurat.nomor.length - 1 && kepalaSurat.nomor[i + 1]}
+										<span>/</span>
+									{/if}
+								{/if}
+							{/each}
+						</li>
+						<li><span class="list-title">Sifat</span>: {kepalaSurat.sifat}</li>
+						<li><span class="list-title">Lampiran</span>: {kepalaSurat.lampiran}</li>
+						<li><span class="list-title">Perihal</span>: {kepalaSurat.perihal}</li>
 					</ul>
 
 					<svg
