@@ -211,7 +211,7 @@
 				<section>
 					<h1 class="text-center" style="font-size: 12pt">NOTA - DINAS</h1>
 
-					<ul class="kepala-surat items-center">
+					<ul class="kepala-surat items-center list-none">
 						<li><span class="list-title">Kepada</span>: {kepalaSurat.kepada}</li>
 						<li><span class="list-title">Dari</span>: {kepalaSurat.dari}</li>
 						<li><span class="list-title">Tanggal</span>: {kepalaSurat.tanggal}</li>
@@ -244,7 +244,7 @@
 						<line x1="0" y1="1" x2="100" y2="1" stroke="black" stroke-width="10" />
 					</svg>
 
-					<ol class="list-bold list-decimal">
+					<ol class="list-bold list-decimal ml-3.5">
 						{#each isiSurat as isi}
 							<li>
 								<span>{isi.name}:</span>
