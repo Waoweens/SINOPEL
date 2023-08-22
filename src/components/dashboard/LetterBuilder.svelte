@@ -43,7 +43,7 @@
 		{ name: 'Narasumber', content: '', type: 'text' },
 		{ name: 'Materi', content: '', type: 'text' },
 		{ name: 'Hasil Kegiatan', content: '', type: 'text' },
-		{ name: 'Dokumentasi Kegiatan', content: '', type: 'multimedia' }
+		{ name: 'Dokumentasi Kegiatan', content: {}, type: 'multimedia' }
 	];
 
 	let dateBind: string;
@@ -86,10 +86,10 @@
 					<label class="label">
 						<span>Kepada</span>
 						<select class="select" bind:value={kepalaSurat.kepada}>
-							<option value="1">Nama 1</option>
-							<option value="2">Nama 2</option>
-							<option value="3">Nama 3</option>
-							<option value="4">Nama 4</option>
+							<option value="Nama 1">Nama 1</option>
+							<option value="Nama 2">Nama 2</option>
+							<option value="Nama 3">Nama 3</option>
+							<option value="Nama 4">Nama 4</option>
 						</select>
 					</label>
 
@@ -105,8 +105,9 @@
 							<div class="flex">
 								{#each data.formatNomor as format, i}
 									<input
-										class="bg-transparent border-none input-multi-border {i == 0 ? 'rounded-l-full' : ''} {i ==
-										data.formatNomor.length - 1
+										class="bg-transparent border-none input-multi-border {i == 0
+											? 'rounded-l-full'
+											: ''} {i == data.formatNomor.length - 1
 											? 'rounded-r-full'
 											: ''} w-0 grow shrink basis-auto"
 										type="text"
@@ -154,7 +155,7 @@
 							{#if isi.type === 'text'}
 								<textarea class="textarea" bind:value={isi.content} />
 							{:else if isi.type === 'multimedia'}
-								<input class="input" type="file" />
+								<input class="input" type="file" bind:this={isi.content} />
 							{/if}
 						</label>
 					{/each}
@@ -251,7 +252,8 @@
 								{#if isi.type === 'text'}
 									<p>{isi.content}</p>
 								{:else if isi.type === 'multimedia'}
-									<div>{@html isi.content}</div>
+									<!-- <div>{@html isi.content}</div> -->
+									<div>WIP</div>
 								{/if}
 							</li>
 						{/each}
