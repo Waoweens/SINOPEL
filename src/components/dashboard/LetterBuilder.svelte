@@ -1,7 +1,7 @@
 <script lang="ts">
 	import pemkot from '$lib/assets/Lambang_Kota_Bandung.svg';
+	import type { Surat } from '$lib/surat';
 	import { authStore } from '$stores/authStore';
-
 	import { onMount } from 'svelte';
 
 	let bookmanAvailable: boolean = false;
@@ -19,34 +19,8 @@
 		email = curr?.currentUser?.email || '';
 	});
 
-	// TODO: load data from database
-	let data = {
-		namaPejabat: [],
-		formatNomor: ['Sifat', 'Klasifikasi', 'Nomor Naskah', 'Dinas', 'Bulan', 'Tahun'],
-		sifat: ['Biasa', 'Segera', 'Rahasia', 'Sangat Rahasia', 'Penting', 'Konfidensial'],
-		lampiran: ['Tidak ada (-)', '1 (satu) berkas']
-	};
-
-	let kepalaSurat = {
-		kepada: '',
-		dari: email,
-		tanggal: '',
-		nomor: [],
-		sifat: '',
-		lampiran: '',
-		perihal: ''
-	};
-
-	let isiSurat = [
-		{ name: 'Dasar Hukum', content: '', type: 'text' },
-		{ name: 'Peserta Kegiatan', content: '', type: 'text' },
-		{ name: 'Narasumber', content: '', type: 'text' },
-		{ name: 'Materi', content: '', type: 'text' },
-		{ name: 'Hasil Kegiatan', content: '', type: 'text' },
-		{ name: 'Dokumentasi Kegiatan', content: {}, type: 'multimedia' }
-	];
-
-	let dateBind: string;
+	export let surat: Surat;
+	$: console.log(surat);
 
 	let vw: number;
 	let vh: number;
@@ -61,16 +35,16 @@
 		paperMarginY = (210 * 1.5714 * 3.7795 - 210 * 1.5714 * 3.7795 * paperScale) / 2;
 	}
 
-	$: if (dateBind) {
-		const date: Date = new Date(dateBind);
-		// format: 01 Januari 1970 (id-ID)
+	// $: if () {
+	// 	// const date: Date = new Date(dateBind);
+	// 	// // format: 01 Januari 1970 (id-ID)
 
-		kepalaSurat.tanggal = date.toLocaleDateString('id-ID', {
-			year: 'numeric',
-			month: 'long',
-			day: '2-digit'
-		});
-	}
+	// 	// kepalaSurat.tanggal = new Date(dateBind).toLocaleDateString('id-ID', {
+	// 	// 	year: 'numeric',
+	// 	// 	month: 'long',
+	// 	// 	day: '2-digit'
+	// 	// });
+	// }
 
 	function handleSubmit() {}
 </script>
@@ -83,81 +57,73 @@
 			<form on:submit|preventDefault={handleSubmit}>
 				<h2 class="text-xl mb-2">Kepala Surat</h2>
 				<div class="2xl:grid grid-cols-2 gap-4">
-					<label class="label">
-						<span>Kepada</span>
-						<select class="select" bind:value={kepalaSurat.kepada}>
-							<option value="Nama 1">Nama 1</option>
-							<option value="Nama 2">Nama 2</option>
-							<option value="Nama 3">Nama 3</option>
-							<option value="Nama 4">Nama 4</option>
-						</select>
-					</label>
-
-					<label class="label">
-						<span>Tanggal</span>
-						<input class="input" type="date" bind:value={dateBind} />
-					</label>
-
-					<label class="label col-span-2">
-						<span>Nomor Surat</span>
-
-						<div class="input focus-within:border-transparent">
-							<div class="flex">
-								{#each data.formatNomor as format, i}
-									<input
-										class="bg-transparent border-none input-multi-border {i == 0
-											? 'rounded-l-full'
-											: ''} {i == data.formatNomor.length - 1
-											? 'rounded-r-full'
-											: ''} w-0 grow shrink basis-auto"
-										type="text"
-										placeholder={format}
-										title={format}
-										bind:value={kepalaSurat.nomor[i]}
+					{#each surat.head as item}
+						{#if item.type !== 'static'}
+							<label class="label {item.spanFull ? 'col-span-2' : ''}">
+								{item.name}
+								{#if item.type === 'text'}
+									<input class="input" type="text" bind:value={item.content} />
+								{:else if item.type === 'textarea'}
+									<textarea class="textarea" bind:value={item.content} />
+								{:else if item.type === 'select'}
+									<select class="select" bind:value={item.content}>
+										{#each item.data as data}
+											{#if typeof data === 'string'}
+												<option value={data}>{data}</option>
+											{:else}
+												<option value={data.value}>{data.name}</option>
+											{/if}
+										{/each}
+									</select>
+								{:else if item.type === 'date'}
+									<input class="input" type="date" bind:value={item.content} />
+								{:else if item.type === 'file'}
+									<input class="input" type="file" bind:value={item.content} />
+								{:else if item.type === 'custom'}
+									<svelte:component
+										this={item.elementIn}
+										data={item.data}
+										bind:content={item.content}
 									/>
-									{#if i < data.formatNomor.length - 1}
-										<span role="separator" class="text-lg my-2 mx-1 leading-6">/</span>
-									{/if}
-								{/each}
-							</div>
-						</div>
-					</label>
-
-					<label class="label">
-						<span>Sifat</span>
-						<select class="select" bind:value={kepalaSurat.sifat}>
-							{#each data.sifat as sifat}
-								<option value={sifat}>{sifat}</option>
-							{/each}
-						</select>
-					</label>
-
-					<label class="label">
-						<span>Lampiran</span>
-						<select class="select" bind:value={kepalaSurat.lampiran}>
-							{#each data.lampiran as lampiran, i}
-								<option value={i == 0 ? '-' : lampiran}>{lampiran}</option>
-							{/each}
-						</select>
-					</label>
-
-					<label class="label col-span-2">
-						<span>Perihal</span>
-						<input class="input" type="text" bind:value={kepalaSurat.perihal} />
-					</label>
+								{/if}
+							</label>
+						{/if}
+					{/each}
 				</div>
 
 				<h2 class="text-xl my-2">Isi Surat</h2>
 				<div>
-					{#each isiSurat as isi, i}
-						<label class="label">
-							<span>{isi.name}</span>
-							{#if isi.type === 'text'}
-								<textarea class="textarea" bind:value={isi.content} />
-							{:else if isi.type === 'multimedia'}
-								<input class="input" type="file" bind:this={isi.content} />
-							{/if}
-						</label>
+					{#each surat.content as item}
+						{#if item.type !== 'static'}
+							<label class="label">
+								{item.name}
+								{#if item.type === 'text'}
+									<input class="input" type="text" bind:value={item.content} />
+								{:else if item.type === 'textarea'}
+									<textarea class="textarea" bind:value={item.content} />
+								{:else if item.type === 'select'}
+									<select class="select" bind:value={item.content}>
+										{#each item.data as data}
+											{#if typeof data === 'string'}
+												<option value={data}>{data}</option>
+											{:else}
+												<option value={data.value}>{data.name}</option>
+											{/if}
+										{/each}
+									</select>
+								{:else if item.type === 'date'}
+									<input class="input" type="date" bind:value={item.content} />
+								{:else if item.type === 'file'}
+									<input class="input" type="file" bind:value={item.content} />
+								{:else if item.type === 'custom'}
+									<svelte:component
+										this={item.elementIn}
+										data={item.data}
+										bind:content={item.content}
+									/>
+								{/if}
+							</label>
+						{/if}
 					{/each}
 				</div>
 			</form>
@@ -210,26 +176,33 @@
 					</svg>
 				</header>
 				<section>
-					<h1 class="text-center" style="font-size: 12pt">NOTA - DINAS</h1>
-
+					<h1 class="text-center text-[14pt]">{surat.title}</h1>
 					<ul class="kepala-surat items-center list-none">
-						<li><span class="list-title">Kepada</span>: {kepalaSurat.kepada}</li>
-						<li><span class="list-title">Dari</span>: {kepalaSurat.dari}</li>
-						<li><span class="list-title">Tanggal</span>: {kepalaSurat.tanggal}</li>
-						<li>
-							<span class="list-title">Nomor</span>:
-							{#each kepalaSurat.nomor as nomor, i}
-								{#if nomor}
-									<span>{nomor}</span>
-									{#if i < kepalaSurat.nomor.length - 1 && kepalaSurat.nomor[i + 1]}
-										<span>/</span>
-									{/if}
-								{/if}
-							{/each}
-						</li>
-						<li><span class="list-title">Sifat</span>: {kepalaSurat.sifat}</li>
-						<li><span class="list-title">Lampiran</span>: {kepalaSurat.lampiran}</li>
-						<li><span class="list-title">Perihal</span>: {kepalaSurat.perihal}</li>
+						{#each surat.head as item}
+							{#if ['static', 'text', 'textarea', 'select'].includes(item.type)}
+								<li><span class="list-title">{item.name}</span>: {item.content}</li>
+							{:else if item.type === 'date'}
+								<li>
+									<span class="list-title">{item.name}</span>:
+									{new Date(item.content).toLocaleDateString('id-ID', {
+										year: 'numeric',
+										month: 'long',
+										day: '2-digit'
+									})}
+								</li>
+							{:else if item.type === 'file'}
+								Unsupported
+							{:else if item.type === 'custom'}
+								<li>
+									<span class="list-title">{item.name}</span>:
+									<svelte:component
+										this={item.elementOut}
+										data={item.data}
+										content={item.content}
+									/>
+								</li>
+							{/if}
+						{/each}
 					</ul>
 
 					<svg
@@ -246,18 +219,32 @@
 					</svg>
 
 					<ol class="list-bold list-decimal ml-3.5">
-						{#each isiSurat as isi}
+						{#each surat.content as item}
 							<li>
-								<span>{isi.name}:</span>
-								{#if isi.type === 'text'}
-									<p>{isi.content}</p>
-								{:else if isi.type === 'multimedia'}
+								<span>{item.name}:</span>
+								{#if ['static', 'text', 'textarea', 'select'].includes(item.type)}
+									<p>{item.content}</p>
+								{:else if item.type === 'file'}
 									<!-- <div>{@html isi.content}</div> -->
 									<div>WIP</div>
 								{/if}
 							</li>
 						{/each}
 					</ol>
+
+					<!-- <ol class="list-bold list-decimal ml-3.5">
+						{#each isiSurat as isi}
+							<li>
+								<span>{isi.name}:</span>
+								{#if isi.type === 'text'}
+									<p>{isi.content}</p>
+								{:else if isi.type === 'multimedia'}
+									<!-- <div>{@html isi.content}</div> --
+									<div>WIP</div>
+								{/if}
+							</li>
+						{/each}
+					</ol> -->
 				</section>
 				<footer />
 			</article>
