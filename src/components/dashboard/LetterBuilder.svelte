@@ -227,6 +227,12 @@
 								{:else if item.type === 'file'}
 									<!-- <div>{@html isi.content}</div> -->
 									<div>WIP</div>
+								{:else if item.type === 'custom'}
+									<svelte:component
+										this={item.elementOut}
+										data={item.data}
+										content={item.content}
+									/>
 								{/if}
 							</li>
 						{/each}

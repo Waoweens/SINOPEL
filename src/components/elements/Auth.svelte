@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { FirebaseError } from 'firebase/app';
-	import { authHandlers, authStore } from '../stores/authStore';
+	import { authHandlers, authStore } from '../../stores/authStore';
 	import { ProgressRadial } from '@skeletonlabs/skeleton';
 
 	// let register: boolean = false;

@@ -48,8 +48,8 @@ interface CustomType extends BaseType {
 	type: 'custom';
 	elementIn: ComponentType;
 	elementOut: ComponentType;
-	data: any;
-	content: any;
+	data?: any;
+	content?: any;
 }
 
 type AllTypes = StaticType | TextType | TextAreaType | SelectType | DateType | FileType | CustomType;
