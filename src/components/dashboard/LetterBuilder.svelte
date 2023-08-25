@@ -81,7 +81,7 @@
 									<input class="input" type="file" bind:value={item.content} />
 								{:else if item.type === 'custom'}
 									<svelte:component
-										this={item.elementIn}
+										this={item.componentIn}
 										data={item.data}
 										bind:content={item.content}
 									/>
@@ -117,7 +117,7 @@
 									<input class="input" type="file" bind:value={item.content} />
 								{:else if item.type === 'custom'}
 									<svelte:component
-										this={item.elementIn}
+										this={item.componentIn}
 										data={item.data}
 										bind:content={item.content}
 									/>
@@ -196,7 +196,7 @@
 								<li>
 									<span class="list-title">{item.name}</span>:
 									<svelte:component
-										this={item.elementOut}
+										this={item.componentOut}
 										data={item.data}
 										content={item.content}
 									/>
@@ -229,7 +229,7 @@
 									<div>WIP</div>
 								{:else if item.type === 'custom'}
 									<svelte:component
-										this={item.elementOut}
+										this={item.componentOut}
 										data={item.data}
 										content={item.content}
 									/>

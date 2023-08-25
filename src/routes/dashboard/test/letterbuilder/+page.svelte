@@ -6,12 +6,13 @@
 	import LetterNumberDisplay from "$components/elements/letterbuilder/LetterNumberDisplay.svelte";
 	import type { Surat } from "$lib/surat";
 
-	let notaDinas: Surat = {
-		title: "NOTA DINAS",
+	let notulenRapat: Surat = {
+		title: "Notulen Rapat",
+		type: "NOTA DINAS",
 		head: [
 			{
 				name: 'Kepada',
-				type: 'select',
+				type: 'autocomplete',
 				data: [
 					'Nama 1',
 					'Nama 2',
@@ -33,8 +34,8 @@
 			{
 				name: 'Nomor',
 				type: 'custom',
-				elementIn: LetterNumber,
-				elementOut: LetterNumberDisplay,
+				componentIn: LetterNumber,
+				componentOut: LetterNumberDisplay,
 				data: {
 					format: ['Sifat', 'Klasifikasi', 'Nomor Naskah', 'Dinas', 'Bulan', 'Tahun'],
 					seperator: '/'
@@ -86,14 +87,12 @@
 				content: ''
 			},
 			{
-				name: 'Jumlah Peserta',
-				type: 'custom',
-				elementIn: ParticipantCount,
-				elementOut: ParticipantCountDisplay,
-				content: {}
+				name: 'Peserta Kegiatan',
+				type: 'textarea',
+				content: ''
 			},
 			{
-				name: 'Narasumber',
+				name: 'Pemimpin Rapat',
 				type: 'textarea',
 				content: ''
 			},
@@ -117,6 +116,7 @@
 
 	let laporanPelaksanaanKegiatan: Surat = {
 		title: "Laporan Pelaksanaan Kegiatan",
+		type: "NOTA DINAS",
 		head: [
 			{
 				name: 'Kepada',
@@ -142,8 +142,8 @@
 			{
 				name: 'Nomor',
 				type: 'custom',
-				elementIn: LetterNumber,
-				elementOut: LetterNumberDisplay,
+				componentIn: LetterNumber,
+				componentOut: LetterNumberDisplay,
 				data: {
 					format: ['Sifat', 'Klasifikasi', 'Nomor Naskah', 'Dinas', 'Bulan', 'Tahun'],
 					seperator: '/'
@@ -197,8 +197,8 @@
 			{
 				name: 'Jumlah Peserta',
 				type: 'custom',
-				elementIn: ParticipantCount,
-				elementOut: ParticipantCountDisplay,
+				componentIn: ParticipantCount,
+				componentOut: ParticipantCountDisplay,
 				content: {}
 			},
 			{
@@ -225,9 +225,9 @@
 	}
 
 	let suratBind: number = 0;
-	let surat: Surat = notaDinas;
+	let surat: Surat = notulenRapat;
 
-	$: surat = suratBind === 0 ? notaDinas : laporanPelaksanaanKegiatan;
+	$: surat = suratBind === 0 ? notulenRapat : laporanPelaksanaanKegiatan;
 
 </script>
 

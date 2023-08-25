@@ -1,10 +1,12 @@
+import type { AutocompleteOption } from "@skeletonlabs/skeleton";
 import type { ComponentType } from "svelte";
 
 interface BaseType {
 	name: string;
-	type: 'static' | 'text' | 'textarea' | 'select' | 'date' | 'file' | 'custom';
+	type: 'static' | 'text' | 'textarea' | 'select' | 'autocomplete' | 'date' | 'file' | 'custom';
 	data?: unknown;
 	content?: unknown;
+	placeholder?: unknown;
 	disabled?: boolean;
 	spanFull?: boolean;
 }
@@ -32,6 +34,12 @@ interface SelectType extends BaseType {
 	content: string;
 }
 
+interface AutocompleteType extends BaseType {
+	type: 'autocomplete';
+	data: AutocompleteOption[];
+	content: unknown;
+}
+
 interface DateType extends BaseType {
 	type: 'date';
 	data?: string;
@@ -46,8 +54,8 @@ interface FileType extends BaseType {
 
 interface CustomType extends BaseType {
 	type: 'custom';
-	elementIn: ComponentType;
-	elementOut: ComponentType;
+	componentIn: ComponentType;
+	componentOut: ComponentType;
 	data?: any;
 	content?: any;
 }
@@ -56,6 +64,7 @@ type AllTypes = StaticType | TextType | TextAreaType | SelectType | DateType | F
 
 export type Surat = {
 	title: string;
+	type: string;
 	head: AllTypes[];
 	content: AllTypes[];
 };
