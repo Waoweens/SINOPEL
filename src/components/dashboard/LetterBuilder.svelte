@@ -1,7 +1,6 @@
 <script lang="ts">
 	import pemkot from '$lib/assets/Lambang_Kota_Bandung.svg';
 	import type { AutocompletePopupType, Letter, LetterTypes } from '$lib/letter';
-	import { authStore } from '$stores/authStore';
 	import { Autocomplete, popup } from '@skeletonlabs/skeleton';
 	import { onMount } from 'svelte';
 
@@ -12,12 +11,6 @@
 		bookmanAvailable = document.fonts.check('1rem Bookman Old Style');
 
 		// let shadowRoot = document.getElementById('shadowDom').attachShadow({mode: 'open'});
-	});
-
-	// TODO: load name instead of email
-	let email: string = '';
-	authStore.subscribe((curr) => {
-		email = curr?.currentUser?.email || '';
 	});
 
 	export let surat: Letter;
