@@ -7,7 +7,7 @@
 	// Finally, your application's global stylesheet (sometimes labeled 'app.css')
 	import '../app.scss';
 
-	import { AppShell, Modal, Toast, getDrawerStore, initializeStores, storePopup } from '@skeletonlabs/skeleton';
+	import { AppShell, Modal, Toast, getDrawerStore, initializeStores, setInitialClassState, storePopup } from '@skeletonlabs/skeleton';
 	import { computePosition, autoUpdate, offset, shift, flip, arrow } from '@floating-ui/dom';
 
 	import { onMount } from 'svelte';

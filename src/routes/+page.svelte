@@ -15,13 +15,13 @@
 	<h1 class="h1 font-[600]">{appname}</h1>
 	<p>{appnameLong}</p>
 
-	<br />
-
-	<SignedIn>
-		{goto('/dashboard')}
-	</SignedIn>
-
-	<SignedOut let:auth>
-		<Auth {auth} />
-	</SignedOut>
+	<div class="mt-4">
+		<SignedIn>
+			{goto('/dashboard')}
+		</SignedIn>
+	
+		<SignedOut let:auth>
+			<Auth {auth} />
+		</SignedOut>
+	</div>
 </div>
