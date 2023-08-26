@@ -1,9 +1,17 @@
-import type { AutocompleteOption } from "@skeletonlabs/skeleton";
-import type { ComponentType } from "svelte";
+import type { AutocompleteOption } from '@skeletonlabs/skeleton';
+import type { ComponentType } from 'svelte';
 
 interface BaseType {
 	name: string;
-	type: 'static' | 'text' | 'textarea' | 'select' | 'autocomplete' | 'date' | 'file' | 'custom';
+	type:
+		| 'static'
+		| 'text'
+		| 'textarea'
+		| 'select'
+		| 'autocomplete-popup'
+		| 'date'
+		| 'file'
+		| 'custom';
 	data?: unknown;
 	content?: unknown;
 	placeholder?: unknown;
@@ -30,14 +38,17 @@ interface TextAreaType extends BaseType {
 
 interface SelectType extends BaseType {
 	type: 'select';
-	data: (string | { name: string, value: string })[];
+	data: (string | { name: string; value: string })[];
 	content: string;
 }
 
-interface AutocompleteType extends BaseType {
-	type: 'autocomplete';
+export interface AutocompletePopupType extends BaseType {
+	type: 'autocomplete-popup';
 	data: AutocompleteOption[];
-	content: unknown;
+	content: {
+		search: string;
+		value: string;
+	};
 }
 
 interface DateType extends BaseType {
@@ -56,17 +67,25 @@ interface CustomType extends BaseType {
 	type: 'custom';
 	componentIn: ComponentType;
 	componentOut: ComponentType;
-	data?: any;
-	content?: any;
+	data?: unknown;
+	content?: unknown;
 }
 
-type AllTypes = StaticType | TextType | TextAreaType | SelectType | DateType | FileType | CustomType;
+export type LetterTypes =
+	| StaticType
+	| TextType
+	| TextAreaType
+	| SelectType
+	| AutocompletePopupType
+	| DateType
+	| FileType
+	| CustomType;
 
-export type Surat = {
+export type Letter = {
 	title: string;
 	type: string;
-	head: AllTypes[];
-	content: AllTypes[];
+	head: LetterTypes[];
+	content: LetterTypes[];
 };
 
-export {}
+export {};

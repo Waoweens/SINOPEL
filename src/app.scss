@@ -9,11 +9,14 @@ body {
 .input-multi-border:focus {
 	--tw-ring-color: rgb(var(--color-primary-500) / var(--tw-border-opacity)) !important;
 	border-color: rgb(var(--color-primary-500) / var(--tw-border-opacity)) !important;
-    transition-property: color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter, -webkit-backdrop-filter;
-    transition-property: color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter, backdrop-filter;
-    transition-property: color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter, backdrop-filter, -webkit-backdrop-filter;
-    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-    transition-duration: 200ms;
+	transition-property: color, background-color, border-color, text-decoration-color, fill, stroke,
+		opacity, box-shadow, transform, filter, -webkit-backdrop-filter;
+	transition-property: color, background-color, border-color, text-decoration-color, fill, stroke,
+		opacity, box-shadow, transform, filter, backdrop-filter;
+	transition-property: color, background-color, border-color, text-decoration-color, fill, stroke,
+		opacity, box-shadow, transform, filter, backdrop-filter, -webkit-backdrop-filter;
+	transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+	transition-duration: 200ms;
 }
 
 .paper-F4 {
@@ -21,7 +24,7 @@ body {
 	$px-per-mm: 3.7795; // 96dpi / 25.4mm (rounded)
 	$aspect-ratio: 1.5714; // 330mm / 210mm (rounded)
 	$original-width-px: $original-width * $px-per-mm;
-	
+
 	all: initial;
 	display: block;
 	box-sizing: border-box;
@@ -34,7 +37,6 @@ body {
 	transform: scale(var(--paper-scale));
 	// transform-origin: top left;
 	margin: calc(var(--paper-margin-y) * -1px) calc(var(--paper-margin-x) * -1px);
-	
 
 	font-family: 'Bookman Old Style', Georgia, Cambria, serif !important;
 	> header {
@@ -56,7 +58,6 @@ body {
 		background-color: red;
 	}
 
-
 	ol {
 		list-style-type: decimal;
 	}
@@ -65,7 +66,8 @@ body {
 		list-style-type: disc;
 	}
 
-	.list-bold li span, .list-bold li::marker {
+	.list-bold li span,
+	.list-bold li::marker {
 		font-weight: 800;
 	}
 
@@ -73,15 +75,14 @@ body {
 		list-style-type: none;
 		display: table;
 		font-size: 12pt;
-	
+
 		li {
 			display: table-row;
 		}
-	
+
 		.list-title {
 			display: table-cell;
 			padding-right: 1rem;
 		}
 	}
 }
-

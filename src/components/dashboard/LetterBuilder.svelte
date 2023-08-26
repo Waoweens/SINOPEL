@@ -1,7 +1,8 @@
 <script lang="ts">
 	import pemkot from '$lib/assets/Lambang_Kota_Bandung.svg';
-	import type { Surat } from '$lib/surat';
+	import type { AutocompletePopupType, Letter, LetterTypes } from '$lib/letter';
 	import { authStore } from '$stores/authStore';
+	import { Autocomplete, popup } from '@skeletonlabs/skeleton';
 	import { onMount } from 'svelte';
 
 	let bookmanAvailable: boolean = false;
@@ -19,7 +20,7 @@
 		email = curr?.currentUser?.email || '';
 	});
 
-	export let surat: Surat;
+	export let surat: Letter;
 	$: console.log(surat);
 
 	let vw: number;
@@ -35,16 +36,28 @@
 		paperMarginY = (210 * 1.5714 * 3.7795 - 210 * 1.5714 * 3.7795 * paperScale) / 2;
 	}
 
-	// $: if () {
-	// 	// const date: Date = new Date(dateBind);
-	// 	// // format: 01 Januari 1970 (id-ID)
+	// autocomplete selection workaround
+	function autocompleteSelection(event: CustomEvent, item: LetterTypes) {
+		const curItem = item as AutocompletePopupType;
+		const index = surat.head.indexOf(item);
 
-	// 	// kepalaSurat.tanggal = new Date(dateBind).toLocaleDateString('id-ID', {
-	// 	// 	year: 'numeric',
-	// 	// 	month: 'long',
-	// 	// 	day: '2-digit'
-	// 	// });
-	// }
+		surat = {
+			...surat,
+			head: [
+				...surat.head.slice(0, index),
+				{
+					...curItem,
+					content: {
+						...curItem.content,
+						value: event.detail.value
+					}
+				},
+				...surat.head.slice(index + 1)
+			]
+		};
+		console.log(event.detail);
+		console.log(item.content);
+	}
 
 	function handleSubmit() {}
 </script>
@@ -57,7 +70,7 @@
 			<form on:submit|preventDefault={handleSubmit}>
 				<h2 class="text-xl mb-2">Kepala Surat</h2>
 				<div class="2xl:grid grid-cols-2 gap-4">
-					{#each surat.head as item}
+					{#each surat.head as item (item)}
 						{#if item.type !== 'static'}
 							<label class="label {item.spanFull ? 'col-span-2' : ''}">
 								{item.name}
@@ -75,6 +88,33 @@
 											{/if}
 										{/each}
 									</select>
+								{:else if item.type === 'autocomplete-popup'}
+									<!--HERE-->
+									<div class="flex flex-col">
+										<input
+											class="input"
+											type="search"
+											placeholder="Cari..."
+											bind:value={item.content.search}
+											use:popup={{ event: 'focus-click', target: item.name, placement: 'bottom' }}
+										/>
+										<div
+											class="card flex-grow min-w-32 max-h-48 p-3 overflow-y-auto"
+											data-popup={item.name}
+										>
+											<Autocomplete
+												bind:input={item.content.search}
+												options={item.data}
+												on:selection={(event) => {
+													// because of JS-TS weirdness,
+													// @ts-ignore
+													item.content.value = event.detail.value;
+													// @ts-ignore
+													item.content.search = event.detail.label;
+												}}
+											/>
+										</div>
+									</div>
 								{:else if item.type === 'date'}
 									<input class="input" type="date" bind:value={item.content} />
 								{:else if item.type === 'file'}
@@ -178,9 +218,11 @@
 				<section>
 					<h1 class="text-center text-[14pt]">{surat.title}</h1>
 					<ul class="kepala-surat items-center list-none">
-						{#each surat.head as item}
+						{#each surat.head as item (item)}
 							{#if ['static', 'text', 'textarea', 'select'].includes(item.type)}
 								<li><span class="list-title">{item.name}</span>: {item.content}</li>
+							{:else if item.type === 'autocomplete-popup'}
+								<li><span class="list-title">{item.name}</span>: {item.content.value}</li>
 							{:else if item.type === 'date'}
 								<li>
 									<span class="list-title">{item.name}</span>:

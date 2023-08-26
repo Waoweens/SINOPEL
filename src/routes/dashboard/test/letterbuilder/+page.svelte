@@ -1,25 +1,28 @@
 <script lang="ts">
-	import LetterBuilder from "$components/dashboard/LetterBuilder.svelte";
-	import ParticipantCount from "$components/elements/letterbuilder/ParticipantCount.svelte";
-	import ParticipantCountDisplay from "$components/elements/letterbuilder/ParticipantCountDisplay.svelte";
-	import LetterNumber from "$components/elements/letterbuilder/LetterNumber.svelte";
-	import LetterNumberDisplay from "$components/elements/letterbuilder/LetterNumberDisplay.svelte";
-	import type { Surat } from "$lib/surat";
+	import LetterBuilder from '$components/dashboard/LetterBuilder.svelte';
+	import ParticipantCount from '$components/elements/letterbuilder/ParticipantCount.svelte';
+	import ParticipantCountDisplay from '$components/elements/letterbuilder/ParticipantCountDisplay.svelte';
+	import LetterNumber from '$components/elements/letterbuilder/LetterNumber.svelte';
+	import LetterNumberDisplay from '$components/elements/letterbuilder/LetterNumberDisplay.svelte';
+	import type { Letter } from '$lib/letter';
 
-	let notulenRapat: Surat = {
-		title: "Notulen Rapat",
-		type: "NOTA DINAS",
+	let notulenRapat: Letter = {
+		title: 'Notulen Rapat',
+		type: 'NOTA DINAS',
 		head: [
 			{
 				name: 'Kepada',
-				type: 'autocomplete',
+				type: 'autocomplete-popup',
 				data: [
-					'Nama 1',
-					'Nama 2',
-					'Nama 3',
-					'Nama 4'
+					{ label: 'Name 1', value: '1234' },
+					{ label: 'Name 2', value: '5678' },
+					{ label: 'Name 3', value: '9101' },
+					{ label: 'Name 4', value: '1121' }
 				],
-				content: ''
+				content: {
+					search: '',
+					value: ''
+				}
 			},
 			{
 				name: 'Dari',
@@ -46,14 +49,7 @@
 			{
 				name: 'Sifat',
 				type: 'select',
-				data: [
-					'Biasa',
-					'Segera',
-					'Rahasia',
-					'Sangat Rahasia',
-					'Penting',
-					'Konfidensial'
-				],
+				data: ['Biasa', 'Segera', 'Rahasia', 'Sangat Rahasia', 'Penting', 'Konfidensial'],
 				content: ''
 			},
 			{
@@ -112,21 +108,16 @@
 				content: undefined
 			}
 		]
-	}
+	};
 
-	let laporanPelaksanaanKegiatan: Surat = {
-		title: "Laporan Pelaksanaan Kegiatan",
-		type: "NOTA DINAS",
+	let laporanPelaksanaanKegiatan: Letter = {
+		title: 'Laporan Pelaksanaan Kegiatan',
+		type: 'NOTA DINAS',
 		head: [
 			{
 				name: 'Kepada',
 				type: 'select',
-				data: [
-					'Nama 1',
-					'Nama 2',
-					'Nama 3',
-					'Nama 4'
-				],
+				data: ['Nama 1', 'Nama 2', 'Nama 3', 'Nama 4'],
 				content: ''
 			},
 			{
@@ -154,14 +145,7 @@
 			{
 				name: 'Sifat',
 				type: 'select',
-				data: [
-					'Biasa',
-					'Segera',
-					'Rahasia',
-					'Sangat Rahasia',
-					'Penting',
-					'Konfidensial'
-				],
+				data: ['Biasa', 'Segera', 'Rahasia', 'Sangat Rahasia', 'Penting', 'Konfidensial'],
 				content: ''
 			},
 			{
@@ -222,13 +206,12 @@
 				content: undefined
 			}
 		]
-	}
+	};
 
 	let suratBind: number = 0;
-	let surat: Surat = notulenRapat;
+	let surat: Letter = notulenRapat;
 
 	$: surat = suratBind === 0 ? notulenRapat : laporanPelaksanaanKegiatan;
-
 </script>
 
 <h1 class="text-2xl">Halaman Tes Surat</h1>
@@ -241,4 +224,4 @@
 	</select>
 </label>
 
-<LetterBuilder surat={surat}/>
+<LetterBuilder {surat} />
