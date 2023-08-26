@@ -1,41 +1,43 @@
 <script lang="ts">
-	import '../app.scss';
+	import '../app.postcss';
 	// Your selected Skeleton theme:
-	import '@skeletonlabs/skeleton/themes/theme-skeleton.css';
+	// import '@skeletonlabs/skeleton/themes/theme-skeleton.css';
 	// This contains the bulk of Skeletons required styles:
-	import '@skeletonlabs/skeleton/styles/skeleton.css';
+	// import '@skeletonlabs/skeleton/styles/skeleton.css';
 	// Finally, your application's global stylesheet (sometimes labeled 'app.css')
 	import '../app.scss';
 
-	import { AppShell, Modal, Toast, drawerStore, storePopup } from '@skeletonlabs/skeleton';
+	import { AppShell, Modal, Toast, getDrawerStore, initializeStores, storePopup } from '@skeletonlabs/skeleton';
 	import { computePosition, autoUpdate, offset, shift, flip, arrow } from '@floating-ui/dom';
 
 	import { onMount } from 'svelte';
-	import { auth } from '$lib/firebase/firebase.client';
-	import { authStore } from '$stores/authStore';
+	import { auth, firestore, storage } from '$lib/firebase/firebase.client';
 	import Navbar from '$components/Navbar.svelte';
 	import { browser } from '$app/environment';
 	import { appname } from '$stores/static';
 	import Navrail from '$components/Navrail.svelte';
 	import { navrailState } from '$stores/states';
 	import Drawers from '$components/Drawers.svelte';
+	import { FirebaseApp, SignedIn } from 'sveltefire';
+
+	initializeStores();
+	const drawerStore = getDrawerStore();
 
 	storePopup.set({ computePosition, autoUpdate, offset, shift, flip, arrow });
 
-	$: isLoggedIn = $authStore.currentUser !== null;
+	// $: isLoggedIn = $authStore.currentUser !== null;
 
-	onMount(() => {
-		const unsubscribe = auth.onAuthStateChanged((user) => {
-			console.log(user);
+	// onMount(() => {
+	// 	const unsubscribe = auth.onAuthStateChanged((user) => {
+	// 		console.log(user);
 
-			authStore.update((curr) => {
-				return { ...curr, isLoading: false, currentUser: user };
-			});
+	// 		authStore.update((curr) => {
+	// 			return { ...curr, isLoading: false, currentUser: user };
+	// 		});
+	// 	});
 
-		});
-
-		return unsubscribe;
-	});
+	// 	return unsubscribe;
+	// });
 
 	let railStyle: string;
 	let innerWidth: number;
@@ -69,27 +71,29 @@
 
 <svelte:window bind:innerWidth />
 
-<!-- Overlays -->
-<Modal />
-<Toast />
-<Drawers />
+<FirebaseApp {auth} {firestore} {storage}>
+	<!-- Overlays -->
+	<Modal />
+	<Toast />
+	<Drawers />
 
-<AppShell>
-	<svelte:fragment slot="header">
-		<Navbar />
-	</svelte:fragment>
-	<!-- <svelte:fragment slot="pageHeader">Page Header</svelte:fragment> -->
-	<svelte:fragment slot="sidebarLeft">
-		{#if isLoggedIn}
-			<Navrail display={railStyle} />
-		{/if}
-	</svelte:fragment>
-	<!-- <svelte:fragment slot="sidebarRight">Sidebar Right</svelte:fragment> -->
-	<!-- Router Slot -->
-	<div class="m-3">
-		<slot />
-	</div>
-	<!-- ---- / ---- -->
-	<svelte:fragment slot="pageFooter">Page Footer</svelte:fragment>
-	<!-- <svelte:fragment slot="footer">Footer</svelte:fragment> -->
-</AppShell>
+	<AppShell>
+		<svelte:fragment slot="header">
+			<Navbar />
+		</svelte:fragment>
+		<!-- <svelte:fragment slot="pageHeader">Page Header</svelte:fragment> -->
+		<svelte:fragment slot="sidebarLeft">
+			<SignedIn>
+				<Navrail display={railStyle} />
+			</SignedIn>
+		</svelte:fragment>
+		<!-- <svelte:fragment slot="sidebarRight">Sidebar Right</svelte:fragment> -->
+		<!-- Router Slot -->
+		<div class="m-3">
+			<slot />
+		</div>
+		<!-- ---- / ---- -->
+		<svelte:fragment slot="pageFooter">Page Footer</svelte:fragment>
+		<!-- <svelte:fragment slot="footer">Footer</svelte:fragment> -->
+	</AppShell>
+</FirebaseApp>

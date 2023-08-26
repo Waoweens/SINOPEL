@@ -1,4 +1,6 @@
 {
 	"eslint.rules.customizations": [{ "rule": "*", "severity": "warn" }],
-	"css.customData": [".vscode/tailwind.json"]
+	"css.customData": [
+		".vscode/tailwind.json"
+	]
 }

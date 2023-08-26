@@ -2,7 +2,9 @@
 import { browser } from '$app/environment';
 import { getAnalytics, type Analytics } from 'firebase/analytics';
 import { deleteApp, getApp, getApps, initializeApp, type FirebaseApp } from 'firebase/app';
-import { getAuth } from 'firebase/auth';
+import { getAuth, type Auth } from 'firebase/auth';
+import { getFirestore, type Firestore } from 'firebase/firestore';
+import { getStorage, type FirebaseStorage } from 'firebase/storage';
 import { onMount } from 'svelte';
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
@@ -23,7 +25,7 @@ const firebaseConfig = {
 // const app = initializeApp(firebaseConfig);
 // const analytics = getAnalytics(app);
 
-let firebaseApp: FirebaseApp;
+export let firebaseApp: FirebaseApp;
 if (!getApps().length) {
 	firebaseApp = initializeApp(firebaseConfig);
 } else {
@@ -37,4 +39,6 @@ if (browser) {
 	analytics = getAnalytics(firebaseApp);
 }
 
-export const auth = getAuth(firebaseApp);
+export const auth: Auth = getAuth(firebaseApp);
+export const firestore: Firestore = getFirestore(firebaseApp);
+export const storage: FirebaseStorage = getStorage(firebaseApp);

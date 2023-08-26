@@ -1,6 +1,8 @@
 <script lang="ts">
-	import { Drawer, drawerStore, type DrawerSettings } from '@skeletonlabs/skeleton';
+	import { Drawer, getDrawerStore, type DrawerSettings } from '@skeletonlabs/skeleton';
 	import Navrail from './Navrail.svelte';
+
+	const drawerStore = getDrawerStore()
 </script>
 
 <Drawer width="w-20">

@@ -1,15 +1,15 @@
 <script lang="ts">
-	import { authStore } from "$stores/authStore";
 	import { ProgressRadial } from "@skeletonlabs/skeleton";
+	import { SignedIn } from "sveltefire";
 
 </script>
 
-{#if $authStore.currentUser}
+<SignedIn>
 	<slot />
-{:else}
-	<div class="flex h-screen">
+</SignedIn>
+
+	<!-- <div class="flex h-screen">
 		<div class="m-auto">
 			<ProgressRadial stroke={100} />
 		</div>
-	</div>
-{/if}
+	</div> -->

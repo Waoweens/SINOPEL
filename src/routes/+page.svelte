@@ -1,9 +1,9 @@
 <script>
-
-	import Auth from "$components/elements/Auth.svelte";
-	import { authStore } from "$stores/authStore";
-	import { appname, appnameLong } from "$stores/static";
-
+	import { goto } from '$app/navigation';
+	import Auth from '$components/Auth.svelte';
+	import { appname, appnameLong } from '$stores/static';
+	import { LightSwitch } from '@skeletonlabs/skeleton';
+	import { SignedIn, SignedOut } from 'sveltefire';
 </script>
 
 <!--
@@ -11,9 +11,17 @@
 	currently, <div>s are used everywhere
 -->
 
-<h1>{appname}</h1>
-<p>{appnameLong}</p>
+<div class="flex flex-col justify-center items-center">
+	<h1 class="h1 font-[600]">{appname}</h1>
+	<p>{appnameLong}</p>
 
-<br />
+	<br />
 
-<Auth/>
+	<SignedIn>
+		{goto('/dashboard')}
+	</SignedIn>
+
+	<SignedOut let:auth>
+		<Auth {auth} />
+	</SignedOut>
+</div>

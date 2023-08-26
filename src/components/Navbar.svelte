@@ -1,10 +1,10 @@
 <script lang="ts">
-	import { AppBar, Avatar, LightSwitch, popup, type PopupSettings } from '@skeletonlabs/skeleton';
+	import { AppBar, LightSwitch, popup, type PopupSettings } from '@skeletonlabs/skeleton';
 	import { appname } from '$stores/static';
 	import IconAccount from '~icons/ic/baseline-account-circle';
 	import IconApps from '~icons/ic/baseline-apps';
-	import { authHandlers, authStore } from '$stores/authStore';
 	import { navrailState } from '$stores/states';
+	import { SignedIn } from 'sveltefire';
 
 	const popupUser: PopupSettings = {
 		event: 'click',
@@ -13,9 +13,9 @@
 	};
 
 	let email: string;
-	authStore.subscribe((curr) => {
-		email = curr?.currentUser?.email || '';
-	});
+	// authStore.subscribe((curr) => {
+	// 	email = curr?.currentUser?.email || '';
+	// });
 </script>
 
 <AppBar>
@@ -50,7 +50,9 @@
 						<a href="/settings">Settings</a>
 					</li>
 					<li>
-						<a href="#logout" on:click={authHandlers.logout}>Logout</a>
+						<SignedIn let:signOut>
+							<a href="#logout" on:click={signOut}>Logout</a>
+						</SignedIn>
 					</li>
 				</ul>
 			</nav>

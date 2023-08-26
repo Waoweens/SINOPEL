@@ -1,11 +1,4 @@
-@use './lib/assets/normalize' as *;
-
 /* Write your global styles here, in PostCSS syntax */
-html,
-body {
-	@apply h-full overflow-hidden;
-}
-
 .input-multi-border:focus {
 	--tw-ring-color: rgb(var(--color-primary-500) / var(--tw-border-opacity)) !important;
 	border-color: rgb(var(--color-primary-500) / var(--tw-border-opacity)) !important;
