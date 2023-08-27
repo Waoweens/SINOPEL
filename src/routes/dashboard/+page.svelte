@@ -3,5 +3,7 @@
 </script>
 
 <svelte:head>
-	<title>Dashboard - {appname}</title>
+	<title>Dasbor - {appname}</title>
 </svelte:head>
+
+<h1>Dasbor</h1>

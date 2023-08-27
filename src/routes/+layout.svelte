@@ -11,7 +11,7 @@
 	import { computePosition, autoUpdate, offset, shift, flip, arrow } from '@floating-ui/dom';
 
 	import { onMount } from 'svelte';
-	import { auth, firestore, storage } from '$lib/firebase/firebase.client';
+	import { auth, firestore, storage } from '$lib/firebase/firebase';
 	import Navbar from '$components/Navbar.svelte';
 	import { browser } from '$app/environment';
 	import { appname } from '$stores/static';

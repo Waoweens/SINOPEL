@@ -173,7 +173,7 @@
 				</aside>
 			{/if}
 			<article
-				class="paper-scale-desktop paper-F4 bg-white"
+				class="paper-scale-desktop paper-F4"
 				style="--paper-scale: {paperScale}; --paper-margin-x: {paperMarginX}; --paper-margin-y: {paperMarginY}"
 			>
 				<header>
@@ -182,8 +182,8 @@
 							<img src={pemkot} alt="Lambang Kota Bandung" />
 						</div>
 						<div>
-							<h1 class="text-[14pt]">PEMERINTAH KOTA BANDUNG</h1>
-							<h2 class="text-[15pt]">DINAS KEBAKARAN DAN PENANGGULANGAN BENCANA</h2>
+							<h1 class="text-[14pt] font-bold">PEMERINTAH KOTA BANDUNG</h1>
+							<h2 class="text-[15pt] font-bold">DINAS KEBAKARAN DAN PENANGGULANGAN BENCANA</h2>
 							<address class="not-italic text-[10pt]">
 								Jalan Sukabumi Nomor 17, Bandung, Telepon 022-7207113
 								<br />

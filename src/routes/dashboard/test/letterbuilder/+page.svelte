@@ -5,6 +5,10 @@
 	import LetterNumber from '$components/elements/letterbuilder/LetterNumber.svelte';
 	import LetterNumberDisplay from '$components/elements/letterbuilder/LetterNumberDisplay.svelte';
 	import type { Letter } from '$lib/letter';
+	import { userStore } from 'sveltefire';
+	import { auth } from '$lib/firebase/firebase';
+
+	const user = userStore(auth);
 
 	let notulenRapat: Letter = {
 		title: 'Notulen Rapat',
@@ -27,7 +31,7 @@
 			{
 				name: 'Dari',
 				type: 'static',
-				content: 'Pending'
+				content: $user?.displayName
 			},
 			{
 				name: 'Tanggal',

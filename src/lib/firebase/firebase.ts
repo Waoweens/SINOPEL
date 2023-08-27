@@ -25,14 +25,16 @@ const firebaseConfig = {
 // const app = initializeApp(firebaseConfig);
 // const analytics = getAnalytics(app);
 
-export let firebaseApp: FirebaseApp;
-if (!getApps().length) {
-	firebaseApp = initializeApp(firebaseConfig);
-} else {
-	firebaseApp = getApp();
-	deleteApp(firebaseApp);
-	firebaseApp = initializeApp(firebaseConfig);
-}
+// export let firebaseApp: FirebaseApp;
+// if (!getApps().length) {
+// 	firebaseApp = initializeApp(firebaseConfig);
+// } else {
+// 	firebaseApp = getApp();
+// 	deleteApp(firebaseApp);
+// 	firebaseApp = initializeApp(firebaseConfig);
+// }
+
+export const firebaseApp: FirebaseApp = initializeApp(firebaseConfig);
 
 let analytics: Analytics;
 if (browser) {
