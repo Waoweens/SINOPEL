@@ -2,7 +2,7 @@
 	import pemkot from '$lib/assets/Lambang_Kota_Bandung.svg';
 	import type { AutocompletePopupType, Letter, LetterTypes } from '$lib/letter';
 	import { Autocomplete, popup } from '@skeletonlabs/skeleton';
-	import { onMount } from 'svelte';
+	import { createEventDispatcher, onMount } from 'svelte';
 
 	let bookmanAvailable: boolean = false;
 
@@ -13,8 +13,8 @@
 		// let shadowRoot = document.getElementById('shadowDom').attachShadow({mode: 'open'});
 	});
 
-	export let surat: Letter;
-	$: console.log(surat);
+	export let letter: Letter;
+	$: console.log(letter);
 
 	let vw: number;
 	let vh: number;
@@ -32,12 +32,12 @@
 	// autocomplete selection workaround
 	function autocompleteSelection(event: CustomEvent, item: LetterTypes) {
 		const curItem = item as AutocompletePopupType;
-		const index = surat.head.indexOf(item);
+		const index = letter.head.indexOf(item);
 
-		surat = {
-			...surat,
+		letter = {
+			...letter,
 			head: [
-				...surat.head.slice(0, index),
+				...letter.head.slice(0, index),
 				{
 					...curItem,
 					content: {
@@ -45,14 +45,18 @@
 						value: event.detail.value
 					}
 				},
-				...surat.head.slice(index + 1)
+				...letter.head.slice(index + 1)
 			]
 		};
 		console.log(event.detail);
 		console.log(item.content);
 	}
 
-	function handleSubmit() {}
+	const dispatch = createEventDispatcher();
+
+	function handleSubmit() {
+		dispatch('submit', letter);
+	}
 </script>
 
 <div bind:offsetWidth={vw} bind:offsetHeight={vh}>
@@ -63,7 +67,7 @@
 			<form on:submit|preventDefault={handleSubmit}>
 				<h2 class="text-xl mb-2">Kepala Surat</h2>
 				<div class="2xl:grid grid-cols-2 gap-4">
-					{#each surat.head as item (item)}
+					{#each letter.head as item (item)}
 						{#if item.type !== 'static'}
 							<label class="label {item.spanFull ? 'col-span-2' : ''}">
 								{item.name}
@@ -126,7 +130,7 @@
 
 				<h2 class="text-xl my-2">Isi Surat</h2>
 				<div>
-					{#each surat.content as item}
+					{#each letter.content as item}
 						{#if item.type !== 'static'}
 							<label class="label">
 								{item.name}
@@ -159,6 +163,9 @@
 						{/if}
 					{/each}
 				</div>
+				<div class="pt-4">
+					<button class="btn variant-filled w-full" type="submit">Buat Surat</button>
+				</div>
 			</form>
 		</div>
 		<div class="p-2 border-8 border-surface-900-50-token">
@@ -172,6 +179,7 @@
 					</p>
 				</aside>
 			{/if}
+			<!--!!!-->
 			<article
 				class="paper-scale-desktop paper-F4"
 				style="--paper-scale: {paperScale}; --paper-margin-x: {paperMarginX}; --paper-margin-y: {paperMarginY}"
@@ -209,9 +217,9 @@
 					</svg>
 				</header>
 				<section>
-					<h1 class="text-center text-[14pt]">{surat.title}</h1>
+					<h1 class="text-center text-[14pt] font-bold">{letter.type}</h1>
 					<ul class="kepala-surat items-center list-none">
-						{#each surat.head as item (item)}
+						{#each letter.head as item (item)}
 							{#if ['static', 'text', 'textarea', 'select'].includes(item.type)}
 								<li><span class="list-title">{item.name}</span>: {item.content}</li>
 							{:else if item.type === 'autocomplete-popup'}
@@ -254,11 +262,20 @@
 					</svg>
 
 					<ol class="list-bold list-decimal ml-3.5">
-						{#each surat.content as item}
+						{#each letter.content as item}
 							<li>
 								<span>{item.name}:</span>
 								{#if ['static', 'text', 'textarea', 'select'].includes(item.type)}
 									<p>{item.content}</p>
+								{:else if item.type === 'date'}
+									<p>
+										{new Date(item.content).toLocaleDateString('id-ID', {
+											year: 'numeric',
+											month: 'long',
+											day: '2-digit',
+											weekday: 'long'
+										})}
+									</p>
 								{:else if item.type === 'file'}
 									<!-- <div>{@html isi.content}</div> -->
 									<div>WIP</div>
@@ -289,6 +306,7 @@
 				</section>
 				<footer />
 			</article>
+			<!--!!!-->
 		</div>
 	</div>
 </div>

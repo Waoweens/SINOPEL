@@ -60,7 +60,7 @@ interface DateType extends BaseType {
 interface FileType extends BaseType {
 	type: 'file';
 	data?: File;
-	content: File | undefined;
+	content: File | undefined | object;
 }
 
 interface CustomType extends BaseType {

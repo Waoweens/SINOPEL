@@ -7,7 +7,15 @@
 	// Finally, your application's global stylesheet (sometimes labeled 'app.css')
 	import '../app.scss';
 
-	import { AppShell, Modal, Toast, getDrawerStore, initializeStores, setInitialClassState, storePopup } from '@skeletonlabs/skeleton';
+	import {
+		AppShell,
+		Modal,
+		Toast,
+		getDrawerStore,
+		initializeStores,
+		setInitialClassState,
+		storePopup
+	} from '@skeletonlabs/skeleton';
 	import { computePosition, autoUpdate, offset, shift, flip, arrow } from '@floating-ui/dom';
 
 	import { onMount } from 'svelte';
@@ -83,9 +91,7 @@
 		</svelte:fragment>
 		<!-- <svelte:fragment slot="pageHeader">Page Header</svelte:fragment> -->
 		<svelte:fragment slot="sidebarLeft">
-			<SignedIn>
-				<Navrail display={railStyle} />
-			</SignedIn>
+			<Navrail display={railStyle} />
 		</svelte:fragment>
 		<!-- <svelte:fragment slot="sidebarRight">Sidebar Right</svelte:fragment> -->
 		<!-- Router Slot -->

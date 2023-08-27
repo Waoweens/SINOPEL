@@ -228,4 +228,4 @@
 	</select>
 </label>
 
-<LetterBuilder {surat} />
+<LetterBuilder letter={surat} />

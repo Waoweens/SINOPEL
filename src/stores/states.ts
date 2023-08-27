@@ -5,5 +5,15 @@ export const navrailState = writable<{
 	toggle: boolean;
 }>({
 	small: false,
-	toggle: false,
+	toggle: false
 });
+
+export const menuNavLinks = {
+	'/dashboard/admin': {
+		title: 'Admin',
+		list: [
+			{ name: 'Akun', href: '/dashboard/admin/users' },
+			{ name: 'Pejabat', href: '/dashboard/admin/employees' },
+		]
+	}
+};

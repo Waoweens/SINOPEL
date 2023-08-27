@@ -1,5 +1,5 @@
 <script lang="ts">
-
+	
 </script>
 
-<h1>admin</h1>
+<slot />

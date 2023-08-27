@@ -1,32 +1,54 @@
 <script lang="ts">
+	import { auth, firestore } from '$lib/firebase/firebase';
 	import { appname } from '$stores/static';
-	import { Table, tableMapperValues, type TableSource } from '@skeletonlabs/skeleton';
+	import { DataHandler, type Row } from '@vincjo/datatables';
+	import { Timestamp, collection, query, where } from 'firebase/firestore';
+	import type { Readable } from 'svelte/store';
+	import { Collection, Doc, SignedIn, collectionStore } from 'sveltefire';
 
-	let tableSelected: Array<any> = [];
+	const col = collectionStore(firestore, '/letters/notulenRapat/entries');
 
-	function tableSelectedHandler(meta: CustomEvent): void {
-		tableSelected = meta && meta.detail ? meta.detail : [];
+	let handler;
+	let rows: Readable<Row[]>;
+	$: if (col) {
+		handler = new DataHandler($col as Row[]);
+		rows = handler.getRows();
+		console.log('rows', $rows);
 	}
-
-	const tableTestData = [
-	];
-
-	const tableData: TableSource = {
-		// A list of heading labels.
-		head: ['ID', 'Nomor<br>Surat', 'Bidang', 'Kategori', 'Perihal', 'Pembuat<br>Surat', 'Pengedit<br>Terakhir', 'Siap<br>Dikirim', 'Posisi<br>Surat'],
-		// The data visibly shown in your table body UI.
-		body: tableMapperValues(tableTestData, ['names', 'symbol', 'weight']),
-		// Optional: The data returned when interactive is enabled and a row is clicked.
-		meta: tableMapperValues(tableTestData, ['position', 'name', 'symbol', 'weight']),
-		// Optional: A list of footer labels.
-		foot: ['Showing X of X', '', '', '', '', '', '', 'prev-next']
-	};
 </script>
 
 <svelte:head>
 	<title>Notulen Rapat - {appname}</title>
 </svelte:head>
 
-<p>{tableSelected.length > 1 ? `${tableSelected[0]}. ${tableSelected[1]}` : "Select an entry"}</p>
+<h2 class="h2 font-bold">Notulen Rapat</h2>
 
-<Table source={tableData} interactive={true} on:selected={tableSelectedHandler} />
+<a href="/dashboard/meeting/new" class="btn variant-filled">Buat surat</a>
+
+<SignedIn let:user>
+	<div class="table-container">
+		<table class="table table-hover">
+			<thead>
+				<tr>
+					<th>ID</th>
+					<!-- <th>Nomor<br />Surat</th> -->
+					<!-- <th>Perangkat<br />Daerah</th> -->
+					<!-- <th>Kategori</th> -->
+					<!-- <th>Perihal</th> -->
+					<th>Notulen</th>
+					<!-- <th>Tanggal<br />Dibuat</th> -->
+				</tr>
+			</thead>
+			<tbody>
+				<Collection ref={'users'} let:data>
+					{#each $rows as row}
+						<tr>
+							<td>{row.id}</td>
+							<td>{data.find((obj) => obj.id == row.user)?.displayName ?? 'invalid account'}</td>
+						</tr>
+					{/each}
+				</Collection>
+			</tbody>
+		</table>
+	</div>
+</SignedIn>

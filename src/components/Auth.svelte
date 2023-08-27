@@ -1,10 +1,12 @@
 <script lang="ts">
+	import { invalidateAll } from '$app/navigation';
 	import { ProgressRadial } from '@skeletonlabs/skeleton';
 	import {
 		signInWithEmailAndPassword,
 		type Auth,
 		setPersistence,
-		browserSessionPersistence
+		browserLocalPersistence,
+
 	} from 'firebase/auth';
 	import { userStore } from 'sveltefire';
 
@@ -22,9 +24,10 @@
 	function handleSubmit(): void {
 		pressed = true;
 
-		setPersistence(auth, browserSessionPersistence)
+		setPersistence(auth, browserLocalPersistence)
 			.then(() => {
 				signInWithEmailAndPassword(auth, email, password);
+				invalidateAll();
 			})
 			.catch((error) => {
 				error.all = error.message;
