@@ -39,7 +39,6 @@
 	let collStore;
 	let userDoc;
 	function initFirestore(): void {
-		console.log('called', $user?.uid);
 		collStore = collectionStore<UserDoc[]>(firestore, '/users');
 		userDoc = docStore<UserDoc>(firestore, `/users/${$user?.uid}`);
 	}
@@ -100,7 +99,6 @@
 	$: if ($collStore && $userDoc !== undefined) {
 		const val: UserDoc[] = $collStore;
 		if (val.length > 0) {
-			console.log('coll', val, 'doc', $userDoc);
 
 			if ($userDoc == null) {
 				console.log('doc not found');

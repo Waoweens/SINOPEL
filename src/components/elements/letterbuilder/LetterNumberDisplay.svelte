@@ -8,9 +8,7 @@
 
 {#each content as num, i}
 	{#if num}
-		<span>{num}</span>
-		{#if i < content.length - 1 && content[i + 1]}
-			<span>{data.seperator}</span>
+		<span>{num}</span>{#if i < content.length - 1 && content[i + 1]}<span>{data.seperator}</span>
 		{/if}
 	{/if}
 {/each}

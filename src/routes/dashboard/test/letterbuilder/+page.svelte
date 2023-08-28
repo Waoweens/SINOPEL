@@ -109,7 +109,7 @@
 			{
 				name: 'Dokumentasi Kegiatan',
 				type: 'file',
-				content: undefined
+				content: {}
 			}
 		]
 	};
@@ -207,7 +207,7 @@
 			{
 				name: 'Dokumentasi Kegiatan',
 				type: 'file',
-				content: undefined
+				content: {}
 			}
 		]
 	};

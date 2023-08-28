@@ -1,8 +1,8 @@
 <script lang="ts">
-	import pemkot from '$lib/assets/Lambang_Kota_Bandung.svg';
 	import type { AutocompletePopupType, Letter, LetterTypes } from '$lib/letter';
 	import { Autocomplete, popup } from '@skeletonlabs/skeleton';
 	import { createEventDispatcher, onMount } from 'svelte';
+	import LetterView from './LetterView.svelte';
 
 	let bookmanAvailable: boolean = false;
 
@@ -14,7 +14,6 @@
 	});
 
 	export let letter: Letter;
-	$: console.log(letter);
 
 	let vw: number;
 	let vh: number;
@@ -48,8 +47,6 @@
 				...letter.head.slice(index + 1)
 			]
 		};
-		console.log(event.detail);
-		console.log(item.content);
 	}
 
 	const dispatch = createEventDispatcher();
@@ -62,9 +59,17 @@
 <div bind:offsetWidth={vw} bind:offsetHeight={vh}>
 	<div class="lg:flex flex-grow-0">
 		<div class="w-full p-3 border-8 max-lg:border-b-0 lg:border-r-0 border-surface-900-50-token">
-			<h1 class="text-2xl pb-2">Buat surat</h1>
+			<h1 class="text-2xl pb-2 font-bold">Buat surat - {letter.title}</h1>
 
-			<form on:submit|preventDefault={handleSubmit}>
+			<!--! Letter Head !-->
+
+			<!-- svelte-ignore a11y-no-noninteractive-element-interactions -->
+			<form
+				on:keydown={(e) => {
+					if (e.key == 'Enter') e.preventDefault();
+				}}
+				on:submit|preventDefault={handleSubmit}
+			>
 				<h2 class="text-xl mb-2">Kepala Surat</h2>
 				<div class="2xl:grid grid-cols-2 gap-4">
 					{#each letter.head as item (item)}
@@ -128,6 +133,8 @@
 					{/each}
 				</div>
 
+				<!--! Letter Content !-->
+
 				<h2 class="text-xl my-2">Isi Surat</h2>
 				<div>
 					{#each letter.content as item}
@@ -168,6 +175,9 @@
 				</div>
 			</form>
 		</div>
+
+		<!--! Letter Preview !-->
+
 		<div class="p-2 border-8 border-surface-900-50-token">
 			<h1 class="text-2xl pb-2">Preview Surat</h1>
 			{#if !bookmanAvailable}
@@ -179,134 +189,10 @@
 					</p>
 				</aside>
 			{/if}
-			<!--!!!-->
-			<article
-				class="paper-scale-desktop paper-F4"
+			<LetterView
+				{letter}
 				style="--paper-scale: {paperScale}; --paper-margin-x: {paperMarginX}; --paper-margin-y: {paperMarginY}"
-			>
-				<header>
-					<div class="flex text-center justify-center items-center">
-						<div class="inline-block w-24">
-							<img src={pemkot} alt="Lambang Kota Bandung" />
-						</div>
-						<div>
-							<h1 class="text-[14pt] font-bold">PEMERINTAH KOTA BANDUNG</h1>
-							<h2 class="text-[15pt] font-bold">DINAS KEBAKARAN DAN PENANGGULANGAN BENCANA</h2>
-							<address class="not-italic text-[10pt]">
-								Jalan Sukabumi Nomor 17, Bandung, Telepon 022-7207113
-								<br />
-								e - mail: diskarbandung@gmail.com
-							</address>
-						</div>
-					</div>
-					<svg
-						role="separator"
-						class="mt-2"
-						xmlns="http://www.w3.org/2000/svg"
-						width="100%"
-						height="10"
-						viewBox="0 0 100 10"
-						preserveAspectRatio="none"
-					>
-						<!-- Top thin line -->
-						<line x1="0" y1="1" x2="100" y2="1" stroke="black" stroke-width="1.5" />
-						<!-- Middle thick line -->
-						<line x1="0" y1="5" x2="100" y2="5" stroke="black" stroke-width="3" />
-						<!-- Bottom thin line -->
-						<line x1="0" y1="9" x2="100" y2="9" stroke="black" stroke-width="1.5" />
-					</svg>
-				</header>
-				<section>
-					<h1 class="text-center text-[14pt] font-bold">{letter.type}</h1>
-					<ul class="kepala-surat items-center list-none">
-						{#each letter.head as item (item)}
-							{#if ['static', 'text', 'textarea', 'select'].includes(item.type)}
-								<li><span class="list-title">{item.name}</span>: {item.content}</li>
-							{:else if item.type === 'autocomplete-popup'}
-								<li><span class="list-title">{item.name}</span>: {item.content.value}</li>
-							{:else if item.type === 'date'}
-								<li>
-									<span class="list-title">{item.name}</span>:
-									{new Date(item.content).toLocaleDateString('id-ID', {
-										year: 'numeric',
-										month: 'long',
-										day: '2-digit'
-									})}
-								</li>
-							{:else if item.type === 'file'}
-								Unsupported
-							{:else if item.type === 'custom'}
-								<li>
-									<span class="list-title">{item.name}</span>:
-									<svelte:component
-										this={item.componentOut}
-										data={item.data}
-										content={item.content}
-									/>
-								</li>
-							{/if}
-						{/each}
-					</ul>
-
-					<svg
-						role="separator"
-						class="my-2"
-						style="margin-left: -5mm; width: calc(100% + 10mm);"
-						xmlns="http://www.w3.org/2000/svg"
-						height="5"
-						viewBox="0 0 100 10"
-						preserveAspectRatio="none"
-					>
-						<!-- Top thin line -->
-						<line x1="0" y1="1" x2="100" y2="1" stroke="black" stroke-width="10" />
-					</svg>
-
-					<ol class="list-bold list-decimal ml-3.5">
-						{#each letter.content as item}
-							<li>
-								<span>{item.name}:</span>
-								{#if ['static', 'text', 'textarea', 'select'].includes(item.type)}
-									<p>{item.content}</p>
-								{:else if item.type === 'date'}
-									<p>
-										{new Date(item.content).toLocaleDateString('id-ID', {
-											year: 'numeric',
-											month: 'long',
-											day: '2-digit',
-											weekday: 'long'
-										})}
-									</p>
-								{:else if item.type === 'file'}
-									<!-- <div>{@html isi.content}</div> -->
-									<div>WIP</div>
-								{:else if item.type === 'custom'}
-									<svelte:component
-										this={item.componentOut}
-										data={item.data}
-										content={item.content}
-									/>
-								{/if}
-							</li>
-						{/each}
-					</ol>
-
-					<!-- <ol class="list-bold list-decimal ml-3.5">
-						{#each isiSurat as isi}
-							<li>
-								<span>{isi.name}:</span>
-								{#if isi.type === 'text'}
-									<p>{isi.content}</p>
-								{:else if isi.type === 'multimedia'}
-									<!-- <div>{@html isi.content}</div> --
-									<div>WIP</div>
-								{/if}
-							</li>
-						{/each}
-					</ol> -->
-				</section>
-				<footer />
-			</article>
-			<!--!!!-->
+			/>
 		</div>
 	</div>
 </div>
