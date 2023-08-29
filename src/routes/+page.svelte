@@ -1,9 +1,15 @@
-<script>
+<script lang="ts">
+	import { browser } from '$app/environment';
 	import { goto } from '$app/navigation';
 	import Auth from '$components/Auth.svelte';
 	import { appname, appnameLong } from '$stores/static';
 	import { LightSwitch } from '@skeletonlabs/skeleton';
 	import { SignedIn, SignedOut } from 'sveltefire';
+
+	function gotoDashboard() {
+		console.log('called')
+		if (browser) goto('/dashboard');
+	}
 </script>
 
 <!--
@@ -17,7 +23,7 @@
 
 	<div class="mt-4">
 		<SignedIn>
-			{goto('/dashboard')}
+			{gotoDashboard()}
 		</SignedIn>
 	
 		<SignedOut let:auth>
