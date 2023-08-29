@@ -8,15 +8,27 @@
 		notulenRapat,
 		type LetterTypes,
 		type LetterTypesMin,
-		type Letter
+		type Letter,
+		laporanKegiatan
 	} from '$lib/letter';
 	import LetterBuilder from '$components/dashboard/LetterBuilder.svelte';
 
 	export let data: PageData;
 
+	let chosenLetter: () => Letter = (): Letter => {
+		switch (data.letter.type) {
+			case 'meeting':
+				return notulenRapat;
+			case 'event':
+				return laporanKegiatan;
+			default:
+				return notulenRapat;
+		}
+	};
+
 	const doc = docStore<Packet>(
 		firestore,
-		`letters/${data.letter.letterType}/entries/${data.letter.letterId}`
+		`letters/${data.letter.type}/entries/${data.letter.id}`
 	);
 
 	$: console.log('doc', $doc);
@@ -30,19 +42,17 @@
 		});
 	};
 
-	notulenRapat;
-
 	let mergedHeadArray;
 	let mergedContentArray;
 	let letter: Letter;
 	$: if ($doc) {
-		mergedHeadArray = mergeArrays(notulenRapat.head, $doc.content.head);
-		mergedContentArray = mergeArrays(notulenRapat.content, $doc.content.content);
+		mergedHeadArray = mergeArrays(chosenLetter().head, $doc.content.head);
+		mergedContentArray = mergeArrays(chosenLetter().content, $doc.content.content);
 		console.log('Merged Head Array:', mergedHeadArray);
 		console.log('Merged Content Array:', mergedContentArray);
 
 		letter = {
-			...notulenRapat,
+			...chosenLetter(),
 			head: mergedHeadArray,
 			content: mergedContentArray
 		};

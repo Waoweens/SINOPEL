@@ -5,6 +5,8 @@
 
 	export let style: string;
 	export let letter: Letter;
+
+	console.log('ltr', letter);
 </script>
 
 <article>
