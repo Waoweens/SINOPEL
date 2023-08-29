@@ -3,7 +3,15 @@
 	import { goto } from '$app/navigation';
 	import LetterBuilder from '$components/dashboard/LetterBuilder.svelte';
 	import { auth, firestore } from '$lib/firebase/firebase';
-	import { notulenRapat, type Letter, type LetterTypes, type LetterTypesMin, type Packet, laporanKegiatan } from '$lib/letter';
+	import {
+		notulenRapat,
+		type Letter,
+		type LetterTypes,
+		type LetterTypesMin,
+		type Packet,
+		laporanKegiatan,
+		splitArray
+	} from '$lib/letter';
 	import { getModalStore } from '@skeletonlabs/skeleton';
 	import { Timestamp, addDoc, collection } from 'firebase/firestore';
 	import { userStore } from 'sveltefire';
@@ -26,19 +34,6 @@
 	};
 
 	function handleSubmit(event: CustomEvent<Letter>) {
-
-		const transformArray = (arr: LetterTypes[]): LetterTypesMin[] => {
-			return arr.map((item) => {
-				return {
-					name: item.name,
-					content: item.content
-				};
-			});
-		};
-
-		const newHeadArray: LetterTypesMin[] = transformArray(chosenLetter().head);
-		const newContentArray: LetterTypesMin[] = transformArray(chosenLetter().content);
-
 		const packet: Packet = {
 			created: {
 				user: $user?.uid,
@@ -49,13 +44,13 @@
 				date: Timestamp.now()
 			},
 			content: {
-				head: newHeadArray,
-				content: newContentArray
+				head: splitArray(chosenLetter().head),
+				content: splitArray(chosenLetter().content)
 			},
 			metadata: {}
 		};
 
-		const doc = addDoc(collection(firestore, 'letters', data.letter.type, 'entries'), packet)
+		addDoc(collection(firestore, 'letters', data.letter.type, 'entries'), packet)
 			.then(() => {
 				modalStore.trigger({
 					type: 'alert',
@@ -73,4 +68,11 @@
 	}
 </script>
 
-<LetterBuilder letter={chosenLetter()} on:submit={handleSubmit} />
+<LetterBuilder letter={chosenLetter()} on:submit={handleSubmit}>
+	<svelte:fragment slot="title">
+		Buat surat - {chosenLetter().title}
+	</svelte:fragment>
+	<svelte:fragment slot="submit">
+		Buat surat
+	</svelte:fragment>
+</LetterBuilder>

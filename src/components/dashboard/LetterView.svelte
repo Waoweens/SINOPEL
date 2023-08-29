@@ -50,7 +50,7 @@
 					{#if ['static', 'text', 'textarea', 'select'].includes(item.type)}
 						<li>
 							<span class="list-title">{item.name}</span>: {@html sanitizeHtml(
-								item.content.replace('\n', '<br>')
+								item.content.replaceAll('\n', '<br>')
 							)}
 						</li>
 					{:else if item.type === 'autocomplete-popup'}
@@ -90,10 +90,10 @@
 
 			<ol class="list-bold list-decimal ml-3.5">
 				{#each letter.content as item}
-					<li>
+					<li class="mb-4">
 						<span>{item.name}:</span>
 						{#if ['static', 'text', 'textarea', 'select'].includes(item.type)}
-							<p>{@html sanitizeHtml(item.content.replace('\n', '<br>'))}</p>
+							<p>{@html sanitizeHtml(item.content.replaceAll('\n', '<br>'))}</p>
 						{:else if item.type === 'date'}
 							<p>
 								{new Date(item.content).toLocaleDateString('id-ID', {

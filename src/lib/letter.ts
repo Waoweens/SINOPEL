@@ -329,6 +329,22 @@ auth.onAuthStateChanged((user) => {
 			}
 		]
 	};
-	
 });
 
+export const splitArray = (arr: LetterTypes[]): LetterTypesMin[] => {
+	return arr.map((item) => {
+		return {
+			name: item.name,
+			content: item.content
+		};
+	});
+};
+
+export const mergeArrays = (originalArray: LetterTypes[], newArray: LetterTypesMin[]) => {
+	return originalArray.map((originalItem, index) => {
+		return {
+			...originalItem,
+			...newArray[index]
+		};
+	});
+};

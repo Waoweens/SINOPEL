@@ -7,10 +7,8 @@
 	let bookmanAvailable: boolean = false;
 
 	onMount(() => {
-		// TODO: doesn't work on mac
+		// TODO: just embed the font
 		bookmanAvailable = document.fonts.check('1rem Bookman Old Style');
-
-		// let shadowRoot = document.getElementById('shadowDom').attachShadow({mode: 'open'});
 	});
 
 	export let letter: Letter;
@@ -28,28 +26,12 @@
 		paperMarginY = (210 * 1.5714 * 3.7795 - 210 * 1.5714 * 3.7795 * paperScale) / 2;
 	}
 
-	// autocomplete selection workaround
-	function autocompleteSelection(event: CustomEvent, item: LetterTypes) {
-		const curItem = item as AutocompletePopupType;
-		const index = letter.head.indexOf(item);
-
-		letter = {
-			...letter,
-			head: [
-				...letter.head.slice(0, index),
-				{
-					...curItem,
-					content: {
-						...curItem.content,
-						value: event.detail.value
-					}
-				},
-				...letter.head.slice(index + 1)
-			]
-		};
-	}
-
 	const dispatch = createEventDispatcher();
+
+	function preventEnter(event: KeyboardEvent) {
+		const targetElement = event.target as HTMLElement;
+		if (event.key === 'Enter' && targetElement.tagName !== 'TEXTAREA') event.preventDefault();
+	}
 
 	function handleSubmit() {
 		dispatch('submit', letter);
@@ -59,15 +41,13 @@
 <div bind:offsetWidth={vw} bind:offsetHeight={vh}>
 	<div class="lg:flex flex-grow-0">
 		<div class="w-full p-3 border-8 max-lg:border-b-0 lg:border-r-0 border-surface-900-50-token">
-			<h1 class="text-2xl pb-2 font-bold">Buat surat - {letter.title}</h1>
+			<h1 class="text-2xl pb-2 font-bold"><slot name="title">Surat</slot></h1>
 
 			<!--! Letter Head !-->
 
 			<!-- svelte-ignore a11y-no-noninteractive-element-interactions -->
 			<form
-				on:keydown={(e) => {
-					if (e.key == 'Enter') e.preventDefault();
-				}}
+				on:keydown={preventEnter}
 				on:submit|preventDefault={handleSubmit}
 			>
 				<h2 class="text-xl mb-2">Kepala Surat</h2>
@@ -171,7 +151,9 @@
 					{/each}
 				</div>
 				<div class="pt-4">
-					<button class="btn variant-filled w-full" type="submit">Buat Surat</button>
+					<button class="btn variant-filled w-full" type="submit">
+						<slot name="submit">Kirim</slot>
+					</button>
 				</div>
 			</form>
 		</div>
