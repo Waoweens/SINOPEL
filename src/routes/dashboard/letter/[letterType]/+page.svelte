@@ -33,7 +33,7 @@
 
 	let handler;
 	let rows: Readable<Packet[]>;
-	$: if (col) {
+	$: if ($col) {
 		handler = new DataHandler($col as Packet[]);
 		rows = handler.getRows();
 	}
