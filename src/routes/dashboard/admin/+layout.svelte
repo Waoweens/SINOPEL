@@ -8,7 +8,7 @@
 <SignedIn let:user>
 	<Doc ref={'/users/' + user.uid} let:data>
 		{#if data.role == 'admin'}
-			<TabGroup>
+			<TabGroup class="mb-3">
 				<TabAnchor href="/dashboard/admin" selected={$page.url.pathname === '/dashboard/admin'}>
 					<span>Home</span>
 				</TabAnchor>
