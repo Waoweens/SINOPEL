@@ -3,6 +3,7 @@
 	import { Autocomplete, popup } from '@skeletonlabs/skeleton';
 	import { createEventDispatcher, onMount } from 'svelte';
 	import LetterView from './LetterView.svelte';
+	import SignatureIn from '$components/elements/letterbuilder/SignatureIn.svelte';
 
 	let bookmanAvailable: boolean = false;
 
@@ -19,8 +20,16 @@
 	let paperMarginX: number;
 	let paperMarginY: number;
 
-	$: if (vw) {
+	// let editorElement: HTMLDivElement;
+	let editorWidth: number;
+
+	$: if (vw >= 1024) {
 		let desiredWidth = vw * 0.5;
+		paperScale = desiredWidth / (210 * 3.7795);
+		paperMarginX = (210 * 3.7795 - 210 * 3.7795 * paperScale) / 2;
+		paperMarginY = (210 * 1.5714 * 3.7795 - 210 * 1.5714 * 3.7795 * paperScale) / 2;
+	} else if (vw < 1024) {
+		let desiredWidth = vw * 0.9;
 		paperScale = desiredWidth / (210 * 3.7795);
 		paperMarginX = (210 * 3.7795 - 210 * 3.7795 * paperScale) / 2;
 		paperMarginY = (210 * 1.5714 * 3.7795 - 210 * 1.5714 * 3.7795 * paperScale) / 2;
@@ -38,9 +47,11 @@
 	}
 </script>
 
-<div bind:offsetWidth={vw} bind:offsetHeight={vh}>
+<svelte:window bind:innerWidth={vw} bind:innerHeight={vh} />
+
+<div>
 	<div class="lg:flex flex-grow-0">
-		<div class="w-full p-3 border-8 max-lg:border-b-0 lg:border-r-0 border-surface-900-50-token">
+		<div bind:clientWidth={editorWidth} class="w-full p-3 border-8 max-lg:border-b-0 lg:border-r-0 border-surface-900-50-token">
 			<h1 class="text-2xl pb-2 font-bold"><slot name="title">Surat</slot></h1>
 
 			<!--! Letter Head !-->
@@ -50,7 +61,7 @@
 				on:keydown={preventEnter}
 				on:submit|preventDefault={handleSubmit}
 			>
-				<h2 class="text-xl mb-2">Kepala Surat</h2>
+				<h2 class="h4 mb-2">Kepala Surat</h2>
 				<div class="2xl:grid grid-cols-2 gap-4">
 					{#each letter.head as item (item)}
 						{#if item.type !== 'static'}
@@ -115,7 +126,7 @@
 
 				<!--! Letter Content !-->
 
-				<h2 class="text-xl my-2">Isi Surat</h2>
+				<h2 class="h4 my-2">Isi Surat</h2>
 				<div>
 					{#each letter.content as item}
 						{#if item.type !== 'static'}
@@ -150,6 +161,14 @@
 						{/if}
 					{/each}
 				</div>
+
+				<!--! Signature !-->
+				<h2 class="h4 my-2">Tanda tangan</h2>
+				<div>
+					<!-- <SignatureIn parent={editorElement} /> -->
+					<SignatureIn bind:letter containerWidth={editorWidth} bind:svg={letter.foot.signature.svg} />
+				</div>
+
 				<div class="pt-4">
 					<button class="btn variant-filled w-full" type="submit">
 						<slot name="submit">Kirim</slot>

@@ -1,5 +1,6 @@
 <script lang="ts">
-	import pemkot from '$lib/assets/Lambang_Kota_Bandung.svg';
+	import SignatureDisplay from '$components/elements/letterbuilder/SignatureDisplay.svelte';
+import pemkot from '$lib/assets/Lambang_Kota_Bandung.svg';
 	import type { Letter } from '$lib/letter';
 	import sanitizeHtml from 'sanitize-html';
 
@@ -113,6 +114,12 @@
 				{/each}
 			</ol>
 		</section>
-		<footer />
+		<footer>
+			<div class="grid grid-cols-3">
+				<div></div>
+				<div></div>
+				<SignatureDisplay {letter} svg={letter.foot.signature.svg} />
+			</div>
+		</footer>
 	</section>
 </article>
