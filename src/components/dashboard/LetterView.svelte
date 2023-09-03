@@ -1,17 +1,38 @@
 <script lang="ts">
 	import SignatureDisplay from '$components/elements/letterbuilder/SignatureDisplay.svelte';
-import pemkot from '$lib/assets/Lambang_Kota_Bandung.svg';
+	import pemkot from '$lib/assets/Lambang_Kota_Bandung-282x240.png';
 	import type { Letter } from '$lib/letter';
 	import sanitizeHtml from 'sanitize-html';
+	import { jsPDF } from "jspdf";
 
 	export let style: string;
 	export let letter: Letter;
 
+	let styleApplied = style;
+
+	let letterObject: HTMLElement;
+
 	console.log('ltr', letter);
+
+	async function downloadPdf() {
+		styleApplied = '';
+		const pdf = new jsPDF({
+			orientation: 'portrait',
+			unit: 'px',
+			format: [letterObject.offsetWidth, letterObject.offsetWidth * 1.5714 ]
+		});
+
+		await pdf.html(letterObject);
+
+		await pdf.save('surat.pdf');
+		styleApplied = style;
+	}
 </script>
 
-<article>
-	<section class="paper-scale-desktop paper-F4" {style}>
+<button type="button" class="btn variant-filled mb-4" on:click={downloadPdf}>Download PDF</button>
+
+<article id="letter" bind:this={letterObject}>
+	<section class="paper-scale-desktop paper-F4" style={styleApplied}>
 		<header>
 			<div class="flex text-center justify-center items-center">
 				<div class="inline-block w-24">
@@ -27,7 +48,7 @@ import pemkot from '$lib/assets/Lambang_Kota_Bandung.svg';
 					</address>
 				</div>
 			</div>
-			<svg
+			<!-- <svg
 				role="separator"
 				class="mt-2"
 				xmlns="http://www.w3.org/2000/svg"
@@ -36,13 +57,19 @@ import pemkot from '$lib/assets/Lambang_Kota_Bandung.svg';
 				viewBox="0 0 100 10"
 				preserveAspectRatio="none"
 			>
-				<!-- Top thin line -->
+				<!-- Top thin line --
 				<line x1="0" y1="1" x2="100" y2="1" stroke="black" stroke-width="1.5" />
-				<!-- Middle thick line -->
+				<!-- Middle thick line --
 				<line x1="0" y1="5" x2="100" y2="5" stroke="black" stroke-width="3" />
-				<!-- Bottom thin line -->
+				<!-- Bottom thin line --
 				<line x1="0" y1="9" x2="100" y2="9" stroke="black" stroke-width="1.5" />
 			</svg>
+			<h1>testtt</h1> -->
+			<div role="separator" class="mt-2">
+				<hr class="!border-black border mb-0.5" />
+				<hr class="!border-black border-[3px] mb-0.5" />
+				<hr class="!border-black border" />
+			</div>
 		</header>
 		<section>
 			<h1 class="text-center text-[14pt] font-bold">{letter.type}</h1>
@@ -76,7 +103,7 @@ import pemkot from '$lib/assets/Lambang_Kota_Bandung.svg';
 				{/each}
 			</ul>
 
-			<svg
+			<!-- <svg
 				role="separator"
 				class="my-2"
 				style="margin-left: -5mm; width: calc(100% + 10mm);"
@@ -85,9 +112,10 @@ import pemkot from '$lib/assets/Lambang_Kota_Bandung.svg';
 				viewBox="0 0 100 10"
 				preserveAspectRatio="none"
 			>
-				<!-- Top thin line -->
+				<!-- Top thin line --
 				<line x1="0" y1="1" x2="100" y2="1" stroke="black" stroke-width="10" />
-			</svg>
+			</svg> -->
+			<hr class="!border-black border my-2" style="margin-left: -5mm; width: calc(100% + 10mm);" />
 
 			<ol class="list-bold list-decimal ml-3.5">
 				{#each letter.content as item}

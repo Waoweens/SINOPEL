@@ -1,21 +1,19 @@
 <script lang="ts">
 	export let data: {
-		format: string[],
-		seperator: string
+		format: string[];
+		seperator: string;
 	};
 
 	export let content: string[] = [];
 </script>
 
-<div class="input focus-within:border-transparent">
-	<div class="flex">
+<div class="sm:input max-sm:card max-sm:p-5 focus-within:border-transparent">
+	<div class="flex max-sm:flex-col">
 		{#each data.format as format, i}
 			<input
-				class="bg-transparent border-none input-multi-border {i == 0
-					? 'rounded-l-full'
-					: ''} {i == data.format.length - 1
-					? 'rounded-r-full'
-					: ''} w-0 grow shrink basis-auto"
+				class="max-sm:input bg-transparent border-none input-multi-border w-0 grow shrink basis-auto
+					{i == 0 ? 'rounded-l-full' : ''}
+					{i == data.format.length - 1 ? 'rounded-r-full' : ''}"
 				type="text"
 				placeholder={format}
 				title={format}

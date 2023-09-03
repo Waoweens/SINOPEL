@@ -15,7 +15,8 @@
 	export let letter: Letter;
 
 	let vw: number;
-	let vh: number;
+	let dw: number;
+	let paperHeight: number;
 	let paperScale: number = 1;
 	let paperMarginX: number;
 	let paperMarginY: number;
@@ -24,12 +25,12 @@
 	let editorWidth: number;
 
 	$: if (vw >= 1024) {
-		let desiredWidth = vw * 0.5;
+		let desiredWidth = dw * 0.5;
 		paperScale = desiredWidth / (210 * 3.7795);
 		paperMarginX = (210 * 3.7795 - 210 * 3.7795 * paperScale) / 2;
 		paperMarginY = (210 * 1.5714 * 3.7795 - 210 * 1.5714 * 3.7795 * paperScale) / 2;
 	} else if (vw < 1024) {
-		let desiredWidth = vw * 0.9;
+		let desiredWidth = dw * 0.9;
 		paperScale = desiredWidth / (210 * 3.7795);
 		paperMarginX = (210 * 3.7795 - 210 * 3.7795 * paperScale) / 2;
 		paperMarginY = (210 * 1.5714 * 3.7795 - 210 * 1.5714 * 3.7795 * paperScale) / 2;
@@ -47,10 +48,10 @@
 	}
 </script>
 
-<svelte:window bind:innerWidth={vw} bind:innerHeight={vh} />
+<svelte:window bind:innerWidth={vw} />
 
 <div>
-	<div class="lg:flex flex-grow-0">
+	<div bind:offsetWidth={dw} class="lg:flex flex-grow-0">
 		<div bind:clientWidth={editorWidth} class="w-full p-3 border-8 max-lg:border-b-0 lg:border-r-0 border-surface-900-50-token">
 			<h1 class="text-2xl pb-2 font-bold"><slot name="title">Surat</slot></h1>
 
