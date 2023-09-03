@@ -18,6 +18,7 @@
 <AppBar>
 	<svelte:fragment slot="lead">
 		<button
+			type="button"
 			class="btn p-0 -my-2"
 			on:click={() => {
 				$navrailState.toggle = !$navrailState.toggle;
@@ -30,7 +31,7 @@
 	<svelte:fragment slot="trail">
 		<LightSwitchX />
 
-		<button class="btn p-0 -my-2" use:popup={popupUser}>
+		<button type="button" class="btn p-0 -my-2" use:popup={popupUser}>
 			<IconAccount class="text-3xl" />
 		</button>
 

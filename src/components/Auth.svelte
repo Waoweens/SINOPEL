@@ -95,6 +95,6 @@
 			{/if}
 			<span aria-live="assertive" class="text-error-400 mt-1">{error.all}</span>
 		</form>
-		<button class="mt-2">Lupa password?</button>
+		<button type="button" class="mt-2">Lupa password?</button>
 	{/if}
 </div>
