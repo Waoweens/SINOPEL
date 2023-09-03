@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { docStore, userStore } from 'sveltefire';
+	import { collectionStore, docStore, userStore } from 'sveltefire';
 	import type { PageData } from './$types';
 	import { auth, firestore } from '$lib/firebase/firebase';
 	import type { Readable, Writable } from 'svelte/store';
@@ -24,14 +24,66 @@
 	const modalStore = getModalStore();
 	const user = userStore(auth);
 
+	const employees = collectionStore(firestore, 'employees/dkpb/entries');
+	let notulenRapatFilled: Letter, laporanKegiatanFilled: Letter;
+
+	$: if ($employees.length > 0) {
+		console.log('call', $employees)
+		notulenRapatFilled = {
+			...notulenRapat,
+			head: notulenRapat.head.map((item) => {
+				if (item.type === 'autocomplete-popup') {
+					if (item.metadata === 'pejabat') {
+						return {
+							...item,
+							data: $employees.map((item: any) => {
+								return {
+									label: item.name,
+									value: item.name
+								};
+							})
+						};
+					}
+				}
+
+				return item;
+			})
+		};
+
+		laporanKegiatanFilled = {
+			...laporanKegiatan,
+			head: laporanKegiatan.head.map((item) => {
+				if (item.type === 'static') {
+					if (item.metadata === 'userDisplayName') {
+						return {
+							...item,
+							content: $user?.displayName
+						};
+					}
+				}
+
+				if (item.type === 'autocomplete-popup') {
+					if (item.metadata === 'pejabat') {
+						return {
+							...item,
+							data: [{ label: 'test', value: 'test' }]
+						};
+					}
+				}
+
+				return item;
+			})
+		};
+	}
+
 	let chosenLetter: () => Letter = (): Letter => {
 		switch (data.letter.type) {
 			case 'meeting':
-				return notulenRapat;
+				return notulenRapatFilled;
 			case 'event':
-				return laporanKegiatan;
+				return laporanKegiatanFilled;
 			default:
-				return notulenRapat;
+				return notulenRapatFilled;
 		}
 	};
 
@@ -61,7 +113,8 @@
 				},
 				content: {
 					head: splitArray(letter.head),
-					content: splitArray(letter.content)
+					content: splitArray(letter.content),
+					foot: letter.foot
 				}
 			};
 
@@ -89,9 +142,7 @@
 		<svelte:fragment slot="title">
 			Edit surat - {letter.title}
 		</svelte:fragment>
-		<svelte:fragment slot="submit">
-			Edit surat
-		</svelte:fragment>
+		<svelte:fragment slot="submit">Edit surat</svelte:fragment>
 	</LetterBuilder>
 {:else}
 	<p>Loading...</p>

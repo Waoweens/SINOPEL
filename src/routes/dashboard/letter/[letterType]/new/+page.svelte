@@ -14,22 +14,75 @@
 	} from '$lib/letter';
 	import { getModalStore } from '@skeletonlabs/skeleton';
 	import { Timestamp, addDoc, collection } from 'firebase/firestore';
-	import { userStore } from 'sveltefire';
+	import { collectionStore, userStore } from 'sveltefire';
 	import type { PageData } from './$types';
+	import { onMount } from 'svelte';
 
 	export let data: PageData;
 
 	const modalStore = getModalStore();
 	const user = userStore(auth);
 
+	const employees = collectionStore(firestore, 'employees/dkpb/entries');
+	let notulenRapatFilled: Letter, laporanKegiatanFilled: Letter;
+
+	$: if ($employees.length > 0) {
+		console.log('call', $employees)
+		notulenRapatFilled = {
+			...notulenRapat,
+			head: notulenRapat.head.map((item) => {
+				if (item.type === 'autocomplete-popup') {
+					if (item.metadata === 'pejabat') {
+						return {
+							...item,
+							data: $employees.map((item: any) => {
+								return {
+									label: item.name,
+									value: item.name
+								};
+							})
+						};
+					}
+				}
+
+				return item;
+			})
+		};
+
+		laporanKegiatanFilled = {
+			...laporanKegiatan,
+			head: laporanKegiatan.head.map((item) => {
+				if (item.type === 'static') {
+					if (item.metadata === 'userDisplayName') {
+						return {
+							...item,
+							content: $user?.displayName
+						};
+					}
+				}
+
+				if (item.type === 'autocomplete-popup') {
+					if (item.metadata === 'pejabat') {
+						return {
+							...item,
+							data: [{ label: 'test', value: 'test' }]
+						};
+					}
+				}
+
+				return item;
+			})
+		};
+	}
+
 	let chosenLetter: () => Letter = (): Letter => {
 		switch (data.letter.type) {
 			case 'meeting':
-				return notulenRapat;
+				return notulenRapatFilled;
 			case 'event':
-				return laporanKegiatan;
+				return laporanKegiatanFilled;
 			default:
-				return notulenRapat;
+				return notulenRapatFilled;
 		}
 	};
 
@@ -45,7 +98,8 @@
 			},
 			content: {
 				head: splitArray(chosenLetter().head),
-				content: splitArray(chosenLetter().content)
+				content: splitArray(chosenLetter().content),
+				foot: chosenLetter().foot
 			},
 			metadata: {}
 		};
@@ -68,11 +122,11 @@
 	}
 </script>
 
-<LetterBuilder letter={chosenLetter()} on:submit={handleSubmit}>
-	<svelte:fragment slot="title">
-		Buat surat - {chosenLetter().title}
-	</svelte:fragment>
-	<svelte:fragment slot="submit">
-		Buat surat
-	</svelte:fragment>
-</LetterBuilder>
+{#if $employees.length > 0}
+	<LetterBuilder letter={chosenLetter()} on:submit={handleSubmit}>
+		<svelte:fragment slot="title">
+			Buat surat - {chosenLetter().title}
+		</svelte:fragment>
+		<svelte:fragment slot="submit">Buat surat</svelte:fragment>
+	</LetterBuilder>
+{/if}
