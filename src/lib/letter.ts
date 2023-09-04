@@ -1,383 +1,383 @@
-// new branch
-
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import type { AutocompleteOption } from '@skeletonlabs/skeleton';
-import type { Timestamp } from 'firebase/firestore';
-import type { ComponentType } from 'svelte';
-import { auth } from './firebase/firebase';
-import { writable } from 'svelte/store';
-import LetterNumber from '$components/elements/letterbuilder/LetterNumber.svelte';
-import LetterNumberDisplay from '$components/elements/letterbuilder/LetterNumberDisplay.svelte';
-import ParticipantCount from '$components/elements/letterbuilder/ParticipantCount.svelte';
-import ParticipantCountDisplay from '$components/elements/letterbuilder/ParticipantCountDisplay.svelte';
-import SignatureIn from '$components/elements/letterbuilder/SignatureIn.svelte';
-import SignatureDisplay from '$components/elements/letterbuilder/SignatureDisplay.svelte';
+// // new branch
 
-interface BaseType {
-	name: string;
-	type:
-		| 'static'
-		| 'text'
-		| 'textarea'
-		| 'select'
-		| 'autocomplete-popup'
-		| 'date'
-		| 'file'
-		| 'custom';
-	data?: unknown;
-	content?: unknown;
-	metadata?: unknown;
-	placeholder?: unknown;
-	disabled?: boolean;
-	spanFull?: boolean;
-}
+// import type { AutocompleteOption } from '@skeletonlabs/skeleton';
+// import type { Timestamp } from 'firebase/firestore';
+// import type { ComponentType } from 'svelte';
+// import { auth } from './firebase/firebase';
+// import { writable } from 'svelte/store';
+// import LetterNumber from '$components/elements/letterbuilder/LetterNumber.svelte';
+// import LetterNumberDisplay from '$components/elements/letterbuilder/LetterNumberDisplay.svelte';
+// import ParticipantCount from '$components/elements/letterbuilder/ParticipantCount.svelte';
+// import ParticipantCountDisplay from '$components/elements/letterbuilder/ParticipantCountDisplay.svelte';
+// import SignatureIn from '$components/elements/letterbuilder/SignatureIn.svelte';
+// import SignatureDisplay from '$components/elements/letterbuilder/SignatureDisplay.svelte';
 
-interface StaticType extends BaseType {
-	type: 'static';
-	content: unknown;
-}
+// interface BaseType {
+// 	name: string;
+// 	type:
+// 		| 'static'
+// 		| 'text'
+// 		| 'textarea'
+// 		| 'select'
+// 		| 'autocomplete-popup'
+// 		| 'date'
+// 		| 'file'
+// 		| 'custom';
+// 	data?: unknown;
+// 	content?: unknown;
+// 	metadata?: unknown;
+// 	placeholder?: unknown;
+// 	disabled?: boolean;
+// 	spanFull?: boolean;
+// }
 
-interface TextType extends BaseType {
-	type: 'text';
-	data?: string;
-	content: string;
-}
+// interface StaticType extends BaseType {
+// 	type: 'static';
+// 	content: unknown;
+// }
 
-interface TextAreaType extends BaseType {
-	type: 'textarea';
-	data?: string;
-	content: string;
-}
+// interface TextType extends BaseType {
+// 	type: 'text';
+// 	data?: string;
+// 	content: string;
+// }
 
-interface SelectType extends BaseType {
-	type: 'select';
-	data: (string | { name: string; value: string })[];
-	content: string;
-}
+// interface TextAreaType extends BaseType {
+// 	type: 'textarea';
+// 	data?: string;
+// 	content: string;
+// }
 
-export interface AutocompletePopupType extends BaseType {
-	type: 'autocomplete-popup';
-	data: AutocompleteOption[];
-	content: {
-		search: string;
-		value: string;
-	};
-}
+// interface SelectType extends BaseType {
+// 	type: 'select';
+// 	data: (string | { name: string; value: string })[];
+// 	content: string;
+// }
 
-interface DateType extends BaseType {
-	type: 'date';
-	data?: string;
-	content: string;
-}
+// export interface AutocompletePopupType extends BaseType {
+// 	type: 'autocomplete-popup';
+// 	data: AutocompleteOption[];
+// 	content: {
+// 		search: string;
+// 		value: string;
+// 	};
+// }
 
-interface FileType extends BaseType {
-	type: 'file';
-	data?: File;
-	content: File | undefined | object;
-}
+// interface DateType extends BaseType {
+// 	type: 'date';
+// 	data?: string;
+// 	content: string;
+// }
 
-interface CustomType extends BaseType {
-	type: 'custom';
-	componentIn: ComponentType;
-	componentOut: ComponentType;
-	data?: any;
-	content?: any;
-}
+// interface FileType extends BaseType {
+// 	type: 'file';
+// 	data?: File;
+// 	content: File | undefined | object;
+// }
 
-export type LetterTypes =
-	| StaticType
-	| TextType
-	| TextAreaType
-	| SelectType
-	| AutocompletePopupType
-	| DateType
-	| FileType
-	| CustomType;
+// interface CustomType extends BaseType {
+// 	type: 'custom';
+// 	componentIn: ComponentType;
+// 	componentOut: ComponentType;
+// 	data?: any;
+// 	content?: any;
+// }
 
-export type LetterTypesMin = {
-	name: string;
-	content: any;
-};
+// export type LetterTypes =
+// 	| StaticType
+// 	| TextType
+// 	| TextAreaType
+// 	| SelectType
+// 	| AutocompletePopupType
+// 	| DateType
+// 	| FileType
+// 	| CustomType;
 
-export type Letter = {
-	title: string;
-	type: string;
-	head: LetterTypes[];
-	content: LetterTypes[];
-	foot: any;
-};
+// export type LetterTypesMin = {
+// 	name: string;
+// 	content: any;
+// };
 
-export type Packet = {
-	created: {
-		user: string | undefined;
-		date: Timestamp;
-	};
-	modified: {
-		user: string | undefined;
-		date: Timestamp;
-	};
-	content: {
-		head: LetterTypesMin[];
-		content: LetterTypesMin[];
-		foot: any;
-	};
-	metadata: object;
-	id?: string; // generated by database, do not use
-};
+// export type Letter = {
+// 	title: string;
+// 	type: string;
+// 	head: LetterTypes[];
+// 	content: LetterTypes[];
+// 	foot: any;
+// };
 
-// export interface Employee {
+// export type Packet = {
+// 	created: {
+// 		user: string | undefined;
+// 		date: Timestamp;
+// 	};
+// 	modified: {
+// 		user: string | undefined;
+// 		date: Timestamp;
+// 	};
+// 	content: {
+// 		head: LetterTypesMin[];
+// 		content: LetterTypesMin[];
+// 		foot: any;
+// 	};
+// 	metadata: object;
+// 	id?: string; // generated by database, do not use
+// };
+
+// // export interface Employee {
+// // 	name: string;
+// // 	number: number;
+// // 	position: string;
+// // 	id?: string; // generated by database, do not use
+// // }
+
+// // Using class
+// export class Employee {
+// 	constructor(
+// 		public name: string,
+// 		public number: number,
+// 		public position: string,
+// 		public id?: string
+// 	) {}
+// }
+
+// // Using interface
+// export interface IEmployee {
 // 	name: string;
 // 	number: number;
 // 	position: string;
-// 	id?: string; // generated by database, do not use
+// 	id?: string;
 // }
 
-// Using class
-export class Employee {
-	constructor(
-		public name: string,
-		public number: number,
-		public position: string,
-		public id?: string
-	) {}
-}
+// export {};
 
-// Using interface
-export interface IEmployee {
-	name: string;
-	number: number;
-	position: string;
-	id?: string;
-}
+// // export const userDisplayName = writable<string>('');
 
-export {};
+// export let notulenRapat: Letter;
+// export let laporanKegiatan: Letter;
 
-// export const userDisplayName = writable<string>('');
+// // auth.onAuthStateChanged((user) => {
+// // 	if (user) {
+// // eslint-disable-next-line prefer-const
+// notulenRapat = {
+// 	title: 'Notulen Rapat',
+// 	type: 'NOTA DINAS',
+// 	head: [
+// 		{
+// 			name: 'Kepada',
+// 			type: 'static',
+// 			content: 'Kepala Dinas Kebakaran dan Penanggulangan Bencana'
+// 		},
+// 		{
+// 			name: 'Dari',
+// 			type: 'autocomplete-popup',
+// 			metadata: 'pejabat',
+// 			data: [{ label: 'pending', value: '1234' }],
+// 			content: {
+// 				search: '',
+// 				value: ''
+// 			}
+// 		},
+// 		{
+// 			name: 'Tanggal',
+// 			type: 'date',
+// 			content: ''
+// 		},
+// 		{
+// 			name: 'Nomor',
+// 			type: 'custom',
+// 			componentIn: LetterNumber,
+// 			componentOut: LetterNumberDisplay,
+// 			data: {
+// 				format: ['Sifat', 'Klasifikasi', 'Nomor Naskah', 'Dinas', 'Bulan', 'Tahun'],
+// 				seperator: '/'
+// 			},
+// 			content: [],
+// 			spanFull: true
+// 		},
+// 		{
+// 			name: 'Sifat',
+// 			type: 'select',
+// 			data: ['Biasa', 'Segera', 'Rahasia', 'Sangat Rahasia', 'Penting', 'Konfidensial'],
+// 			content: ''
+// 		},
+// 		{
+// 			name: 'Lampiran',
+// 			type: 'select',
+// 			data: [
+// 				{
+// 					name: 'Tidak ada (-)',
+// 					value: '-'
+// 				},
+// 				'1 (satu) berkas'
+// 			],
+// 			content: ''
+// 		},
+// 		{
+// 			name: 'Perihal',
+// 			type: 'text',
+// 			content: '',
+// 			spanFull: true
+// 		}
+// 	],
+// 	content: [
+// 		{
+// 			name: 'Dasar Hukum',
+// 			type: 'textarea',
+// 			content: ''
+// 		},
+// 		{
+// 			name: 'Hari / Tanggal',
+// 			type: 'date',
+// 			content: ''
+// 		},
+// 		{
+// 			name: 'Tempat',
+// 			type: 'textarea',
+// 			content: ''
+// 		},
+// 		{
+// 			name: 'Pemimpin Rapat',
+// 			type: 'textarea',
+// 			content: ''
+// 		},
+// 		{
+// 			name: 'Peserta Rapat',
+// 			type: 'textarea',
+// 			content: ''
+// 		},
+// 		{
+// 			name: 'Hasil Rapat',
+// 			type: 'textarea',
+// 			content: ''
+// 		},
+// 		{
+// 			name: 'Dokumentasi',
+// 			type: 'file',
+// 			content: {}
+// 		}
+// 	],
+// 	foot: {
+// 		signature: {
+// 			svg: '',
+// 			employee: {}
+// 		}
+// 	}
+// };
 
-export let notulenRapat: Letter;
-export let laporanKegiatan: Letter;
+// // eslint-disable-next-line prefer-const
+// laporanKegiatan = {
+// 	title: 'Laporan Pelaksanaan Kegiatan',
+// 	type: 'NOTA DINAS',
+// 	head: [
+// 		{
+// 			name: 'Kepada',
+// 			type: 'autocomplete-popup',
+// 			data: [{ label: 'pending', value: '1234' }],
+// 			content: {
+// 				search: '',
+// 				value: ''
+// 			}
+// 		},
+// 		{
+// 			name: 'Dari',
+// 			type: 'static',
+// 			data: 'userDisplayName',
+// 			content: 'pending'
+// 		},
+// 		{
+// 			name: 'Tanggal',
+// 			type: 'date',
+// 			content: ''
+// 		},
+// 		{
+// 			name: 'Nomor',
+// 			type: 'custom',
+// 			componentIn: LetterNumber,
+// 			componentOut: LetterNumberDisplay,
+// 			data: {
+// 				format: ['Sifat', 'Klasifikasi', 'Nomor Naskah', 'Dinas', 'Bulan', 'Tahun'],
+// 				seperator: '/'
+// 			},
+// 			content: [],
+// 			spanFull: true
+// 		},
+// 		{
+// 			name: 'Sifat',
+// 			type: 'select',
+// 			data: ['Biasa', 'Segera', 'Rahasia', 'Sangat Rahasia', 'Penting', 'Konfidensial'],
+// 			content: ''
+// 		},
+// 		{
+// 			name: 'Lampiran',
+// 			type: 'select',
+// 			data: [
+// 				{
+// 					name: 'Tidak ada (-)',
+// 					value: '-'
+// 				},
+// 				'1 (satu) berkas'
+// 			],
+// 			content: ''
+// 		},
+// 		{
+// 			name: 'Perihal',
+// 			type: 'text',
+// 			content: '',
+// 			spanFull: true
+// 		}
+// 	],
+// 	content: [
+// 		{
+// 			name: 'Dasar Hukum',
+// 			type: 'textarea',
+// 			content: ''
+// 		},
+// 		{
+// 			name: 'Peserta Kegiatan',
+// 			type: 'textarea',
+// 			content: ''
+// 		},
+// 		{
+// 			name: 'Jumlah Peserta',
+// 			type: 'custom',
+// 			componentIn: ParticipantCount,
+// 			componentOut: ParticipantCountDisplay,
+// 			content: {}
+// 		},
+// 		{
+// 			name: 'Narasumber',
+// 			type: 'textarea',
+// 			content: ''
+// 		},
+// 		{
+// 			name: 'Materi',
+// 			type: 'textarea',
+// 			content: ''
+// 		},
+// 		{
+// 			name: 'Hasil Kegiatan',
+// 			type: 'textarea',
+// 			content: ''
+// 		},
+// 		{
+// 			name: 'Dokumentasi Kegiatan',
+// 			type: 'file',
+// 			content: {}
+// 		}
+// 	],
+// 	foot: {
+// 		signature: {
+// 			svg: '',
+// 			employee: {}
+// 		}
+// 	}
+// };
+// // });
 
-// auth.onAuthStateChanged((user) => {
-// 	if (user) {
-// eslint-disable-next-line prefer-const
-notulenRapat = {
-	title: 'Notulen Rapat',
-	type: 'NOTA DINAS',
-	head: [
-		{
-			name: 'Kepada',
-			type: 'static',
-			content: 'Kepala Dinas Kebakaran dan Penanggulangan Bencana'
-		},
-		{
-			name: 'Dari',
-			type: 'autocomplete-popup',
-			metadata: 'pejabat',
-			data: [{ label: 'pending', value: '1234' }],
-			content: {
-				search: '',
-				value: ''
-			}
-		},
-		{
-			name: 'Tanggal',
-			type: 'date',
-			content: ''
-		},
-		{
-			name: 'Nomor',
-			type: 'custom',
-			componentIn: LetterNumber,
-			componentOut: LetterNumberDisplay,
-			data: {
-				format: ['Sifat', 'Klasifikasi', 'Nomor Naskah', 'Dinas', 'Bulan', 'Tahun'],
-				seperator: '/'
-			},
-			content: [],
-			spanFull: true
-		},
-		{
-			name: 'Sifat',
-			type: 'select',
-			data: ['Biasa', 'Segera', 'Rahasia', 'Sangat Rahasia', 'Penting', 'Konfidensial'],
-			content: ''
-		},
-		{
-			name: 'Lampiran',
-			type: 'select',
-			data: [
-				{
-					name: 'Tidak ada (-)',
-					value: '-'
-				},
-				'1 (satu) berkas'
-			],
-			content: ''
-		},
-		{
-			name: 'Perihal',
-			type: 'text',
-			content: '',
-			spanFull: true
-		}
-	],
-	content: [
-		{
-			name: 'Dasar Hukum',
-			type: 'textarea',
-			content: ''
-		},
-		{
-			name: 'Hari / Tanggal',
-			type: 'date',
-			content: ''
-		},
-		{
-			name: 'Tempat',
-			type: 'textarea',
-			content: ''
-		},
-		{
-			name: 'Pemimpin Rapat',
-			type: 'textarea',
-			content: ''
-		},
-		{
-			name: 'Peserta Rapat',
-			type: 'textarea',
-			content: ''
-		},
-		{
-			name: 'Hasil Rapat',
-			type: 'textarea',
-			content: ''
-		},
-		{
-			name: 'Dokumentasi',
-			type: 'file',
-			content: {}
-		}
-	],
-	foot: {
-		signature: {
-			svg: '',
-			employee: {}
-		}
-	}
-};
-
-// eslint-disable-next-line prefer-const
-laporanKegiatan = {
-	title: 'Laporan Pelaksanaan Kegiatan',
-	type: 'NOTA DINAS',
-	head: [
-		{
-			name: 'Kepada',
-			type: 'autocomplete-popup',
-			data: [{ label: 'pending', value: '1234' }],
-			content: {
-				search: '',
-				value: ''
-			}
-		},
-		{
-			name: 'Dari',
-			type: 'static',
-			data: 'userDisplayName',
-			content: 'pending'
-		},
-		{
-			name: 'Tanggal',
-			type: 'date',
-			content: ''
-		},
-		{
-			name: 'Nomor',
-			type: 'custom',
-			componentIn: LetterNumber,
-			componentOut: LetterNumberDisplay,
-			data: {
-				format: ['Sifat', 'Klasifikasi', 'Nomor Naskah', 'Dinas', 'Bulan', 'Tahun'],
-				seperator: '/'
-			},
-			content: [],
-			spanFull: true
-		},
-		{
-			name: 'Sifat',
-			type: 'select',
-			data: ['Biasa', 'Segera', 'Rahasia', 'Sangat Rahasia', 'Penting', 'Konfidensial'],
-			content: ''
-		},
-		{
-			name: 'Lampiran',
-			type: 'select',
-			data: [
-				{
-					name: 'Tidak ada (-)',
-					value: '-'
-				},
-				'1 (satu) berkas'
-			],
-			content: ''
-		},
-		{
-			name: 'Perihal',
-			type: 'text',
-			content: '',
-			spanFull: true
-		}
-	],
-	content: [
-		{
-			name: 'Dasar Hukum',
-			type: 'textarea',
-			content: ''
-		},
-		{
-			name: 'Peserta Kegiatan',
-			type: 'textarea',
-			content: ''
-		},
-		{
-			name: 'Jumlah Peserta',
-			type: 'custom',
-			componentIn: ParticipantCount,
-			componentOut: ParticipantCountDisplay,
-			content: {}
-		},
-		{
-			name: 'Narasumber',
-			type: 'textarea',
-			content: ''
-		},
-		{
-			name: 'Materi',
-			type: 'textarea',
-			content: ''
-		},
-		{
-			name: 'Hasil Kegiatan',
-			type: 'textarea',
-			content: ''
-		},
-		{
-			name: 'Dokumentasi Kegiatan',
-			type: 'file',
-			content: {}
-		}
-	],
-	foot: {
-		signature: {
-			svg: '',
-			employee: {}
-		}
-	}
-};
-// });
-
-export const splitArray = (arr: LetterTypes[]): LetterTypesMin[] => {
-	return arr.map((item) => {
+export const splitArray = (arr: any) => {
+	return arr.map((item: any) => {
 		return {
 			name: item.name,
 			content: item.content
@@ -385,8 +385,8 @@ export const splitArray = (arr: LetterTypes[]): LetterTypesMin[] => {
 	});
 };
 
-export const mergeArrays = (originalArray: LetterTypes[], newArray: LetterTypesMin[]) => {
-	return originalArray.map((originalItem, index) => {
+export const mergeArrays = (originalArray: any, newArray: any) => {
+	return originalArray.map((originalItem: any, index: any) => {
 		return {
 			...originalItem,
 			...newArray[index]

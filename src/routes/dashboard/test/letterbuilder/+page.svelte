@@ -220,7 +220,7 @@
 
 <h1 class="text-2xl">Halaman Tes Surat</h1>
 
-<label class="label my-2">
+<label class="label my-2 mb-4">
 	<span>Tipe surat</span>
 	<select class="select" bind:value={suratBind}>
 		<option value={0}>Nota Dinas</option>
