@@ -13,7 +13,7 @@
 		mergeArrays,
 		splitArray
 	} from '$lib/letter';
-	import LetterBuilder from '$components/dashboard/LetterBuilder.svelte';
+	import LetterBuilder from '$components/letter/LetterBuilder.svelte';
 	import { getModalStore } from '@skeletonlabs/skeleton';
 	import { Timestamp, doc, updateDoc } from 'firebase/firestore';
 	import { browser } from '$app/environment';

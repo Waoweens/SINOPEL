@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { browser } from '$app/environment';
 	import { goto } from '$app/navigation';
-	import LetterBuilder from '$components/dashboard/LetterBuilder.svelte';
+	import LetterBuilder from '$components/letter/LetterBuilder.svelte';
 	import { auth, firestore } from '$lib/firebase/firebase';
 	import {
 		notulenRapat,

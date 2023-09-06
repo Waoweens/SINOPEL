@@ -376,6 +376,8 @@
 // };
 // // });
 
+export type LetterTypes = 'NotaDinas' | 'LaporanKegiatan';
+
 export const splitArray = (arr: any) => {
 	return arr.map((item: any) => {
 		return {
