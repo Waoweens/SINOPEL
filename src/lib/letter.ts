@@ -376,7 +376,7 @@
 // };
 // // });
 
-export type LetterTypes = 'NotaDinas' | 'LaporanKegiatan';
+export type LetterTypes = 'NotulenRapat' | 'LaporanKegiatan';
 
 export const splitArray = (arr: any) => {
 	return arr.map((item: any) => {
