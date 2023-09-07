@@ -3,16 +3,26 @@
 	import type { LetterTypes } from '$lib/letter';
 
 	let suratBind: LetterTypes;
+	let idBind: string = 'testdoc';
+	let id: string = 'testdoc';
+
+	function submitId() {
+		id = idBind.trim();
+	}
 </script>
 
 <h1 class="text-2xl">Halaman Tes Surat</h1>
 
 <label class="label my-2 mb-4">
-	<span>Tipe surat</span>
+	<span>Surat</span>
 	<select class="select" bind:value={suratBind}>
-		<option value="NotaDinas">Nota Dinas</option>
-		<option value="LaporanKegiatan">Laporan Pelaksanaan Kegiatan</option>
+		<option value="NotulenRapat">Notulen Rapat</option>
+		<option value="LaporanKegiatan">Laporan Kegiatan</option>
 	</select>
+	<div class="input-group input-group-divider grid-cols-[2fr_auto]">
+		<input type="text" placeholder="Letter ID" bind:value={idBind} />
+		<button type="button" class="variant-filled-primary" on:click={submitId}>Submit</button>
+	</div>
 </label>
 
-<LetterBuilder type={suratBind} />
+<LetterBuilder type={suratBind} id={id} />

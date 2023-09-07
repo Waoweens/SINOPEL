@@ -3,62 +3,125 @@
 	import IconPrint from '~icons/ic/baseline-print';
 	import IconDelete from '~icons/ic/baseline-delete';
 	import type { ComponentType } from 'svelte';
-	import ENotaDinas from './editor/ENotaDinas.svelte';
-	import VNotaDinas from './viewer/VNotaDinas.svelte';
-	import ELaporanKegiatan from './editor/ELaporanKegiatan.svelte';
-	import VLaporanKegiatan from './viewer/VLaporanKegiatan.svelte';
+	import NotulenRapat from '$components/letter/editor/NotulenRapat.svelte';
+	import LaporanKegiatan from '$components/letter/editor/LaporanKegiatan.svelte';
 	import type { LetterTypes } from '$lib/letter';
+	import { collectionStore, docStore } from 'sveltefire';
+	import { firestore } from '$lib/firebase/firebase';
+	import { ProgressRadial } from '@skeletonlabs/skeleton';
+	import type { User } from 'firebase/auth';
+	import type { Readable } from 'svelte/store';
+	import type { CollectionStore } from '$lib/sveltefire-types';
 
 	export let type: LetterTypes;
+	export let id: string = '';
 
-	let LetterInput: ComponentType;
-	let LetterView: ComponentType;
+	let pdf: any;
 
-	switch(type) {
-		case 'NotaDinas':
-			LetterInput = ENotaDinas;
-			LetterView = VNotaDinas;
+	let letterInput: ComponentType;
+	// let letterView: ComponentType;
+	let letterType: string;
+
+	$: switch (type) {
+		case 'NotulenRapat':
+			letterInput = NotulenRapat;
+			// letterView = VNotulenRapat;
+			letterType = 'Notulen Rapat';
 			break;
 		case 'LaporanKegiatan':
-			LetterInput = ELaporanKegiatan;
-			LetterView = VLaporanKegiatan;
+			letterInput = LaporanKegiatan;
+			// letterView = VLaporanKegiatan;
+			letterType = 'Laporan Kegiatan';
 			break;
+	}
+
+	const users = collectionStore(firestore, 'users');
+
+	const displayName = (id: string): string => {
+		const user: any = $users.find((user: any) => user.id === id);
+		return user ? user.displayName : 'Unknown';
+	};
+
+	const employees = collectionStore(firestore, 'employees/dkpb/entries');
+
+	let letterDoc: any;
+	$: if (id) {
+		console.log('call', id);
+		letterDoc = docStore(firestore, `letters/${type}/entries/${id}`);
+	}
+
+	let dateCreated: string, dateModified: string;
+	$: if ($letterDoc) {
+		console.log($letterDoc);
+		const created: Date = $letterDoc.created.date.toDate();
+		const modified: Date = $letterDoc.modified.date.toDate();
+		dateCreated = created.toLocaleDateString('en-GB', {
+			hour12: false,
+			year: 'numeric',
+			month: 'numeric',
+			day: '2-digit',
+			hour: '2-digit',
+			minute: '2-digit',
+			second: '2-digit'
+		});
+		dateModified = modified.toLocaleDateString('en-GB', {
+			hour12: false,
+			year: 'numeric',
+			month: 'numeric',
+			day: '2-digit',
+			hour: '2-digit',
+			minute: '2-digit',
+			second: '2-digit'
+		});
 	}
 </script>
 
-<section class="flex flex-col gap-4">
-	<h2 class="h2">Edit letter</h2>
-	<section class="card p-3">
-		<div class="mb-3">
-			<p>ID:</p>
-			<p>Type: {type}</p>
-			<p>Created:</p>
-			<p>Modified:</p>
-		</div>
-		<div class="flex gap-3">
-			<button type="button" class="btn variant-filled">
-				<span><IconDownload /></span>
-				<span>Download PDF</span>
-			</button>
-			<button type="button" class="btn variant-filled">
-				<span><IconPrint /></span>
-				<span>Print</span>
-			</button>
-			<button type="button" class="btn variant-filled-error">
-				<span><IconDelete /></span>
-				<span>Delete</span>
-			</button>
+{#if $letterDoc}
+	<section class="flex flex-col gap-4">
+		<h1 class="h1">Edit letter</h1>
+		<section class="card p-3">
+			<div class="mb-3">
+				<p>ID: <span><pre class="inline whitespace-nowrap">{id}</pre></span></p>
+				<p>Type: {letterType}</p>
+				<p>Created: {dateCreated} by {displayName($letterDoc.created.user)}</p>
+				<p>Modified: {dateModified} by {displayName($letterDoc.created.user)}</p>
+			</div>
+			<div class="flex gap-3">
+				<button type="button" class="btn variant-filled">
+					<span><IconDownload /></span>
+					<span>Download PDF</span>
+				</button>
+				<button type="button" class="btn variant-filled">
+					<span><IconPrint /></span>
+					<span>Print</span>
+				</button>
+				<button type="button" class="btn variant-filled-error">
+					<span><IconDelete /></span>
+					<span>Delete</span>
+				</button>
+			</div>
+		</section>
+
+		<div class="md:flex gap-4">
+			<section class="p-3 card flex-grow basis-0">
+				<h2 class="h2">Edit</h2>
+				<hr class="my-2" />
+				<svelte:component this={letterInput} {employees} />
+			</section>
+			<section class="p-3 card flex-grow basis-0">
+				<h2 class="h2">Preview</h2>
+				<!-- <svelte:component this={letterView} /> -->
+				<iframe title="Preview Surat" class="w-full h-full" src={pdf} />
+			</section>
 		</div>
 	</section>
-
-	<div class="flex gap-4">
-		<section class="p-3 card flex-grow">
-			<h3 class="h3">Edit</h3>
-			<svelte:component this={LetterInput} />
-		</section>
-		<section class="p-3 card flex-grow">
-			<h3 class="h3">Preview</h3>
-			<svelte:component this={LetterView} />
-		</section>
+{:else}
+	<div class="w-100 flex justify-center items-center p-4">
+		<ProgressRadial
+			width="w-36"
+			stroke={100}
+			meter="stroke-primary-500"
+			track="stroke-primary-500/30"
+		/>
 	</div>
-</section>
+{/if}
