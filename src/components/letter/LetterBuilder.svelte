@@ -55,7 +55,7 @@
 		console.log($letterDoc);
 		const created: Date = $letterDoc.created.date.toDate();
 		const modified: Date = $letterDoc.modified.date.toDate();
-		dateCreated = created.toLocaleDateString('en-GB', {
+		const options: Intl.DateTimeFormatOptions = {
 			hour12: false,
 			year: 'numeric',
 			month: 'numeric',
@@ -63,16 +63,9 @@
 			hour: '2-digit',
 			minute: '2-digit',
 			second: '2-digit'
-		});
-		dateModified = modified.toLocaleDateString('en-GB', {
-			hour12: false,
-			year: 'numeric',
-			month: 'numeric',
-			day: '2-digit',
-			hour: '2-digit',
-			minute: '2-digit',
-			second: '2-digit'
-		});
+		};
+		dateCreated = created.toLocaleDateString('en-GB', options);
+		dateModified = modified.toLocaleDateString('en-GB', options);
 	}
 </script>
 
@@ -106,7 +99,7 @@
 			<section class="p-3 card flex-grow basis-0">
 				<h2 class="h2">Edit</h2>
 				<hr class="my-2" />
-				<svelte:component this={letterInput} {employees} />
+				<svelte:component this={letterInput} {employees} bind:pdf />
 			</section>
 			<section class="p-3 card flex-grow basis-0">
 				<h2 class="h2">Preview</h2>
