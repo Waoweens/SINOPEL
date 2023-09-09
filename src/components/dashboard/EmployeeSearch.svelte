@@ -3,6 +3,7 @@
 	import { Autocomplete, popup, type AutocompleteOption } from '@skeletonlabs/skeleton';
 
 	export let employees: CollectionStore<unknown[]>;
+	export let name: string;
 	let selected: AutocompleteOption;
 
 	let searchBind: string = '';
@@ -26,6 +27,7 @@
 <input
 	class="input"
 	type="search"
+	name={name}
 	placeholder="Nama..."
 	bind:value={searchBind}
 	use:popup={{ event: 'focus-click', target: `ac-employees-${id}`, placement: 'bottom' }}
@@ -40,3 +42,5 @@
 		}}
 	/>
 </div>
+
+<input type="hidden" name="{name}-nis" value={selected?.value ?? ''} />

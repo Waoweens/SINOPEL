@@ -67,6 +67,13 @@
 		dateCreated = created.toLocaleDateString('en-GB', options);
 		dateModified = modified.toLocaleDateString('en-GB', options);
 	}
+
+	let form: HTMLFormElement;
+	function downloadPDF() {
+		form.action = '?/getPDF';
+		form.requestSubmit();
+		form.action = '?/save';
+	}
 </script>
 
 {#if $letterDoc}
@@ -80,7 +87,7 @@
 				<p>Modified: {dateModified} by {displayName($letterDoc.created.user)}</p>
 			</div>
 			<div class="flex gap-3">
-				<button type="button" class="btn variant-filled">
+				<button type="button" on:click={downloadPDF} class="btn variant-filled">
 					<span><IconDownload /></span>
 					<span>Download PDF</span>
 				</button>
@@ -99,7 +106,7 @@
 			<section class="p-3 card flex-grow basis-0">
 				<h2 class="h2">Edit</h2>
 				<hr class="my-2" />
-				<svelte:component this={letterInput} {employees} bind:pdf />
+				<svelte:component this={letterInput} {employees} bind:pdf bind:form />
 			</section>
 			<section class="p-3 card flex-grow basis-0">
 				<h2 class="h2">Preview</h2>
