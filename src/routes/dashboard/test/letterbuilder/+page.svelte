@@ -1,8 +1,8 @@
 <script lang="ts">
 	import LetterBuilder from '$components/letter/LetterBuilder.svelte';
-	import type { LetterTypes } from '$lib/letter';
+	import type { LetterType } from '$lib/letter';
 
-	let suratBind: LetterTypes;
+	let suratBind: LetterType;
 	let idBind: string = 'testdoc';
 	let id: string = 'testdoc';
 
