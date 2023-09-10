@@ -1,69 +1,100 @@
 <script lang="ts">
-	import EmployeeSearch from '$components/dashboard/EmployeeSearch.svelte';
+	import Signature from '$components/letter/elements/editor/Signature.svelte';
+	import EmployeeSearch from '$components/letter/elements/editor/EmployeeSearch.svelte';
+	import type { LetterTypes } from '$lib/letter';
 	import type { CollectionStore } from '$lib/sveltefire-types';
-	import LetterNumber from '../elements/LetterNumber.svelte';
-	import { PDFDocument, rgb } from 'pdf-lib';
-	import pemkot from '$lib/assets/Lambang_Kota_Bandung-282x240.png';
 	import { createEventDispatcher, onMount } from 'svelte';
-	import { enhance } from '$app/forms';
-	import { userStore } from 'sveltefire';
-	import { auth } from '$lib/firebase/firebase';
-	import { getIdToken } from 'firebase/auth';
+	import IconClose from '~icons/ic/baseline-close';
 
-	export let letter: unknown;
 	export let employees: CollectionStore<unknown[]>;
-
-	export let pdf: string;
-
 	export let form: HTMLFormElement;
+	export let letter: { name: string; value: string }[];
+	export let containerWidth: number;
+	export let signatureImg: string;
 
-	const user = userStore(auth);
-	
 	onMount(() => {
-		updatePreview();
+		loadFormData(form, letter);
 	});
-	
+
+	function loadFormData(form: HTMLFormElement, formDataArray: { name: string; value: string }[]) {
+		formDataArray.forEach(({ name, value }) => {
+			const element = form.querySelector(`[name="${name}"]`) as HTMLInputElement;
+			if (element) {
+				if (element.type === 'checkbox' || element.type === 'radio') {
+					const inputGroup = form.querySelectorAll(`[name="${name}"]`) as NodeListOf<HTMLInputElement>;
+					inputGroup.forEach(input => {
+						if (input.value === value) {
+							input.checked = true;
+						}
+					});
+				} else {
+					element.value = value;
+				}
+			} else {
+				console.warn(`Element with name "${name}" not found`);
+			}
+		});
+	}
+
 	async function imgAsArrayBuffer(img: string) {
 		const response = await fetch(img);
 		return await response.arrayBuffer();
 	}
-	
-	let timeout: NodeJS.Timeout;
-	const pt = (n: number) => (n / 25.4) * 72;
-	function updatePreview() {
-		clearTimeout(timeout);
-		timeout = setTimeout(async () => {
-			console.log('update preview');
 
-			const pdfDoc = await PDFDocument.create();
-			const page = pdfDoc.addPage([pt(210), pt(330)]);
-
-			const pngImage = await pdfDoc.embedPng(await imgAsArrayBuffer(pemkot));
-
-			const margin = {
-				top: pt(20),
-				bottom: pt(20),
-				left: pt(20),
-				right: pt(20)
-			};
-
-			page.drawImage(pngImage, {
-				x: page.getWidth() - margin.right - pt(50),
-				y: page.getHeight() - margin.top - pt(50),
-				width: pt(50),
-				height: pt(50)
-			});
-
-			pdf = await pdfDoc.saveAsBase64({ dataUri: true });
-		}, 1000);
+	function preventEnterSubmit(e: KeyboardEvent): void {
+		const target = e.target as HTMLElement;
+		if (e.key === 'Enter' && target.tagName !== 'TEXTAREA') {
+			e.preventDefault();
+		}
 	}
 
+	const dispatch = createEventDispatcher();
+	function handleSubmit(e: SubmitEvent): void {
+		const formData = new FormData(form);
+		const valuesArray = Array.from(formData.entries()).map(([name, value]) => ({
+			name,
+			value
+		}));
+		dispatch('submit', { formInputs: valuesArray, submitter: e.submitter });
+	}
+
+	// peserta
+	let participants: string[] = [];
+	let participantBind: string;
+	let pesertaHiddenInput: HTMLInputElement;
+	let pesertaHiddenValue: string;
+
+	function addParticipant(): void {
+		if (participantBind.trim()) {
+			participants = [...participants, participantBind.trim()];
+			participantBind = '';
+		}
+	}
+
+	function removeParticipant(i: number): void {
+		console.log('call removeParticipant', i)
+		participants = participants.filter((_, index) => index !== i);
+		pesertaHiddenValue = JSON.stringify(participants);
+	}
+
+	function updateParticipants(): void {
+		console.log('call updateParticipants');
+		const currentValue: string[] = JSON.parse(
+			pesertaHiddenInput.value
+		);
+		participants = currentValue;
+	}
+
+	$: if (pesertaHiddenInput) {
+		if (pesertaHiddenInput.value) {
+			updateParticipants();
+		}
+	}
 </script>
 
-<form bind:this={form} method="POST" action="?/save" use:enhance={async ({ formData, action,  submitter }) => {
-	formData.append('userToken', await $user?.getIdToken() ?? '')
-}} on:input={updatePreview}>
-	<section id="input-rapat">
+<!-- svelte-ignore a11y-no-noninteractive-element-interactions -->
+<form bind:this={form} on:submit|preventDefault={handleSubmit} on:keydown={preventEnterSubmit}>
+	<section id="form-rapat">
 		<h3 class="h3 mb-2">Rapat</h3>
 
 		<label class="label mb-2">
@@ -89,7 +120,9 @@
 
 	<hr class="my-2" />
 
-	<section id="input-pimpinan-rapat">
+	<section id="form-pimpinan-rapat">
+		<h3 class="h3 mb-2">Pimpinan Rapat</h3>
+
 		<!-- svelte-ignore a11y-label-has-associated-control -->
 		<label class="label mb-2">
 			<span>Pimpinan</span>
@@ -109,11 +142,76 @@
 
 	<hr class="my-2" />
 
-	<section id="input-foot" />
+	<section id="form-peserta">
+		<h3 class="h3 mb-2">Peserta</h3>
+
+		<div class="2xl:w-1/2 label mb-2">
+			<ul class="list p-3 card !variant-soft-secondary">
+				{#each participants as participant, i (i)}
+				<li class="mb-2">
+					<button
+					type="button"
+					class="btn-icon btn-icon-sm variant-filled"
+					on:click={() => {
+						removeParticipant(i);
+					}}
+						>
+						<IconClose class="text-xl" />
+					</button>
+					<span class="flex-auto text-lg">{participant}</span>
+				</li>
+				{/each}
+			</ul>
+			<label class="label">
+				<span>Tambah peserta</span>
+				<div class="input-group input-group-divider grid-cols-[1fr_auto]">
+					<input
+						type="text"
+						class="input"
+						bind:value={participantBind}
+						on:keydown={(e) => {
+							if (e.key === 'Enter') {
+								addParticipant();
+							}
+						}}
+					/>
+					<button type="button" class="variant-filled-secondary" on:click={addParticipant}
+						>Tambah</button
+					>
+					<input bind:this={pesertaHiddenInput} type="hidden" name="peserta" bind:value={pesertaHiddenValue} />
+				</div>
+			</label>
+		</div>
+	</section>
 
 	<hr class="my-2" />
 
-	<section>
+	<section id="form-kegiatan-rapat">
+		<h3 class="h3 mb-2">Kegiatan Rapat</h3>
+
+		<label class="label mb-2">
+			<span>Pembahasan</span>
+			<textarea class="textarea" rows="5" name="pembahasan" />
+		</label>
+
+		<label class="label mb-2">
+			<span>Keputusan</span>
+			<textarea class="textarea" rows="5" name="keputusan" />
+		</label>
+
+		<label class="label mb-2">
+			<span>Jam penutupan</span>
+			<textarea class="textarea" rows="2" name="jam-penutupan" />
+		</label>
+	</section>
+
+	<hr class="my-2" />
+
+	<section id="form-tanda-tangan">
+		<Signature {containerWidth} {signatureImg} />
+	</section>
+
+	<section id="form-submit">
 		<button type="submit" class="btn variant-filled-primary mt-2">Save</button>
 	</section>
 </form>
