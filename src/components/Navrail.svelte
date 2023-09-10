@@ -25,15 +25,15 @@
 			<span>Kalender</span>
 		</AppRailAnchor>
 		<AppRailAnchor
-			href="/dashboard/letter/meeting"
-			selected={$page.url.pathname.startsWith('/dashboard/letter/meeting')}
+			href="/dashboard/letter/NotulenRapat"
+			selected={$page.url.pathname.startsWith('/dashboard/letter/NotulenRapat')}
 		>
 			<IconDescription class="text-2xl block m-auto" />
 			<span>Notulen<br />Rapat</span>
 		</AppRailAnchor>
 		<AppRailAnchor
-			href="/dashboard/letter/event"
-			selected={$page.url.pathname.startsWith('/dashboard/letter/event')}
+			href="/dashboard/letter/LaporanKegiatan"
+			selected={$page.url.pathname.startsWith('/dashboard/letter/LaporanKegiatan')}
 		>
 			<IconDescription class="text-2xl block m-auto" />
 			<span>Laporan<br />Kegiatan</span>
