@@ -7,13 +7,13 @@
 	import LaporanKegiatan from '$components/letter/editor/LaporanKegiatan.svelte';
 	import NotulenRapatView from '$components/letter/viewer/NotulenRapatView.svelte';
 	import LaporanKegiatanView from '$components/letter/viewer/LaporanKegiatanView.svelte';
-	import type { LetterTypes } from '$lib/letter';
+	import type { LetterType } from '$lib/letter';
 	import { collectionStore, docStore, userStore } from 'sveltefire';
 	import { auth, firestore } from '$lib/firebase/firebase';
 	import { ProgressRadial } from '@skeletonlabs/skeleton';
 	import { doc, serverTimestamp, updateDoc } from 'firebase/firestore';
 
-	export let type: LetterTypes;
+	export let type: LetterType;
 	export let id: string = '';
 
 	let pdf: any;
@@ -139,7 +139,7 @@
 			</section>
 			<section class="p-3 card flex-grow basis-0">
 				<h2 class="h2">Preview</h2>
-				<svelte:component this={letterView} />
+				<svelte:component this={letterView} letter={$letterDoc.letter} />
 				<!-- <iframe title="Preview Surat" class="w-full h-full" src={pdf} /> -->
 			</section>
 		</div>
