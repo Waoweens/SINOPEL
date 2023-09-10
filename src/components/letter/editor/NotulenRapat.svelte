@@ -1,7 +1,7 @@
 <script lang="ts">
 	import Signature from '$components/letter/elements/editor/Signature.svelte';
 	import EmployeeSearch from '$components/letter/elements/editor/EmployeeSearch.svelte';
-	import type { LetterTypes } from '$lib/letter';
+	import type { LetterType } from '$lib/letter';
 	import type { CollectionStore } from '$lib/sveltefire-types';
 	import { createEventDispatcher, onMount } from 'svelte';
 	import IconClose from '~icons/ic/baseline-close';
@@ -209,6 +209,7 @@
 
 	<section id="form-tanda-tangan">
 		<Signature {containerWidth} {signatureImg} />
+		<EmployeeSearch name="ttd" {employees} />
 	</section>
 
 	<section id="form-submit">
