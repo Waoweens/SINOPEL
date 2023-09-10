@@ -5,35 +5,39 @@
 	import type { ComponentType } from 'svelte';
 	import NotulenRapat from '$components/letter/editor/NotulenRapat.svelte';
 	import LaporanKegiatan from '$components/letter/editor/LaporanKegiatan.svelte';
+	import NotulenRapatView from '$components/letter/viewer/NotulenRapatView.svelte';
+	import LaporanKegiatanView from '$components/letter/viewer/LaporanKegiatanView.svelte';
 	import type { LetterTypes } from '$lib/letter';
-	import { collectionStore, docStore } from 'sveltefire';
-	import { firestore } from '$lib/firebase/firebase';
+	import { collectionStore, docStore, userStore } from 'sveltefire';
+	import { auth, firestore } from '$lib/firebase/firebase';
 	import { ProgressRadial } from '@skeletonlabs/skeleton';
-	import type { User } from 'firebase/auth';
-	import type { Readable } from 'svelte/store';
-	import type { CollectionStore } from '$lib/sveltefire-types';
+	import { doc, serverTimestamp, updateDoc } from 'firebase/firestore';
 
 	export let type: LetterTypes;
 	export let id: string = '';
 
 	let pdf: any;
+	let containerWidth: number;
+	let signatureImg: string;
 
 	let letterInput: ComponentType;
-	// let letterView: ComponentType;
+	let letterView: ComponentType;
 	let letterType: string;
 
 	$: switch (type) {
 		case 'NotulenRapat':
 			letterInput = NotulenRapat;
-			// letterView = VNotulenRapat;
+			letterView = NotulenRapatView;
 			letterType = 'Notulen Rapat';
 			break;
 		case 'LaporanKegiatan':
 			letterInput = LaporanKegiatan;
-			// letterView = VLaporanKegiatan;
+			letterView = LaporanKegiatanView;
 			letterType = 'Laporan Kegiatan';
 			break;
 	}
+
+	const user = userStore(auth);
 
 	const users = collectionStore(firestore, 'users');
 
@@ -53,31 +57,47 @@
 	let dateCreated: string, dateModified: string;
 	$: if ($letterDoc) {
 		console.log($letterDoc);
-		const created: Date = $letterDoc.created.date.toDate();
-		const modified: Date = $letterDoc.modified.date.toDate();
-		const options: Intl.DateTimeFormatOptions = {
-			hour12: false,
-			year: 'numeric',
-			month: 'numeric',
-			day: '2-digit',
-			hour: '2-digit',
-			minute: '2-digit',
-			second: '2-digit'
-		};
-		dateCreated = created.toLocaleDateString('en-GB', options);
-		dateModified = modified.toLocaleDateString('en-GB', options);
+
+		if ($letterDoc.created?.date && $letterDoc.modified?.date) {
+			const created: Date = $letterDoc.created.date.toDate();
+			const modified: Date = $letterDoc.modified.date.toDate();
+
+			const options: Intl.DateTimeFormatOptions = {
+				hour12: false,
+				year: 'numeric',
+				month: 'numeric',
+				day: '2-digit',
+				hour: '2-digit',
+				minute: '2-digit',
+				second: '2-digit'
+			};
+
+			// en-GB because our country uses a stupid format
+			dateCreated = created.toLocaleDateString('en-GB', options);
+			dateModified = modified.toLocaleDateString('en-GB', options);
+		} else {
+			dateCreated = 'Loading'
+			dateModified = 'Loading'
+		}
 	}
 
 	let form: HTMLFormElement;
-	function downloadPDF() {
-		form.action = '?/getPDF';
-		form.requestSubmit();
-		form.action = '?/save';
+
+	async function handleSubmit(
+		e: CustomEvent<{ formInputs: { name: string; value: string }[]; submitter: HTMLElement }>
+	) {
+		await updateDoc(doc(firestore, 'letters', type, 'entries', id), {
+			modified: {
+				date: serverTimestamp(),
+				user: $user?.uid
+			},
+			letter: e.detail.formInputs
+		});
 	}
 </script>
 
 {#if $letterDoc}
-	<section class="flex flex-col gap-4">
+	<section class="flex flex-col gap-4" bind:offsetWidth={containerWidth}>
 		<h1 class="h1">Edit letter</h1>
 		<section class="card p-3">
 			<div class="mb-3">
@@ -87,7 +107,7 @@
 				<p>Modified: {dateModified} by {displayName($letterDoc.created.user)}</p>
 			</div>
 			<div class="flex gap-3">
-				<button type="button" on:click={downloadPDF} class="btn variant-filled">
+				<button type="button" class="btn variant-filled">
 					<span><IconDownload /></span>
 					<span>Download PDF</span>
 				</button>
@@ -106,12 +126,21 @@
 			<section class="p-3 card flex-grow basis-0">
 				<h2 class="h2">Edit</h2>
 				<hr class="my-2" />
-				<svelte:component this={letterInput} {employees} bind:pdf bind:form />
+				<svelte:component
+					this={letterInput}
+					on:submit={handleSubmit}
+					letter={$letterDoc.letter}
+					{employees}
+					{containerWidth}
+					{signatureImg}
+					bind:pdf
+					bind:form
+				/>
 			</section>
 			<section class="p-3 card flex-grow basis-0">
 				<h2 class="h2">Preview</h2>
-				<!-- <svelte:component this={letterView} /> -->
-				<iframe title="Preview Surat" class="w-full h-full" src={pdf} />
+				<svelte:component this={letterView} />
+				<!-- <iframe title="Preview Surat" class="w-full h-full" src={pdf} /> -->
 			</section>
 		</div>
 	</section>
