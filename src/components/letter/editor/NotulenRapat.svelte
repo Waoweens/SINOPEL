@@ -201,7 +201,7 @@
 
 		<label class="label mb-2">
 			<span>Jam penutupan</span>
-			<textarea class="textarea" rows="2" name="jam-penutupan" />
+			<textarea class="textarea" rows="2" name="jamPenutupan" />
 		</label>
 	</section>
 
