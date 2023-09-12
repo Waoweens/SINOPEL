@@ -13,7 +13,7 @@
 		};
 	}
 
-	const date = new Date(Date.parse(`${formValues.tanggal} ${formValues.jam}`));
+	const date = new Date(Date.parse(`${formValues?.tanggal ?? ''} ${formValues?.jam ?? ''}`));
 
 	console.log(formValues);
 </script>
@@ -54,23 +54,23 @@
 						month: 'long',
 						day: '2-digit',
 						weekday: 'long'
-					})}
+					}) ?? ''}
 				</li>
 				<li>
 					<span class="list-title">Jam</span>: {date.toLocaleTimeString('en-GB', {
 						hour: '2-digit',
 						minute: '2-digit'
-					})}
+					}) ?? ''}
 				</li>
-				<li><span class="list-title">Tempat</span>: {formValues.tempat}</li>
-				<li><span class="list-title">Acara</span>: {formValues.acara}</li>
+				<li><span class="list-title">Tempat</span>: {formValues?.tempat ?? ''}</li>
+				<li><span class="list-title">Acara</span>: {formValues?.acara ?? ''}</li>
 			</ul>
 
 			<h2 class="mt-4 font-bold">PIMPINAN RAPAT</h2>
 			<ul class="list-style items-center list-none">
-				<li><span class="list-title">Pimpinan</span>: {JSON.parse(formValues.pimpinan)?.name}</li>
-				<li><span class="list-title">Moderator</span>: {JSON.parse(formValues.moderator)?.name}</li>
-				<li><span class="list-title">Pencatat</span>: {JSON.parse(formValues.pencatat)?.name}</li>
+				<li><span class="list-title">Pimpinan</span>: {JSON.parse(formValues?.pimpinan ?? '{}')?.name ?? ''}</li>
+				<li><span class="list-title">Moderator</span>: {JSON.parse(formValues?.moderator ?? '{}')?.name ?? ''}</li>
+				<li><span class="list-title">Pencatat</span>: {JSON.parse(formValues?.pencatat ?? '{}')?.name ?? ''}</li>
 			</ul>
 
 			<h2 class="mt-4 font-bold">PESERTA</h2>
@@ -78,9 +78,9 @@
 
 			<h2 class="mt-4 font-bold">KEGIATAN RAPAT</h2>
 			<ul class="list-style items-center list-none">
-				<li><span class="list-title">Pembahasan</span>: {formValues.pembahasan}</li>
-				<li><span class="list-title">Keputusan</span>: {formValues.keputusan}</li>
-				<li><span class="list-title">Jam penutupan</span>: {formValues['jam-penutupan']}</li>
+				<li><span class="list-title">Pembahasan</span>: {formValues?.pembahasan ?? ''}</li>
+				<li><span class="list-title">Keputusan</span>: {formValues?.keputusan ?? ''}</li>
+				<li><span class="list-title">Jam penutupan</span>: {formValues?.jamPenutupan ?? ''}</li>
 			</ul>
 
 			<h2 class="mt-4 font-bold">DOKUMENTASI</h2>
