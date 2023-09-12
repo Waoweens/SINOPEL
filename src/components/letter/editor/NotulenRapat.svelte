@@ -1,9 +1,9 @@
 <script lang="ts">
 	import Signature from '$components/letter/elements/editor/Signature.svelte';
 	import EmployeeSearch from '$components/letter/elements/editor/EmployeeSearch.svelte';
-	import type { LetterType } from '$lib/letter';
+	import type { FormInput, LetterType } from '$lib/letter';
 	import type { CollectionStore } from '$lib/sveltefire-types';
-	import { createEventDispatcher, onMount } from 'svelte';
+	import { createEventDispatcher, onMount, tick } from 'svelte';
 	import IconClose from '~icons/ic/baseline-close';
 
 	export let employees: CollectionStore<unknown[]>;
@@ -11,6 +11,7 @@
 	export let letter: { name: string; value: string }[];
 	export let containerWidth: number;
 	export let signatureImg: string;
+	export let liveLetter: { [key: string]: FormDataEntryValue };
 
 	onMount(() => {
 		loadFormData(form, letter);
@@ -34,6 +35,8 @@
 				console.warn(`Element with name "${name}" not found`);
 			}
 		});
+
+		updatePreview();
 	}
 
 	async function imgAsArrayBuffer(img: string) {
@@ -64,17 +67,24 @@
 	let pesertaHiddenInput: HTMLInputElement;
 	let pesertaHiddenValue: string;
 
-	function addParticipant(): void {
+	async function addParticipant(): Promise<void> {
 		if (participantBind.trim()) {
 			participants = [...participants, participantBind.trim()];
 			participantBind = '';
+			pesertaHiddenValue = JSON.stringify(participants);
+
+			await tick();
+			updatePreview();
 		}
 	}
 
-	function removeParticipant(i: number): void {
+	async function removeParticipant(i: number): Promise<void> {
 		console.log('call removeParticipant', i)
 		participants = participants.filter((_, index) => index !== i);
 		pesertaHiddenValue = JSON.stringify(participants);
+
+		await tick();
+		updatePreview();
 	}
 
 	function updateParticipants(): void {
@@ -85,15 +95,22 @@
 		participants = currentValue;
 	}
 
+	
 	$: if (pesertaHiddenInput) {
 		if (pesertaHiddenInput.value) {
 			updateParticipants();
 		}
 	}
+
+	function updatePreview(): void {
+		const formData = new FormData(form);
+		liveLetter = Object.fromEntries(formData.entries());
+		console.log('liveLetter', liveLetter);
+	}
 </script>
 
 <!-- svelte-ignore a11y-no-noninteractive-element-interactions -->
-<form bind:this={form} on:submit|preventDefault={handleSubmit} on:keydown={preventEnterSubmit}>
+<form bind:this={form} on:submit|preventDefault={handleSubmit} on:input={updatePreview} on:keydown={preventEnterSubmit}>
 	<section id="form-rapat">
 		<h3 class="h3 mb-2">Rapat</h3>
 
@@ -126,17 +143,17 @@
 		<!-- svelte-ignore a11y-label-has-associated-control -->
 		<label class="label mb-2">
 			<span>Pimpinan</span>
-			<EmployeeSearch name="pimpinan" {employees} />
+			<EmployeeSearch name="pimpinan" {employees} on:select={updatePreview} />
 		</label>
 		<!-- svelte-ignore a11y-label-has-associated-control -->
 		<label class="label mb-2">
 			<span>Moderator</span>
-			<EmployeeSearch name="moderator" {employees} />
+			<EmployeeSearch name="moderator" {employees} on:select={updatePreview} />
 		</label>
 		<!-- svelte-ignore a11y-label-has-associated-control -->
 		<label class="label mb-2">
 			<span>Pencatat</span>
-			<EmployeeSearch name="pencatat" {employees} />
+			<EmployeeSearch name="pencatat" {employees} on:select={updatePreview} />
 		</label>
 	</section>
 
@@ -208,8 +225,10 @@
 	<hr class="my-2" />
 
 	<section id="form-tanda-tangan">
-		<Signature {containerWidth} {signatureImg} />
-		<EmployeeSearch name="ttd" {employees} />
+		<h3 class="h3 mb-2">Tanda tangan</h3>
+		
+		<Signature name="ttdPad" {containerWidth} {signatureImg} on:change={updatePreview} />
+		<EmployeeSearch name="ttd" {employees} on:select={updatePreview} />
 	</section>
 
 	<section id="form-submit">

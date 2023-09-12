@@ -1,13 +1,18 @@
 <script lang="ts">
 	import SignaturePad from 'signature_pad';
-	import { onMount } from 'svelte';
+	import { createEventDispatcher, onMount, tick } from 'svelte';
 
 	export let containerWidth: number;
 	export let signatureImg: string;
+	export let name: string;
 	let vw: number;
 
 	let canvas: HTMLCanvasElement;
 	let signaturePad: SignaturePad;
+	let hiddenInput: HTMLInputElement;
+	let hiddenInputValue: string;
+
+	const dispatch = createEventDispatcher();
 
 	onMount(() => {
 		console.log('Mounted');
@@ -16,18 +21,34 @@
 			maxWidth: 4
 		});
 
-		signaturePad.addEventListener('endStroke', () => {
+		signaturePad.addEventListener('endStroke', async () => {
 			console.log('Changed');
 			signatureImg = signaturePad.toDataURL();
+			
+			updateCanvas();
 		});
 	});
 
+	async function updateCanvas() {
+		console.log('call')
+		hiddenInputValue = signatureImg;
+
+		await tick();
+		dispatch('change');
+	}
+
+	$: if (hiddenInput) {
+		if (hiddenInput.value) {
+			signatureImg = hiddenInput.value;
+			// hiddenInputValue = signatureImg;
+		}
+	}
+
 	let newWidth: number, newHeight: number;
 	$: if (canvas && vw) {
-
 		// if (vw > 1400) {
-			newWidth = containerWidth / 2;
-			newHeight = newWidth / 2;
+		newWidth = containerWidth / 2;
+		newHeight = newWidth / 2;
 		// } else {
 		// 	newWidth = containerWidth - 25;
 		// 	newHeight = newWidth / 2;
@@ -38,12 +59,14 @@
 		canvas.height = newHeight;
 
 		// Calculate scaling factors based on canvas dimensions
-		const scalingFactor = newWidth / 250; // 400 can be some base dimension
+		const scalingFactor = newWidth / 250; // can be some base dimension
 
 		// Update SignaturePad settings
 		if (signaturePad) {
 			signaturePad.minWidth = 2 * scalingFactor;
 			signaturePad.maxWidth = 4 * scalingFactor;
+
+			// updateCanvas();
 		}
 	}
 
@@ -51,6 +74,8 @@
 		console.log('Clearing');
 		signaturePad.clear();
 		signatureImg = signaturePad.toDataURL();
+
+		updateCanvas();
 	}
 
 	function undo() {
@@ -60,15 +85,19 @@
 			signaturePad.fromData(data);
 		}
 		signatureImg = signaturePad.toDataURL();
-	}
 
+		updateCanvas();
+	}
 </script>
 
 <svelte:window bind:innerWidth={vw} />
 
 <canvas class="bg-white rounded-t-lg" bind:this={canvas} />
 
-<div class="!rounded-t-none !rounded-b-lg x-btn-group-aria variant-filled-secondary" style="width: {newWidth}px">
+<div
+	class="!rounded-t-none !rounded-b-lg x-btn-group-aria variant-filled-secondary"
+	style="width: {newWidth}px"
+>
 	<div
 		class="w-full"
 		role="button"
@@ -98,3 +127,5 @@
 		Clear
 	</div>
 </div>
+
+<input type="hidden" bind:this={hiddenInput} {name} bind:value={hiddenInputValue} />

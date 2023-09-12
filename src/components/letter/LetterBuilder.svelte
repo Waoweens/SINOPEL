@@ -24,6 +24,8 @@
 	let letterView: ComponentType;
 	let letterType: string;
 
+	let liveLetter: { [key: string]: FormDataEntryValue };
+
 	$: switch (type) {
 		case 'NotulenRapat':
 			letterInput = NotulenRapat;
@@ -133,13 +135,14 @@
 					{employees}
 					{containerWidth}
 					{signatureImg}
+					bind:liveLetter
 					bind:pdf
 					bind:form
 				/>
 			</section>
 			<section class="p-3 card overflow-auto">
 				<h2 class="h2">Preview</h2>
-				<svelte:component this={letterView} letter={$letterDoc.letter} />
+				<svelte:component this={letterView} {liveLetter} />
 				<!-- <iframe title="Preview Surat" class="w-full h-full" src={pdf} /> -->
 			</section>
 		</div>

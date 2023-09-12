@@ -1,103 +1,130 @@
 <script lang="ts">
 	import pemkot from '$lib/assets/Lambang_Kota_Bandung.svg';
-	import type { FormInput } from '$lib/letter';
+	import { isJson, type FormInput, fromJson } from '$lib/letter';
 
-	export let letter: FormInput[];
+	export let liveLetter: { [key: string]: string };
 
-	let formValues: any;
+	const date = new Date(Date.parse(`${liveLetter?.tanggal ?? ''} ${liveLetter?.jam ?? ''}`));
 
-	for (const { name, value } of letter) {
-		formValues = {
-			...formValues,
-			[name]: value
-		};
-	}
+	console.log('view', liveLetter);
+	console.log('pimpinan', liveLetter?.pimpinan);
 
-	const date = new Date(Date.parse(`${formValues?.tanggal ?? ''} ${formValues?.jam ?? ''}`));
-
-	console.log(formValues);
+	let employeeSearches: { [key: string]: string } = {};
 </script>
 
-<div>
-	<article class="letter-view">
-		<header>
-			<div class="flex text-center justify-center items-center">
-				<div class="inline-block w-24">
-					<img src={pemkot} alt="Lambang Kota Bandung" />
+{#if liveLetter}
+	<div>
+		<article class="letter-view">
+			<header>
+				<div class="flex text-center justify-center items-center">
+					<div class="inline-block w-24">
+						<img src={pemkot} alt="Lambang Kota Bandung" />
+					</div>
+					<div>
+						<h1 class="text-[14pt] font-bold">PEMERINTAH KOTA BANDUNG</h1>
+						<h2 class="text-[15pt] font-bold">DINAS KEBAKARAN DAN PENANGGULANGAN BENCANA</h2>
+						<address class="not-italic text-[10pt]">
+							Jalan Sukabumi Nomor 17, Bandung, Telepon 022-7207113
+							<br />
+							e - mail: diskarbandung@gmail.com
+						</address>
+					</div>
 				</div>
-				<div>
-					<h1 class="text-[14pt] font-bold">PEMERINTAH KOTA BANDUNG</h1>
-					<h2 class="text-[15pt] font-bold">DINAS KEBAKARAN DAN PENANGGULANGAN BENCANA</h2>
-					<address class="not-italic text-[10pt]">
-						Jalan Sukabumi Nomor 17, Bandung, Telepon 022-7207113
-						<br />
-						e - mail: diskarbandung@gmail.com
-					</address>
+				<div role="separator" class="mt-2">
+					<hr class="!border-black border mb-0.5" />
+					<hr class="!border-black border-[3px] mb-0.5" />
+					<hr class="!border-black border" />
 				</div>
-			</div>
-			<div role="separator" class="mt-2">
-				<hr class="!border-black border mb-0.5" />
-				<hr class="!border-black border-[3px] mb-0.5" />
-				<hr class="!border-black border" />
-			</div>
-		</header>
-		<section>
-			<h1 class="text-center text-[14pt] mb-8 font-bold">NOTULEN</h1>
+			</header>
+			<section>
+				<h1 class="text-center text-[14pt] mb-4 font-bold">NOTULEN</h1>
 
-			<p>Dipermaklumkan dengan hormat. Berikut kami sampaikan notulensi rapat sebagai berikut:</p>
+				<ul class="list-style items-center list-none">
+					<h2 class="mt-4 font-bold">RAPAT</h2>
+					<li>
+						<span class="list-title">Hari/Tanggal</span>: {date.toLocaleDateString('id-ID', {
+							year: 'numeric',
+							month: 'long',
+							day: '2-digit',
+							weekday: 'long'
+						}) ?? ''}
+					</li>
+					<li>
+						<span class="list-title">Jam</span>: {date.toLocaleTimeString('en-GB', {
+							hour: '2-digit',
+							minute: '2-digit'
+						}) ?? ''}
+					</li>
+					<li><span class="list-title">Tempat</span>: {liveLetter?.tempat ?? ''}</li>
+					<li><span class="list-title">Acara</span>: {liveLetter?.acara ?? ''}</li>
+					<!-- </ul> -->
 
-			<h2 class="mt-4 font-bold">RAPAT</h2>
-			<ul class="list-style items-center list-none">
-				<li>
-					<span class="list-title">Hari/Tanggal</span>: {date.toLocaleDateString('id-ID', {
-						year: 'numeric',
-						month: 'long',
-						day: '2-digit',
-						weekday: 'long'
-					}) ?? ''}
-				</li>
-				<li>
-					<span class="list-title">Jam</span>: {date.toLocaleTimeString('en-GB', {
-						hour: '2-digit',
-						minute: '2-digit'
-					}) ?? ''}
-				</li>
-				<li><span class="list-title">Tempat</span>: {formValues?.tempat ?? ''}</li>
-				<li><span class="list-title">Acara</span>: {formValues?.acara ?? ''}</li>
-			</ul>
+					<h2 class="mt-4 font-bold">PIMPINAN RAPAT</h2>
+					<!-- <ul class="list-style items-center list-none"> -->
+					<li>
+						<span class="list-title">Pimpinan</span>:
+						{#if fromJson(liveLetter.pimpinan)?.position === 'other'}
+							{fromJson(liveLetter.pimpinanOther)?.name ?? ''}
+						{:else}
+							{fromJson(liveLetter.pimpinan)?.name ?? ''}
+						{/if}
+					</li>
+					<li>
+						<span class="list-title">Moderator</span>:
+						{#if fromJson(liveLetter.moderator)?.position === 'other'}
+							{fromJson(liveLetter.moderatorOther).name ?? ''}
+						{:else}
+							{fromJson(liveLetter.moderator)?.name ?? ''}
+						{/if}
+					</li>
+					<li>
+						<span class="list-title">Pencatat</span>:
+						{#if fromJson(liveLetter.pencatat)?.position === 'other'}
+							{fromJson(liveLetter.pencatatOther)?.name ?? ''}
+						{:else}
+							{fromJson(liveLetter.pencatat)?.name ?? ''}
+						{/if}
+					</li>
+					<!-- </ul> -->
 
-			<h2 class="mt-4 font-bold">PIMPINAN RAPAT</h2>
-			<ul class="list-style items-center list-none">
-				<li><span class="list-title">Pimpinan</span>: {JSON.parse(formValues?.pimpinan ?? '{}')?.name ?? ''}</li>
-				<li><span class="list-title">Moderator</span>: {JSON.parse(formValues?.moderator ?? '{}')?.name ?? ''}</li>
-				<li><span class="list-title">Pencatat</span>: {JSON.parse(formValues?.pencatat ?? '{}')?.name ?? ''}</li>
-			</ul>
+					<h2 class="mt-4 font-bold">PESERTA</h2>
+					<!-- <ul class="list-style items-center list-none" /> -->
+					<li>
+						<span class="list-title" />
+						<ul class="list-disc">
+							{#each fromJson(liveLetter.peserta) as peserta, i (i)}
+								<li>{i + 1}. {peserta}</li>
+							{/each}
+						</ul>
+					</li>
 
-			<h2 class="mt-4 font-bold">PESERTA</h2>
-			<ul class="list-style items-center list-none" />
+					<h2 class="mt-4 font-bold">KEGIATAN RAPAT</h2>
+					<!-- <ul class="list-style items-center list-none"> -->
+					<li>
+						<span class="list-title">Pembahasan</span>: {liveLetter?.pembahasan ?? ''}
+					</li>
+					<li><span class="list-title">Keputusan</span>: {liveLetter?.keputusan ?? ''}</li>
+					<li><span class="list-title">Jam penutupan</span>: {liveLetter?.jamPenutupan ?? ''}</li>
+				</ul>
 
-			<h2 class="mt-4 font-bold">KEGIATAN RAPAT</h2>
-			<ul class="list-style items-center list-none">
-				<li><span class="list-title">Pembahasan</span>: {formValues?.pembahasan ?? ''}</li>
-				<li><span class="list-title">Keputusan</span>: {formValues?.keputusan ?? ''}</li>
-				<li><span class="list-title">Jam penutupan</span>: {formValues?.jamPenutupan ?? ''}</li>
-			</ul>
-
-			<h2 class="mt-4 font-bold">DOKUMENTASI</h2>
-			<div />
-
-			<p class="mt-4">
-				Demikian nota dinas ini kami sampaikan. Atas perhatian dan perkenan Bapak, kami ucapkan
-				terima kasih.
-			</p>
-		</section>
-		<footer class="grid grid-cols-3">
-			<div />
-			<div />
-			<!--<SignatureView />-->
-		</footer>
-	</article>
-</div>
+				<h2 class="mt-4 font-bold">DOKUMENTASI</h2>
+				<div />
+			</section>
+			<footer class="grid grid-cols-3">
+				<div />
+				<div />
+				<div class="text-center">
+					<p>
+						{fromJson(liveLetter.ttd)?.position ?? ''}
+					</p>
+					<img alt="Signature" src={liveLetter?.ttdPad} />
+					<p class="font-bold">{fromJson(liveLetter.ttd)?.name ?? ''}</p>
+					<p>NIP: {fromJson(liveLetter.ttd)?.number ?? ''}</p>
+				</div>
+			</footer>
+		</article>
+	</div>
+{/if}
 
 <style>
 	.letter-view {
@@ -108,6 +135,7 @@
 		width: 210mm;
 		min-height: 330mm;
 		font-family: 'Bookman Old Style', Georgia, Cambria, serif !important;
+		font-size: 11 pt;
 	}
 
 	.letter-view > header {
@@ -116,7 +144,8 @@
 		padding-left: 15mm;
 	}
 
-	.letter-view > section {
+	.letter-view > section,
+	.letter-view > footer {
 		padding-left: 20mm;
 		padding-right: 20mm;
 		padding-top: 5mm;
@@ -128,7 +157,7 @@
 	.list-style {
 		list-style-type: none;
 		display: table;
-		font-size: 12pt;
+		/* font-size: 12pt; */
 	}
 
 	.list-style li {
