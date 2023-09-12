@@ -10,6 +10,7 @@
 	import {
 		AppShell,
 		Modal,
+		ProgressBar,
 		Toast,
 		getDrawerStore,
 		initializeStores,
@@ -27,6 +28,7 @@
 	import { navrailState } from '$stores/states';
 	import Drawers from '$components/Drawers.svelte';
 	import { FirebaseApp, SignedIn } from 'sveltefire';
+	import { navigating } from '$app/stores';
 
 	initializeStores();
 	const drawerStore = getDrawerStore();
@@ -87,6 +89,9 @@
 
 	<AppShell>
 		<svelte:fragment slot="header">
+			{#if $navigating}
+				<ProgressBar />
+			{/if}
 			<Navbar />
 		</svelte:fragment>
 		<!-- <svelte:fragment slot="pageHeader">Page Header</svelte:fragment> -->
