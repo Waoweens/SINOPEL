@@ -25,13 +25,13 @@
 	let newWidth: number, newHeight: number;
 	$: if (canvas && vw) {
 
-		if (vw > 1400) {
+		// if (vw > 1400) {
 			newWidth = containerWidth / 2;
 			newHeight = newWidth / 2;
-		} else {
-			newWidth = containerWidth - 25;
-			newHeight = newWidth / 2;
-		}
+		// } else {
+		// 	newWidth = containerWidth - 25;
+		// 	newHeight = newWidth / 2;
+		// }
 
 		// Update the canvas size
 		canvas.width = newWidth;

@@ -122,8 +122,8 @@
 			</div>
 		</section>
 
-		<div class="md:flex gap-4">
-			<section class="p-3 card flex-grow basis-0">
+		<div class="flex flex-col lg:flex-row gap-4">
+			<section class="p-3 card">
 				<h2 class="h2">Edit</h2>
 				<hr class="my-2" />
 				<svelte:component
@@ -137,7 +137,7 @@
 					bind:form
 				/>
 			</section>
-			<section class="p-3 card flex-grow basis-0">
+			<section class="p-3 card overflow-auto">
 				<h2 class="h2">Preview</h2>
 				<svelte:component this={letterView} letter={$letterDoc.letter} />
 				<!-- <iframe title="Preview Surat" class="w-full h-full" src={pdf} /> -->
