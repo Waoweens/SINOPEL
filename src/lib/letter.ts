@@ -434,3 +434,27 @@ export const fromJson = (input: string): any => {
 		return null;
 	}
 };
+
+export const getFileSize = (sizeBytes: number): string => {
+	// MiB
+	if (sizeBytes >= 1048576) return `${(sizeBytes / 1048576).toFixed(2)}\u00A0MiB`;
+	// KiB
+	if (sizeBytes >= 1024) return `${(sizeBytes / 1024).toFixed(2)}\u00A0KiB`;
+	// bytes
+	if (sizeBytes > 1) return `${sizeBytes}\u00A0bytes`;
+
+	return 'invalid file size';
+};
+
+export const getFileExt = (mimeType: string): string => {
+	switch (mimeType) {
+		case 'image/jpeg':
+			return '.jpg';
+		case 'image/png':
+			return '.png';
+		case 'image/gif':
+			return '.gif';
+		default:
+			return 'unknown';
+	}
+};

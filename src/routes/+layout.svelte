@@ -15,7 +15,10 @@
 		getDrawerStore,
 		initializeStores,
 		setInitialClassState,
-		storePopup
+		storePopup,
+
+		type ModalComponent
+
 	} from '@skeletonlabs/skeleton';
 	import { computePosition, autoUpdate, offset, shift, flip, arrow } from '@floating-ui/dom';
 
@@ -29,11 +32,22 @@
 	import Drawers from '$components/Drawers.svelte';
 	import { FirebaseApp, SignedIn } from 'sveltefire';
 	import { navigating } from '$app/stores';
+	import FileUploadModal from '$components/letter/elements/editor/FileUploadModal.svelte';
+	import type { PageData } from './$types';
+
+	export let data: PageData;
 
 	initializeStores();
 	const drawerStore = getDrawerStore();
 
 	storePopup.set({ computePosition, autoUpdate, offset, shift, flip, arrow });
+
+	const modalComponentRegistry: Record<string, ModalComponent> = {
+		fileUploadBox: {
+			ref: FileUploadModal,
+			// params: {}
+		}
+	}
 
 	// $: isLoggedIn = $authStore.currentUser !== null;
 
@@ -83,7 +97,7 @@
 
 <FirebaseApp {auth} {firestore} {storage}>
 	<!-- Overlays -->
-	<Modal />
+	<Modal components={modalComponentRegistry} />
 	<Toast />
 	<Drawers />
 
