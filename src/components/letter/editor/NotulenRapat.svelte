@@ -5,6 +5,8 @@
 	import type { CollectionStore } from '$lib/sveltefire-types';
 	import { createEventDispatcher, onMount, tick } from 'svelte';
 	import IconClose from '~icons/ic/baseline-close';
+	import IconUploadFile from '~icons/ic/round-upload-file';
+	import { FileDropzone, getModalStore, type ModalSettings } from '@skeletonlabs/skeleton';
 
 	export let employees: CollectionStore<unknown[]>;
 	export let form: HTMLFormElement;
@@ -12,6 +14,9 @@
 	export let containerWidth: number;
 	export let signatureImg: string;
 	export let liveLetter: { [key: string]: FormDataEntryValue };
+	export let id: string;
+
+	const modalStore = getModalStore();
 
 	onMount(() => {
 		loadFormData(form, letter);
@@ -22,8 +27,10 @@
 			const element = form.querySelector(`[name="${name}"]`) as HTMLInputElement;
 			if (element) {
 				if (element.type === 'checkbox' || element.type === 'radio') {
-					const inputGroup = form.querySelectorAll(`[name="${name}"]`) as NodeListOf<HTMLInputElement>;
-					inputGroup.forEach(input => {
+					const inputGroup = form.querySelectorAll(
+						`[name="${name}"]`
+					) as NodeListOf<HTMLInputElement>;
+					inputGroup.forEach((input) => {
 						if (input.value === value) {
 							input.checked = true;
 						}
@@ -79,7 +86,7 @@
 	}
 
 	async function removeParticipant(i: number): Promise<void> {
-		console.log('call removeParticipant', i)
+		console.log('call removeParticipant', i);
 		participants = participants.filter((_, index) => index !== i);
 		pesertaHiddenValue = JSON.stringify(participants);
 
@@ -89,13 +96,10 @@
 
 	function updateParticipants(): void {
 		console.log('call updateParticipants');
-		const currentValue: string[] = JSON.parse(
-			pesertaHiddenInput.value
-		);
+		const currentValue: string[] = JSON.parse(pesertaHiddenInput.value);
 		participants = currentValue;
 	}
 
-	
 	$: if (pesertaHiddenInput) {
 		if (pesertaHiddenInput.value) {
 			updateParticipants();
@@ -107,10 +111,29 @@
 		liveLetter = Object.fromEntries(formData.entries());
 		console.log('liveLetter', liveLetter);
 	}
+
+	function openUploadBox(name: string) {
+		const modalSettings: ModalSettings = {
+			type: 'component',
+			component: 'fileUploadBox',
+			meta: {
+				name,
+				letterType: 'NotulenRapat',
+				letterId: id
+			}
+		};
+
+		modalStore.trigger(modalSettings);
+	}
 </script>
 
 <!-- svelte-ignore a11y-no-noninteractive-element-interactions -->
-<form bind:this={form} on:submit|preventDefault={handleSubmit} on:input={updatePreview} on:keydown={preventEnterSubmit}>
+<form
+	bind:this={form}
+	on:submit|preventDefault={handleSubmit}
+	on:input={updatePreview}
+	on:keydown={preventEnterSubmit}
+>
 	<section id="form-rapat">
 		<h3 class="h3 mb-2">Rapat</h3>
 
@@ -165,18 +188,18 @@
 		<div class="2xl:w-1/2 label mb-2">
 			<ul class="list p-3 card !variant-soft-secondary">
 				{#each participants as participant, i (i)}
-				<li class="mb-2">
-					<button
-					type="button"
-					class="btn-icon btn-icon-sm variant-filled"
-					on:click={() => {
-						removeParticipant(i);
-					}}
+					<li class="mb-2">
+						<button
+							type="button"
+							class="btn-icon btn-icon-sm variant-filled"
+							on:click={() => {
+								removeParticipant(i);
+							}}
 						>
-						<IconClose class="text-xl" />
-					</button>
-					<span class="flex-auto text-lg">{participant}</span>
-				</li>
+							<IconClose class="text-xl" />
+						</button>
+						<span class="flex-auto text-lg">{participant}</span>
+					</li>
 				{/each}
 			</ul>
 			<label class="label">
@@ -195,7 +218,12 @@
 					<button type="button" class="variant-filled-secondary" on:click={addParticipant}
 						>Tambah</button
 					>
-					<input bind:this={pesertaHiddenInput} type="hidden" name="peserta" bind:value={pesertaHiddenValue} />
+					<input
+						bind:this={pesertaHiddenInput}
+						type="hidden"
+						name="peserta"
+						bind:value={pesertaHiddenValue}
+					/>
 				</div>
 			</label>
 		</div>
@@ -218,15 +246,42 @@
 
 		<label class="label mb-2">
 			<span>Jam penutupan</span>
-			<textarea class="textarea" rows="2" name="jamPenutupan" />
+			<input type="time" name="jamPenutupan" class="input" />
 		</label>
+	</section>
+
+	<hr class="my-2" />
+
+	<section>
+		<h2 class="h3 mb-2">Dokumentasi</h2>
+		<!-- svelte-ignore a11y-label-has-associated-control -->
+		<label class="label mb-2">
+			<span>Upload file</span>
+		</label>
+
+		<ul class="lg:columns-2">
+			<li>
+				<div>
+					<button
+						type="button"
+						class="btn variant-filled"
+						on:click={() => openUploadBox('uploadOne')}
+					>
+						Upload
+					</button>
+				</div>
+			</li>
+			<li>2</li>
+			<li>3</li>
+			<li>4</li>
+		</ul>
 	</section>
 
 	<hr class="my-2" />
 
 	<section id="form-tanda-tangan">
 		<h3 class="h3 mb-2">Tanda tangan</h3>
-		
+
 		<Signature name="ttdPad" {containerWidth} {signatureImg} on:change={updatePreview} />
 		<EmployeeSearch name="ttd" {employees} on:select={updatePreview} />
 	</section>

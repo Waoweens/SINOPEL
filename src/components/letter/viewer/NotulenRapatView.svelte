@@ -4,7 +4,9 @@
 
 	export let liveLetter: { [key: string]: string };
 
-	const date = new Date(Date.parse(`${liveLetter?.tanggal ?? ''} ${liveLetter?.jam ?? ''}`));
+	const date = new Date(Date.parse(`${liveLetter?.tanggal ?? ''}T${liveLetter?.jam ?? ''}Z`));
+
+	const jamPenutupan = new Date(Date.parse(`1970-01-01T${liveLetter?.jamPenutupan ?? ''}Z`));
 
 	console.log('view', liveLetter);
 	console.log('pimpinan', liveLetter?.pimpinan);
@@ -104,7 +106,12 @@
 						<span class="list-title">Pembahasan</span>: {liveLetter?.pembahasan ?? ''}
 					</li>
 					<li><span class="list-title">Keputusan</span>: {liveLetter?.keputusan ?? ''}</li>
-					<li><span class="list-title">Jam penutupan</span>: {liveLetter?.jamPenutupan ?? ''}</li>
+					<li><span class="list-title">Jam penutupan</span>:
+					{jamPenutupan.toLocaleTimeString('en-GB', {
+						hour: '2-digit',
+						minute: '2-digit'
+					}) ?? ''}
+					</li>
 				</ul>
 
 				<h2 class="mt-4 font-bold">DOKUMENTASI</h2>
