@@ -92,7 +92,7 @@
 					<li>
 						<span class="list-title" />
 						<ul class="list-disc">
-							{#each fromJson(liveLetter.peserta) as peserta, i (i)}
+							{#each fromJson(liveLetter.peserta) ?? [] as peserta, i (i)}
 								<li>{i + 1}. {peserta}</li>
 							{/each}
 						</ul>

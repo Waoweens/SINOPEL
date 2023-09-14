@@ -4,7 +4,7 @@ import { getAnalytics, type Analytics } from 'firebase/analytics';
 import { deleteApp, getApp, getApps, initializeApp, type FirebaseApp } from 'firebase/app';
 import { getAuth, type Auth } from 'firebase/auth';
 import { getFirestore, type Firestore } from 'firebase/firestore';
-import { getStorage, type FirebaseStorage } from 'firebase/storage';
+import { getStorage, type FirebaseStorage, ref, type StorageReference } from 'firebase/storage';
 import { onMount } from 'svelte';
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries

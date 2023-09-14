@@ -425,12 +425,12 @@ export const isJson = (item: string) => {
 
 // takes a json string and returns an object
 export const fromJson = (input: string): any => {
-	if (!isJson(input)) return {};
+	if (!isJson(input)) return null;
 	try {
 		const result = JSON.parse(input);
 		return result;
 	} catch (error) {
 		console.error('Invalid JSON:', error);
-		return {};
+		return null;
 	}
 };

@@ -1,7 +1,7 @@
 <script lang="ts">
 	import LetterNumberDisplay from '$components/elements/letterbuilder/LetterNumberDisplay.svelte';
 	import { firestore } from '$lib/firebase/firebase';
-	import type { Packet } from '$lib/letter';
+	import { fromJson, type Packet } from '$lib/letter';
 	import { appname } from '$stores/static';
 	import { DataHandler } from '@vincjo/datatables';
 	import type { Readable, Writable } from 'svelte/store';
@@ -86,7 +86,7 @@
 								</td>
 								<td>{row.id}</td>
 								<td>
-									{JSON.parse((row.letter).find((obj) => obj.name == 'pencatat')?.value ?? '{}').name}
+									{fromJson((row.letter)?.find((obj) => obj.name == 'pencatat')?.value ?? '')?.name}
 								</td>
 								<td>
 									{data.find((obj) => obj.id == row.created.user)?.displayName ??

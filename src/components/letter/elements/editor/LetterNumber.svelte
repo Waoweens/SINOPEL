@@ -1,4 +1,5 @@
 <script lang="ts">
+	export let name: string;
 </script>
 
 <div class="grid grid-cols-[1fr_auto] gap-y-1 lg:flex lg:flex-row">
