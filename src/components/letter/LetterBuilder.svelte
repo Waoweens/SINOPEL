@@ -10,8 +10,10 @@
 	import { snapshotElement, type LetterType } from '$lib/letter';
 	import { collectionStore, docStore, userStore } from 'sveltefire';
 	import { auth, firestore } from '$lib/firebase/firebase';
-	import { ProgressRadial } from '@skeletonlabs/skeleton';
-	import { doc, serverTimestamp, updateDoc } from 'firebase/firestore';
+	import { ProgressRadial, getModalStore } from '@skeletonlabs/skeleton';
+	import { deleteDoc, doc, serverTimestamp, updateDoc } from 'firebase/firestore';
+	import { page } from '$app/stores';
+	import { goto } from '$app/navigation';
 
 	export let type: LetterType;
 	export let id: string = '';
@@ -44,6 +46,8 @@
 	const user = userStore(auth);
 
 	const users = collectionStore(firestore, 'users');
+
+	const modalStore = getModalStore();
 
 	const displayName = (id: string): string => {
 		const user: any = $users.find((user: any) => user.id === id);
@@ -80,8 +84,8 @@
 			dateCreated = created.toLocaleDateString('en-GB', options);
 			dateModified = modified.toLocaleDateString('en-GB', options);
 		} else {
-			dateCreated = 'Loading'
-			dateModified = 'Loading'
+			dateCreated = 'Loading';
+			dateModified = 'Loading';
 		}
 	}
 
@@ -99,10 +103,73 @@
 		});
 	}
 
+	// linked to button
+
+	let downloadAnchor: HTMLAnchorElement;
+	let pdfDownloading: boolean = false;
 	async function downloadPdf() {
-		console.log(snapshotElement(article))
+		pdfDownloading = true;	
+		try {
+			console.log('download pdf');
+			const snapshot = snapshotElement(article);
+
+			console.log(snapshot);
+
+			const origin = $page.url.origin;
+			console.log(origin);
+
+			const pdf = await fetch('/api-internal/pdf', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'text/html',
+					'X-Origin-Baseurl': origin
+				},
+				body: snapshot
+			});
+
+			if (!pdf.ok) {
+				console.error('Failed to generate PDF');
+				return;
+			}
+
+			console.log('request done'); // logs
+
+			const blob = await pdf.blob();
+			console.log('blob done'); // does not log
+			console.log('blob', blob); // does not log
+
+			const url = URL.createObjectURL(blob);
+			console.log('url done'); // does not log
+			console.log('url', url); // does not log
+
+			downloadAnchor.href = url;
+			downloadAnchor.download = `${id}.pdf`;
+			downloadAnchor.click(); // nothing happens
+		} catch (err) {
+			console.error(err);
+		}
+		pdfDownloading = false;
+	}
+
+	async function deleteLtr() {
+		modalStore.trigger({
+			type: 'confirm',
+			title: 'Hapus dokumen',
+			body: 'Apakah anda yakin ingin menghapus dokumen ini?',
+
+			response: async (r: boolean) => {
+				if (r) {
+					await deleteDoc(doc(firestore, 'letters', type, 'entries', id));
+					goto('./../');
+				}
+			}
+		})
 	}
 </script>
+
+<!-- svelte-ignore a11y-missing-attribute -->
+<!-- svelte-ignore a11y-missing-content -->
+<a bind:this={downloadAnchor} />
 
 {#if $letterDoc}
 	<section class="flex flex-col gap-4" bind:offsetWidth={containerWidth}>
@@ -115,15 +182,26 @@
 				<p>Modified: {dateModified} by {displayName($letterDoc.created.user)}</p>
 			</div>
 			<div class="flex gap-3">
-				<button type="button" class="btn variant-filled" on:click={downloadPdf}>
-					<span><IconDownload /></span>
+				<button
+					type="button"
+					disabled={pdfDownloading}
+					class="btn variant-filled"
+					on:click={downloadPdf}
+				>
+					<span>
+						{#if pdfDownloading}
+							<ProgressRadial width="w-6" stroke={150} meter="stroke-primary-500" />
+						{:else}
+							<IconDownload />
+						{/if}
+					</span>
 					<span>Download PDF</span>
 				</button>
-				<button type="button" class="btn variant-filled">
+				<!-- <button type="button" class="btn variant-filled">
 					<span><IconPrint /></span>
 					<span>Print</span>
-				</button>
-				<button type="button" class="btn variant-filled-error">
+				</button> -->
+				<button type="button" class="btn variant-filled-error" on:click={deleteLtr}>
 					<span><IconDelete /></span>
 					<span>Delete</span>
 				</button>
@@ -149,7 +227,7 @@
 			</section>
 			<section class="p-3 card overflow-auto">
 				<h2 class="h2">Preview</h2>
-				<svelte:component this={letterView} {liveLetter} bind:article={article} />
+				<svelte:component this={letterView} {liveLetter} bind:article />
 				<!-- <iframe title="Preview Surat" class="w-full h-full" src={pdf} /> -->
 			</section>
 		</div>
