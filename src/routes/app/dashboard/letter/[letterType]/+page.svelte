@@ -79,14 +79,14 @@
 								<td class="w-1">
 									<a
 										class="btn-icon variant-filled-secondary !rounded-md"
-										href="/dashboard/letter/{letterType}/edit/{row.id}"
+										href="/app/dashboard/letter/{letterType}/edit/{row.id}"
 									>
 										<IconEdit class="text-xl" />
 									</a>
 								</td>
 								<td>{row.id}</td>
 								<td>
-									{fromJson((row.letter)?.find((obj) => obj.name == 'pencatat')?.value ?? '')?.name}
+									{fromJson((row.letter)?.find((obj) => obj.name == 'pencatat')?.value ?? '')?.name ?? ''}
 								</td>
 								<td>
 									{data.find((obj) => obj.id == row.created.user)?.displayName ??
