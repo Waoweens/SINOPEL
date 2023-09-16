@@ -1,10 +1,12 @@
 <script lang="ts">
-	import SignaturePad from 'signature_pad';
+	import { fromJson } from '$lib/letter';
+	import SignaturePad, { type PointGroup } from 'signature_pad';
 	import { createEventDispatcher, onMount, tick } from 'svelte';
 
 	export let containerWidth: number;
-	export let signatureImg: string;
 	export let name: string;
+	// let signatureImg: string;
+	let signatureData: PointGroup[]
 	let vw: number;
 
 	let canvas: HTMLCanvasElement;
@@ -23,15 +25,16 @@
 
 		signaturePad.addEventListener('endStroke', async () => {
 			console.log('Changed');
-			signatureImg = signaturePad.toDataURL();
+			// signatureImg = signaturePad.toDataURL();
+			signatureData = signaturePad.toData();
 			
 			updateCanvas();
 		});
 	});
 
 	async function updateCanvas() {
-		console.log('call')
-		hiddenInputValue = signatureImg;
+		hiddenInputValue = JSON.stringify(signatureData);
+		console.log('SIGNATURE DATA', signatureData);
 
 		await tick();
 		dispatch('change');
@@ -39,7 +42,7 @@
 
 	$: if (hiddenInput) {
 		if (hiddenInput.value) {
-			signatureImg = hiddenInput.value;
+			signatureData = fromJson(hiddenInput.value);
 			// hiddenInputValue = signatureImg;
 		}
 	}
@@ -73,7 +76,7 @@
 	function clear() {
 		console.log('Clearing');
 		signaturePad.clear();
-		signatureImg = signaturePad.toDataURL();
+		signatureData = signaturePad.toData();
 
 		updateCanvas();
 	}
@@ -84,7 +87,7 @@
 			data.pop(); // remove the last dot or line
 			signaturePad.fromData(data);
 		}
-		signatureImg = signaturePad.toDataURL();
+		signatureData = signaturePad.toData();
 
 		updateCanvas();
 	}
