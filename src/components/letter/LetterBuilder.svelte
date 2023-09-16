@@ -7,7 +7,7 @@
 	import LaporanKegiatan from '$components/letter/editor/LaporanKegiatan.svelte';
 	import NotulenRapatView from '$components/letter/viewer/NotulenRapatView.svelte';
 	import LaporanKegiatanView from '$components/letter/viewer/LaporanKegiatanView.svelte';
-	import type { LetterType } from '$lib/letter';
+	import { snapshotElement, type LetterType } from '$lib/letter';
 	import { collectionStore, docStore, userStore } from 'sveltefire';
 	import { auth, firestore } from '$lib/firebase/firebase';
 	import { ProgressRadial } from '@skeletonlabs/skeleton';
@@ -15,6 +15,8 @@
 
 	export let type: LetterType;
 	export let id: string = '';
+
+	let article: HTMLElement;
 
 	let pdf: any;
 	let containerWidth: number;
@@ -96,6 +98,10 @@
 			letter: e.detail.formInputs
 		});
 	}
+
+	async function downloadPdf() {
+		console.log(snapshotElement(article))
+	}
 </script>
 
 {#if $letterDoc}
@@ -109,7 +115,7 @@
 				<p>Modified: {dateModified} by {displayName($letterDoc.created.user)}</p>
 			</div>
 			<div class="flex gap-3">
-				<button type="button" class="btn variant-filled">
+				<button type="button" class="btn variant-filled" on:click={downloadPdf}>
 					<span><IconDownload /></span>
 					<span>Download PDF</span>
 				</button>
@@ -143,7 +149,7 @@
 			</section>
 			<section class="p-3 card overflow-auto">
 				<h2 class="h2">Preview</h2>
-				<svelte:component this={letterView} {liveLetter} />
+				<svelte:component this={letterView} {liveLetter} bind:article={article} />
 				<!-- <iframe title="Preview Surat" class="w-full h-full" src={pdf} /> -->
 			</section>
 		</div>

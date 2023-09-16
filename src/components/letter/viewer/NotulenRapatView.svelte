@@ -8,6 +8,8 @@
 
 	export let liveLetter: { [key: string]: string };
 
+	export let article: HTMLElement;
+
 	const date = new Date(Date.parse(`${liveLetter?.tanggal ?? ''}T${liveLetter?.jam ?? ''}Z`));
 
 	const jamPenutupan = new Date(Date.parse(`1970-01-01T${liveLetter?.jamPenutupan ?? ''}Z`));
@@ -54,7 +56,7 @@
 
 {#if liveLetter}
 	<div>
-		<article class="letter-view">
+		<article bind:this={article} class="letter-view">
 			<header>
 				<div class="flex text-center justify-center items-center">
 					<div class="inline-block w-24">
@@ -198,6 +200,10 @@
 <canvas bind:this={signature} class="hidden" width="100" height="100" />
 
 <style>
+	@page {
+		size: 21cm 33mm;
+		/* margin: 0; */
+	}
 	.letter-view {
 		all: initial;
 		display: block;
