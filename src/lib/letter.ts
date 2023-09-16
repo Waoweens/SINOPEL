@@ -3,6 +3,8 @@
 
 // import type { AutocompleteOption } from '@skeletonlabs/skeleton';
 import type { Timestamp } from 'firebase/firestore';
+import { ref } from 'firebase/storage';
+import { storage } from './firebase/firebase';
 // import type { ComponentType } from 'svelte';
 // import { auth } from './firebase/firebase';
 // import { writable } from 'svelte/store';
@@ -458,3 +460,9 @@ export const getFileExt = (mimeType: string): string => {
 			return 'unknown';
 	}
 };
+
+export const getFileName = (url: string): string | undefined => {
+	if (!url) return undefined;
+	const fileRef = ref(storage, url);
+	return fileRef.name;
+}
