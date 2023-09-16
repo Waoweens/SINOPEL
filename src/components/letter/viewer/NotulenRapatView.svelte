@@ -1,6 +1,10 @@
 <script lang="ts">
 	import pemkot from '$lib/assets/Lambang_Kota_Bandung.svg';
+	import { storage } from '$lib/firebase/firebase';
 	import { isJson, type FormInput, fromJson } from '$lib/letter';
+	import { getDownloadURL, ref } from 'firebase/storage';
+	import SignaturePad from 'signature_pad';
+	import { onMount, tick } from 'svelte';
 
 	export let liveLetter: { [key: string]: string };
 
@@ -12,6 +16,40 @@
 	console.log('pimpinan', liveLetter?.pimpinan);
 
 	let employeeSearches: { [key: string]: string } = {};
+	let signature: HTMLCanvasElement;
+	let pad: SignaturePad;
+	let signatureImg: string;
+
+	onMount(() => {
+		pad = new SignaturePad(signature);
+	});
+
+	async function updateSignature(): Promise<void> {
+		console.log('signature', liveLetter?.ttdPad);
+		console.log(fromJson(liveLetter?.ttdPad));
+		pad.fromData(fromJson(liveLetter?.ttdPad));
+		await tick();
+		signatureImg = pad.toDataURL();
+		console.log('signatureImg', signatureImg);
+	}
+
+	$: if (pad) {
+		if (liveLetter?.ttdPad) {
+			updateSignature();
+		}
+	}
+
+	let uploadOne: string, uploadTwo: string, uploadThree: string, uploadFour: string;
+	$: if (liveLetter?.uploadOne) {
+		const pathRef = ref(storage, liveLetter?.uploadOne);
+
+		getDownloadURL(pathRef)
+			.then((url) => {
+				console.log('getDownloadUrl', url);
+				uploadOne = url;
+			})
+			.catch((err) => console.error(err));
+	}
 </script>
 
 {#if liveLetter}
@@ -106,16 +144,40 @@
 						<span class="list-title">Pembahasan</span>: {liveLetter?.pembahasan ?? ''}
 					</li>
 					<li><span class="list-title">Keputusan</span>: {liveLetter?.keputusan ?? ''}</li>
-					<li><span class="list-title">Jam penutupan</span>:
-					{jamPenutupan.toLocaleTimeString('en-GB', {
-						hour: '2-digit',
-						minute: '2-digit'
-					}) ?? ''}
+					<li>
+						<span class="list-title">Jam penutupan</span>:
+						{jamPenutupan.toLocaleTimeString('en-GB', {
+							hour: '2-digit',
+							minute: '2-digit'
+						}) ?? ''}
 					</li>
 				</ul>
 
 				<h2 class="mt-4 font-bold">DOKUMENTASI</h2>
-				<div />
+				<div>
+					<section class="grid grid-cols-2 gap-4">
+						<div>
+							{#if uploadOne}
+								<img src={uploadOne} alt="Upload One" class="h-auto max-w-full" />
+							{/if}
+						</div>
+						<div>
+							{#if uploadTwo}
+								<img src={uploadTwo} alt="Upload Two" class="h-auto max-w-full" />
+							{/if}
+						</div>
+						<div>
+							{#if uploadThree}
+								<img src={uploadThree} alt="Upload Three" class="h-auto max-w-full" />
+							{/if}
+						</div>
+						<div>
+							{#if uploadFour}
+								<img src={uploadFour} alt="Upload Four" class="h-auto max-w-full" />
+							{/if}
+						</div>
+					</section>
+				</div>
 			</section>
 			<footer class="grid grid-cols-3">
 				<div />
@@ -124,7 +186,7 @@
 					<p>
 						{fromJson(liveLetter.ttd)?.position ?? ''}
 					</p>
-					<img alt="Signature" src={liveLetter?.ttdPad} />
+					<img alt="Signature" src={signatureImg} />
 					<p class="font-bold">{fromJson(liveLetter.ttd)?.name ?? ''}</p>
 					<p>NIP: {fromJson(liveLetter.ttd)?.number ?? ''}</p>
 				</div>
@@ -132,6 +194,8 @@
 		</article>
 	</div>
 {/if}
+
+<canvas bind:this={signature} class="hidden" width="100" height="100" />
 
 <style>
 	.letter-view {

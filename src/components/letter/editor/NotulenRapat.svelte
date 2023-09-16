@@ -1,18 +1,19 @@
 <script lang="ts">
 	import Signature from '$components/letter/elements/editor/Signature.svelte';
 	import EmployeeSearch from '$components/letter/elements/editor/EmployeeSearch.svelte';
-	import type { FormInput, LetterType } from '$lib/letter';
+	import { getFileName, type FormInput, type LetterType } from '$lib/letter';
 	import type { CollectionStore } from '$lib/sveltefire-types';
 	import { createEventDispatcher, onMount, tick } from 'svelte';
 	import IconClose from '~icons/ic/baseline-close';
 	import IconUploadFile from '~icons/ic/round-upload-file';
 	import { FileDropzone, getModalStore, type ModalSettings } from '@skeletonlabs/skeleton';
+	import { ref } from 'firebase/storage';
+	import { storage } from '$lib/firebase/firebase';
 
 	export let employees: CollectionStore<unknown[]>;
 	export let form: HTMLFormElement;
 	export let letter: { name: string; value: string }[];
 	export let containerWidth: number;
-	export let signatureImg: string;
 	export let liveLetter: { [key: string]: FormDataEntryValue };
 	export let id: string;
 
@@ -22,7 +23,10 @@
 		loadFormData(form, letter);
 	});
 
-	function loadFormData(form: HTMLFormElement, formDataArray: { name: string; value: string }[]) {
+	async function loadFormData(
+		form: HTMLFormElement,
+		formDataArray: { name: string; value: string }[]
+	) {
 		formDataArray.forEach(({ name, value }) => {
 			const element = form.querySelector(`[name="${name}"]`) as HTMLInputElement;
 			if (element) {
@@ -43,6 +47,7 @@
 			}
 		});
 
+		await tick();
 		updatePreview();
 	}
 
@@ -112,18 +117,39 @@
 		console.log('liveLetter', liveLetter);
 	}
 
+	let uploadOne: string, uploadTwo: string, uploadThree: string, uploadFour: string;
+	let uploadOneInput: HTMLInputElement,
+		uploadTwoInput: HTMLInputElement,
+		uploadThreeInput: HTMLInputElement,
+		uploadFourInput: HTMLInputElement;
 	function openUploadBox(name: string) {
-		const modalSettings: ModalSettings = {
-			type: 'component',
-			component: 'fileUploadBox',
-			meta: {
-				name,
-				letterType: 'NotulenRapat',
-				letterId: id
-			}
-		};
+		// modalStore.trigger(modalSettings)
+		new Promise<{ name: string; url: string }>((resolve) => {
+			const modalSettings: ModalSettings = {
+				type: 'component',
+				component: 'fileUploadBox',
+				meta: {
+					name,
+					letterType: 'NotulenRapat',
+					letterId: id
+				},
+				response: (r: { name: string; url: string }) => resolve(r)
+			};
 
-		modalStore.trigger(modalSettings);
+			modalStore.trigger(modalSettings);
+		}).then(async (res) => {
+			console.log('res', res);
+			uploadOne = res.url;
+			await tick();
+			updatePreview();
+		});
+	}
+
+	$: if (uploadOneInput) {
+		if (uploadOneInput.value) {
+			uploadOne = uploadOneInput.value;
+			console.log('hope this does not cause an infinite loop!!!!');
+		}
 	}
 </script>
 
@@ -259,22 +285,55 @@
 			<span>Upload file</span>
 		</label>
 
-		<ul class="lg:columns-2">
-			<li>
-				<div>
-					<button
-						type="button"
-						class="btn variant-filled"
-						on:click={() => openUploadBox('uploadOne')}
-					>
-						Upload
-					</button>
-				</div>
-			</li>
-			<li>2</li>
-			<li>3</li>
-			<li>4</li>
-		</ul>
+		<div>
+			<div class="variant-ghost-secondary p-2 mb-2">
+				<button
+					type="button"
+					class="btn variant-filled"
+					on:click={() => openUploadBox('uploadOne')}
+				>
+					Upload
+				</button>
+				<p class="text-xl">{getFileName(uploadOne) ?? 'Belum ada gambar'}</p>
+				<input bind:this={uploadOneInput} type="hidden" name="uploadOne" bind:value={uploadOne} />
+			</div>
+
+			<div class="flex gap-3 items-center variant-ghost-secondary p-2 mb-2">
+				<button
+					type="button"
+					class="btn variant-filled"
+					on:click={() => openUploadBox('uploadTwo')}
+				>
+					Upload
+				</button>
+				<p class="text-xl">{getFileName(uploadTwo) ?? 'Belum ada gambar'}</p>
+				<input type="hidden" name="uploadTwo" bind:value={uploadTwo} />
+			</div>
+
+			<div class="variant-ghost-secondary p-2 mb-2">
+				<button
+					type="button"
+					class="btn variant-filled"
+					on:click={() => openUploadBox('uploadThree')}
+				>
+					Upload
+				</button>
+				<p class="text-xl">{getFileName(uploadThree) ?? 'Belum ada gambar'}</p>
+				<input type="hidden" name="uploadThree" bind:value={uploadThree} />
+			</div>
+
+			<div class="variant-ghost-secondary p-2 mb-2">
+				<button
+					type="button"
+					class="btn variant-filled"
+					on:click={() => openUploadBox('uploadFour')}
+				>
+					Upload
+				</button>
+				<p class="text-xl">{getFileName(uploadFour) ?? 'Belum ada gambar'}</p>
+				<input type="hidden" name="uploadFour" bind:value={uploadFour} />
+			</div>
+		</div>
 	</section>
 
 	<hr class="my-2" />
@@ -282,7 +341,7 @@
 	<section id="form-tanda-tangan">
 		<h3 class="h3 mb-2">Tanda tangan</h3>
 
-		<Signature name="ttdPad" {containerWidth} {signatureImg} on:change={updatePreview} />
+		<Signature name="ttdPad" {containerWidth} on:change={updatePreview} />
 		<EmployeeSearch name="ttd" {employees} on:select={updatePreview} />
 	</section>
 

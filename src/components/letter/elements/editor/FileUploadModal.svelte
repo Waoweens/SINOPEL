@@ -1,11 +1,13 @@
 <script lang="ts">
-	import { FileDropzone, ProgressBar, getModalStore } from '@skeletonlabs/skeleton';
+	import { FileDropzone, ProgressBar, ProgressRadial, getModalStore } from '@skeletonlabs/skeleton';
 	import IconUploadFile from '~icons/ic/round-upload-file';
 	import IconClose from '~icons/ic/baseline-close';
 	import IconWarning from '~icons/ic/baseline-warning';
 	import { getFileExt, getFileSize } from '$lib/letter';
-	import { ref, uploadBytes } from 'firebase/storage';
+	import { ref, uploadBytes, uploadBytesResumable } from 'firebase/storage';
 	import { storage } from '$lib/firebase/firebase';
+	import { gsRoot } from '$stores/static';
+	import { v4 as uuidv4 } from 'uuid';
 
 	const modalStore = getModalStore();
 	// export let parent: unknown;
@@ -21,6 +23,8 @@
 
 	let files: FileList | undefined;
 	let file: File | undefined;
+	let progress: number = 0;
+	let uploading: boolean = false;
 
 	$: if (files) {
 		console.log(files);
@@ -30,9 +34,9 @@
 		alert.body = '';
 		disabled = false;
 
-		if (file.size > 1048576) {
+		if (file.size > 2097152) {
 			alert.head = 'File terlalu besar';
-			alert.body = 'Ukuran file maksimal 1 MiB';
+			alert.body = 'Ukuran file maksimal 2 MiB';
 			disabled = true;
 		}
 
@@ -46,21 +50,49 @@
 	function upload(): void {
 		if (file) {
 			// repalce file name with name.ext
-			const fileName = $modalStore[0].meta?.name + getFileExt(file.type);
+			// const fileName = $modalStore[0].meta?.name + getFileExt(file.type);
+			const fileName = uuidv4() + getFileExt(file.type);
 			console.log(fileName);
 
 			const storageRef = ref(
 				storage,
-				`letters/${$modalStore[0].meta?.letterType}/${$modalStore[0].meta?.letterId}/${fileName}`
+				`${gsRoot}/letters/${$modalStore[0].meta?.letterType}/${$modalStore[0].meta?.letterId}/${fileName}`
 			);
 
-			console.log(storageRef);
+			console.log(storageRef.toString());
 
-			uploadBytes(storageRef, file).then((snapshot) => {
-				console.log('Uploaded a blob or file!', snapshot);
-				clear();
-				// modalStore.close();
-			});
+			// uploadBytes(storageRef, file).then((snapshot) => {
+			// 	console.log('Uploaded a blob or file!', snapshot);
+			// 	clear();
+			// 	// modalStore.close();
+			// });
+
+			const uploadTask = uploadBytesResumable(storageRef, file);
+			uploading = true;
+			disabled = true;
+
+			uploadTask.on(
+				'state_changed',
+				(snapshot) => {
+					const percentage = Math.floor((snapshot.bytesTransferred / snapshot.totalBytes) * 100);
+
+					console.log('Upload is ' + percentage + '% done');
+					progress = percentage;
+				},
+				(error) => {
+					console.error(error);
+				},
+				() => {
+					console.log('Upload is complete');
+
+					if ($modalStore[0].response) $modalStore[0]?.response({
+						name: fileName,
+						url: uploadTask.snapshot.ref.toString()
+					});
+
+					modalStore.close();
+				}
+			);
 		}
 	}
 
@@ -92,13 +124,19 @@
 			<svelte:fragment slot="message">
 				<span class="font-bold">Klik atau drag</span> untuk upload file
 			</svelte:fragment>
-			<svelte:fragment slot="meta">JPG, PNG, dan GIF. Maksimal 1 MiB</svelte:fragment>
+			<svelte:fragment slot="meta">JPG, PNG, dan GIF. Maksimal 2 MiB</svelte:fragment>
 		</FileDropzone>
 		<div class="flex gap-3 items-center variant-ghost-surface p-2">
 			{#if file}
-				<button type="button" class="btn-icon btn-icon-sm variant-filled-error" on:click={clear}>
-					<IconClose />
-				</button>
+				{#if uploading}
+					<div class="btn-icon btn-icon-sm variant-filled-secondary p-1">
+						<ProgressRadial stroke={150} />
+					</div>
+				{:else}
+					<button type="button" class="btn-icon btn-icon-sm variant-filled-error" on:click={clear}>
+						<IconClose />
+					</button>
+					{/if}
 				<p>{file.name} ({getFileSize(file.size)})</p>
 			{/if}
 		</div>
@@ -111,9 +149,12 @@
 				</div>
 			</aside>
 		{/if}
-		<ProgressBar value={0} />
+		<ProgressBar meter="variant-filled-primary" value={progress} />
 	</section>
-	<section class="flex ml-auto">
+	<section class="flex items-center gap-3 ml-auto">
+		{#if uploading}
+			<p class="text-xl">{progress}%</p>
+		{/if}
 		<button type="button" class="btn variant-filled-primary" {disabled} on:click={upload}>
 			Upload
 		</button>
