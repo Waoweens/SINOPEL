@@ -125,6 +125,6 @@
 
 {#if signedOut}
 	<SignedOut>
-		{goto('/')}
+		{goto('/app')}
 	</SignedOut>
 {/if}

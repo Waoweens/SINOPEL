@@ -8,7 +8,7 @@
 
 	function gotoDashboard() {
 		console.log('called')
-		if (browser) goto('/dashboard');
+		if (browser) goto('/app/dashboard');
 	}
 </script>
 

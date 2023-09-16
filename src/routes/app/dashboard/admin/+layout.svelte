@@ -28,7 +28,7 @@
 			<slot />
 		{:else}
 			<h1>403</h1>
-			{goto('/dashboard')}
+			{goto('/app/dashboard')}
 		{/if}
 	</Doc>
 </SignedIn>
