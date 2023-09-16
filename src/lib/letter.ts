@@ -465,4 +465,37 @@ export const getFileName = (url: string): string | undefined => {
 	if (!url) return undefined;
 	const fileRef = ref(storage, url);
 	return fileRef.name;
-}
+};
+
+export const snapshotElement = (element: Element): string => {
+	const clone = element.cloneNode(true) as HTMLElement;
+
+	Array.from(clone.querySelectorAll('img')).forEach(img => {
+		// eslint-disable-next-line no-self-assign
+		img.src = img.src; // This will set the src attribute to the absolute URL
+	});
+
+	const stylesheets = Array.from(document.styleSheets)
+		.map((stylesheet: any) => {
+			try {
+				return Array.from(stylesheet.cssRules)
+					.map((rule: any) => rule.cssText)
+					.join('');
+			} catch (e) {
+				// Cross-origin stylesheets are inaccessible, we ignore them
+				return '';
+			}
+		})
+		.join('');
+
+	const styledHTML = `
+		<style>
+			${stylesheets}
+		</style>
+		${clone.outerHTML}
+	`;
+
+	const encodedHTML = encodeURIComponent(styledHTML);
+	const dataURL = `data:text/html;charset=UTF-8,${encodedHTML}`;
+	return dataURL;
+};
