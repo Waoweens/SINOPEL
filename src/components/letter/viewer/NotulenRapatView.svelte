@@ -10,9 +10,11 @@
 
 	export let article: HTMLElement;
 
-	const date = new Date(Date.parse(`${liveLetter?.tanggal ?? ''}T${liveLetter?.jam ?? ''}Z`));
+	let date: Date;
+	$: date = new Date(Date.parse(`${liveLetter?.tanggal ?? ''}T${liveLetter?.jam ?? ''}Z`));
 
-	const jamPenutupan = new Date(Date.parse(`1970-01-01T${liveLetter?.jamPenutupan ?? ''}Z`));
+	let jamPenutupan: Date;
+	$: jamPenutupan = new Date(Date.parse(`1970-01-01T${liveLetter?.jamPenutupan ?? ''}Z`));
 
 	console.log('view', liveLetter);
 	console.log('pimpinan', liveLetter?.pimpinan);
@@ -41,16 +43,105 @@
 		}
 	}
 
-	let uploadOne: string, uploadTwo: string, uploadThree: string, uploadFour: string;
-	$: if (liveLetter?.uploadOne) {
-		const pathRef = ref(storage, liveLetter?.uploadOne);
+	let uploadOne: string,
+		uploadTwo: string,
+		uploadThree: string,
+		uploadFour: string,
+		uploadDaftarHadir: string;
+	let _uploadOne: string,
+		_uploadTwo: string,
+		_uploadThree: string,
+		_uploadFour: string,
+		_uploadDaftarHadir: string;
+	let _prevUploadOne: string,
+		_prevUploadTwo: string,
+		_prevUploadThree: string,
+		_prevUploadFour: string,
+		_prevUploadDaftarHadir: string;
 
-		getDownloadURL(pathRef)
-			.then((url) => {
-				console.log('getDownloadUrl', url);
-				uploadOne = url;
-			})
-			.catch((err) => console.error(err));
+	// upload one
+	$: if (liveLetter) _uploadOne = liveLetter?.uploadOne;
+	$: if (_uploadOne) {
+		if (_uploadOne !== _prevUploadOne) {
+			const pathRef = ref(storage, liveLetter?.uploadOne);
+
+			getDownloadURL(pathRef)
+				.then((url) => {
+					console.log('getDownloadUrl ONE', url);
+					uploadOne = url;
+				})
+				.catch((err) => console.error(err));
+
+			_prevUploadOne = _uploadOne;
+		}
+	}
+
+	// upload two
+	$: if (liveLetter) _uploadTwo = liveLetter?.uploadTwo;
+	$: if (_uploadTwo) {
+		if (_uploadTwo !== _prevUploadTwo) {
+			const pathRef = ref(storage, liveLetter?.uploadTwo);
+
+			getDownloadURL(pathRef)
+				.then((url) => {
+					console.log('getDownloadUrl TWO', url);
+					uploadTwo = url;
+				})
+				.catch((err) => console.error(err));
+
+			_prevUploadTwo = _uploadTwo;
+		}
+	}
+
+	// upload three
+	$: if (liveLetter) _uploadThree = liveLetter?.uploadThree;
+	$: if (_uploadThree) {
+		if (_uploadThree !== _prevUploadThree) {
+			const pathRef = ref(storage, liveLetter?.uploadThree);
+
+			getDownloadURL(pathRef)
+				.then((url) => {
+					console.log('getDownloadUrl THREE', url);
+					uploadThree = url;
+				})
+				.catch((err) => console.error(err));
+
+			_prevUploadThree = _uploadThree;
+		}
+	}
+
+	// upload four
+	$: if (liveLetter) _uploadFour = liveLetter?.uploadFour;
+	$: if (_uploadFour) {
+		if (_uploadFour !== _prevUploadFour) {
+			const pathRef = ref(storage, liveLetter?.uploadFour);
+
+			getDownloadURL(pathRef)
+				.then((url) => {
+					console.log('getDownloadUrl FOUR', url);
+					uploadFour = url;
+				})
+				.catch((err) => console.error(err));
+
+			_prevUploadFour = _uploadFour;
+		}
+	}
+
+	// upload daftar hadir
+	$: if (liveLetter) _uploadDaftarHadir = liveLetter?.uploadDaftarHadir;
+	$: if (_uploadDaftarHadir) {
+		if (_uploadDaftarHadir !== _prevUploadDaftarHadir) {
+			const pathRef = ref(storage, liveLetter?.uploadDaftarHadir);
+
+			getDownloadURL(pathRef)
+				.then((url) => {
+					console.log('getDownloadUrl DAFTAR HADIR', url);
+					uploadDaftarHadir = url;
+				})
+				.catch((err) => console.error(err));
+
+			_prevUploadDaftarHadir = _uploadDaftarHadir;
+		}
 	}
 </script>
 
@@ -143,9 +234,9 @@
 					<h2 class="mt-4 font-bold">KEGIATAN RAPAT</h2>
 					<!-- <ul class="list-style items-center list-none"> -->
 					<li>
-						<span class="list-title">Pembahasan</span>: {liveLetter?.pembahasan ?? ''}
+						<span class="list-title">Pembahasan</span>: {@html (liveLetter?.pembahasan ?? '').replaceAll('\n', '<br />')}
 					</li>
-					<li><span class="list-title">Keputusan</span>: {liveLetter?.keputusan ?? ''}</li>
+					<li><span class="list-title">Keputusan</span>: {@html (liveLetter?.keputusan ?? '').replaceAll('\n', '<br />')}</li>
 					<li>
 						<span class="list-title">Jam penutupan</span>:
 						{jamPenutupan.toLocaleTimeString('en-GB', {
@@ -156,9 +247,9 @@
 				</ul>
 
 				<h2 class="mt-4 font-bold">DOKUMENTASI</h2>
-				<div>
-					<section class="grid grid-cols-2 gap-4">
-						<div>
+				<section class="flex flex-col">
+					<div class="flex flex-row mb-2">
+						<div class="mr-2">
 							{#if uploadOne}
 								<img src={uploadOne} alt="Upload One" class="h-auto max-w-full" />
 							{/if}
@@ -168,7 +259,9 @@
 								<img src={uploadTwo} alt="Upload Two" class="h-auto max-w-full" />
 							{/if}
 						</div>
-						<div>
+					</div>
+					<div class="flex flex-row">
+						<div class="mr-2">
 							{#if uploadThree}
 								<img src={uploadThree} alt="Upload Three" class="h-auto max-w-full" />
 							{/if}
@@ -178,12 +271,10 @@
 								<img src={uploadFour} alt="Upload Four" class="h-auto max-w-full" />
 							{/if}
 						</div>
-					</section>
-				</div>
+					</div>
+				</section>
 			</section>
-			<footer class="grid grid-cols-3">
-				<div />
-				<div />
+			<footer class="flex flex-row justify-end">
 				<div class="text-center">
 					<p>
 						{fromJson(liveLetter.ttd)?.position ?? ''}
@@ -193,6 +284,13 @@
 					<p>NIP: {fromJson(liveLetter.ttd)?.number ?? ''}</p>
 				</div>
 			</footer>
+			<section style="page-break-before: always;">
+				<div>
+					{#if uploadDaftarHadir}
+						<img src={uploadDaftarHadir} alt="Upload Daftar Hadir" class="h-auto max-w-full" />
+					{/if}
+				</div>
+			</section>
 		</article>
 	</div>
 {/if}
@@ -200,10 +298,6 @@
 <canvas bind:this={signature} class="hidden" width="100" height="100" />
 
 <style>
-	@page {
-		size: 21cm 33mm;
-		/* margin: 0; */
-	}
 	.letter-view {
 		all: initial;
 		display: block;

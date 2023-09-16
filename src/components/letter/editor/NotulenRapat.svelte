@@ -118,11 +118,14 @@
 	}
 
 	let uploadOne: string, uploadTwo: string, uploadThree: string, uploadFour: string;
+	let uploadDaftarHadir: string;
 	let uploadOneInput: HTMLInputElement,
 		uploadTwoInput: HTMLInputElement,
 		uploadThreeInput: HTMLInputElement,
 		uploadFourInput: HTMLInputElement;
+	let uploadDaftarHadirInput: HTMLInputElement;
 	function openUploadBox(name: string) {
+		const tmp = {}
 		// modalStore.trigger(modalSettings)
 		new Promise<{ name: string; url: string }>((resolve) => {
 			const modalSettings: ModalSettings = {
@@ -139,18 +142,61 @@
 			modalStore.trigger(modalSettings);
 		}).then(async (res) => {
 			console.log('res', res);
-			uploadOne = res.url;
+			console.log('name', name)
+			switch(name) {
+				case 'uploadOne':
+					uploadOne = res.url;
+					break;
+				case 'uploadTwo':
+					uploadTwo = res.url;
+					break;
+				case 'uploadThree':
+					uploadThree = res.url;
+					break;
+				case 'uploadFour':
+					uploadFour = res.url;
+					break;
+				case 'uploadDaftarHadir':
+					uploadDaftarHadir = res.url;
+					break;
+			}
 			await tick();
 			updatePreview();
 		});
 	}
 
+	// upload one
 	$: if (uploadOneInput) {
 		if (uploadOneInput.value) {
 			uploadOne = uploadOneInput.value;
-			console.log('hope this does not cause an infinite loop!!!!');
 		}
 	}
+	
+	// upload two
+	$: if (uploadTwoInput) {
+		if (uploadTwoInput.value) {
+			uploadTwo = uploadTwoInput.value;
+		}
+	}
+	// upload three
+	$: if (uploadThreeInput) {
+		if (uploadThreeInput.value) {
+			uploadThree = uploadThreeInput.value;
+		}
+	}
+	// upload four
+	$: if (uploadFourInput) {
+		if (uploadFourInput.value) {
+			uploadFour = uploadFourInput.value;
+		}
+	}
+	// upload daftar hadir
+	$: if (uploadDaftarHadirInput) {
+		if (uploadDaftarHadirInput.value) {
+			uploadDaftarHadir = uploadDaftarHadirInput.value;
+		}
+	}
+
 </script>
 
 <!-- svelte-ignore a11y-no-noninteractive-element-interactions -->
@@ -286,7 +332,7 @@
 		</label>
 
 		<div>
-			<div class="variant-ghost-secondary p-2 mb-2">
+			<div class="flex gap-3 items-center variant-ghost-secondary p-2 mb-2">
 				<button
 					type="button"
 					class="btn variant-filled"
@@ -307,10 +353,10 @@
 					Upload
 				</button>
 				<p class="text-xl">{getFileName(uploadTwo) ?? 'Belum ada gambar'}</p>
-				<input type="hidden" name="uploadTwo" bind:value={uploadTwo} />
+				<input bind:this={uploadTwoInput} type="hidden" name="uploadTwo" bind:value={uploadTwo} />
 			</div>
 
-			<div class="variant-ghost-secondary p-2 mb-2">
+			<div class="flex gap-3 items-center variant-ghost-secondary p-2 mb-2">
 				<button
 					type="button"
 					class="btn variant-filled"
@@ -319,10 +365,10 @@
 					Upload
 				</button>
 				<p class="text-xl">{getFileName(uploadThree) ?? 'Belum ada gambar'}</p>
-				<input type="hidden" name="uploadThree" bind:value={uploadThree} />
+				<input bind:this={uploadThreeInput} type="hidden" name="uploadThree" bind:value={uploadThree} />
 			</div>
 
-			<div class="variant-ghost-secondary p-2 mb-2">
+			<div class="flex gap-3 items-center variant-ghost-secondary p-2 mb-2">
 				<button
 					type="button"
 					class="btn variant-filled"
@@ -331,7 +377,7 @@
 					Upload
 				</button>
 				<p class="text-xl">{getFileName(uploadFour) ?? 'Belum ada gambar'}</p>
-				<input type="hidden" name="uploadFour" bind:value={uploadFour} />
+				<input bind:this={uploadFourInput} type="hidden" name="uploadFour" bind:value={uploadFour} />
 			</div>
 		</div>
 	</section>
@@ -343,6 +389,19 @@
 
 		<Signature name="ttdPad" {containerWidth} on:change={updatePreview} />
 		<EmployeeSearch name="ttd" {employees} on:select={updatePreview} />
+	</section>
+
+	<hr class="my-2" />
+
+	<section id="form-daftar-hadir">
+		<h3 class="h3 mb-2">Daftar hadir</h3>
+		<div class="flex gap-3 items-center variant-ghost-secondary p-2 mb-2">
+			<button type="button" class="btn variant-filled" on:click={() => openUploadBox('uploadDaftarHadir')}>
+				Upload
+			</button>
+			<p class="text-xl">{getFileName(uploadDaftarHadir) ?? 'Belum ada gambar'}</p>
+			<input bind:this={uploadDaftarHadirInput} type="hidden" name="uploadDaftarHadir" bind:value={uploadDaftarHadir} />
+		</div>
 	</section>
 
 	<section id="form-submit">
