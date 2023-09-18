@@ -233,8 +233,14 @@
 
 		<label class="label mb-2">
 			<span>Jumlah peserta</span>
-			<input type="number" class="input" name="jumlahPesertaMale" />
-			<input type="number" class="input" name="jumlahPesertaFemale" />
+			<div class="label flex items-center gap-3">
+				<span>Laki&#8209;laki</span>
+				<input type="number" class="input" name="jumlahPesertaMale" />
+			</div>
+			<label class="label flex items-center gap-3">
+				<span>Perempuan</span>
+				<input type="number" class="input" name="jumlahPesertaFemale" />
+			</label>
 		</label>
 
 		<label class="label mb-2">
