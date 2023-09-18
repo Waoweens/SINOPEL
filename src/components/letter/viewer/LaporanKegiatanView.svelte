@@ -5,16 +5,18 @@
 	import { getDownloadURL, ref } from 'firebase/storage';
 	import SignaturePad from 'signature_pad';
 	import { onMount, tick } from 'svelte';
+	import dayjs, { Dayjs } from 'dayjs';
+	import 'dayjs/locale/id'
 
 	export let liveLetter: { [key: string]: string };
 
 	export let article: HTMLElement;
 
-	let date: Date;
-	$: date = new Date(Date.parse(`${liveLetter?.tanggal ?? ''}T${liveLetter?.jam ?? ''}Z`));
+	let date: dayjs.Dayjs;
+	$: date = dayjs(`${liveLetter?.tanggal ?? ''}`, 'YYYY-MM-DD')
 
-	let jamPenutupan: Date;
-	$: jamPenutupan = new Date(Date.parse(`1970-01-01T${liveLetter?.jamPenutupan ?? ''}Z`));
+	let nomorSurat: string[];
+	$: nomorSurat = fromJson(liveLetter?.nomorSurat);
 
 	console.log('view', liveLetter);
 	console.log('pimpinan', liveLetter?.pimpinan);
@@ -164,9 +166,9 @@
 					</div>
 				</div>
 				<div role="separator" class="mt-2">
-					<hr class="!border-black border mb-0.5" />
-					<hr class="!border-black border-[3px] mb-0.5" />
-					<hr class="!border-black border" />
+					<hr class="border mb-0.5" style="border-color: black;" />
+					<hr class="border-[3px] mb-0.5" style="border-color: black;" />
+					<hr class="border" style="border-color: black;" />
 				</div>
 			</header>
 			<section>
@@ -174,22 +176,51 @@
 
 				<ul class="list-style items-center list-none">
 					<li>
-						<span class="list-title">Hari/Tanggal</span>: {date.toLocaleDateString('id-ID', {
-							year: 'numeric',
-							month: 'long',
-							day: '2-digit',
-							weekday: 'long'
-						}) ?? ''}
+						<span class="list-title">Kepada:</span>:
+						{#if fromJson(liveLetter.kepada)?.position === 'other'}
+							{fromJson(liveLetter.kepadaOther)?.name ?? ''}
+						{:else}
+							{fromJson(liveLetter.kepada)?.name ?? ''}
+						{/if}
 					</li>
 					<li>
-						<span class="list-title">Jam</span>: {date.toLocaleTimeString('en-GB', {
-							hour: '2-digit',
-							minute: '2-digit'
-						}) ?? ''}
+						<span class="list-title">Jam</span>: {date.locale('id').format('dddd, DD MMMM YYYY') ?? ''}
 					</li>
-					<li><span class="list-title">Tempat</span>: {liveLetter?.tempat ?? ''}</li>
-					<li><span class="list-title">Acara</span>: {liveLetter?.acara ?? ''}</li>
+					<li><span class="list-title">Nomor surat</span>: {nomorSurat.slice(0, 3).join('/')}-{nomorSurat.slice(3).join('/')}</li>
+					<li><span class="list-title">Sifat</span>: {liveLetter?.sifat ?? ''}</li>
+					<li><span class="list-title">Lampiran</span>: {liveLetter?.lampiran ?? ''}</li>
+					<li><span class="list-title">Perihal</span>: {liveLetter?.perihal ?? ''}</li>
 				</ul>
+
+				<hr class="my-2 border-[2px] -mx-[15px]" style="border-color: black;" />
+
+				<ol class="list-bold list-decimal">
+					<li>
+						<span class="font-bold">Dasar Hukum</span>:
+						<p>{@html (liveLetter?.dasarHukum ?? '').replaceAll('\n', '<br />')}</p>
+					</li>
+					<li>
+						<span class="font-bold">Peserta Kegiatan</span>:
+						<p>{@html (liveLetter?.pesertaKegiatan ?? '').replaceAll('\n', '<br />')}</p>
+					</li>
+					<li>
+						<span class="font-bold">Jumlah Peserta</span>:
+						<p>Laki&#8209;laki: {liveLetter?.jumlahPesertaMale}</p>
+						<p>Perempuan: {liveLetter?.jumlahPesertaFemale}</p>
+					</li>
+					<li>
+						<span class="font-bold">Narasumber</span>:
+						<p>{@html (liveLetter?.narasumber ?? '').replaceAll('\n', '<br />')}</p>
+					</li>
+					<li>
+						<span class="font-bold">Materi</span>:
+						<p>{@html (liveLetter?.materi ?? '').replaceAll('\n', '<br />')}</p>
+					</li>
+					<li>
+						<span class="font-bold">Hasil Kegiatan</span>:
+						<p>{@html (liveLetter?.hasilKegiatan ?? '').replaceAll('\n', '<br />')}</p>
+					</li>
+				</ol>
 
 				<h2 class="mt-4 font-bold">DOKUMENTASI</h2>
 				<section class="flex flex-col">
@@ -283,5 +314,9 @@
 	.list-style .list-title {
 		display: table-cell;
 		padding-right: 1rem;
+	}
+
+	.list-bold ::marker {
+		font-weight: 800;
 	}
 </style>
