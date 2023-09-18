@@ -1,4 +1,4 @@
 {
 	"devCommand": "npm run dev -- --port $PORT --host",
-	"installCommand": "yum install -y python-pip python-pillow python-cffi python3-brotli pango && npm install"
+	"installCommand": "yum install -y glib2 glib2-devel gtk2 gtk3 python-pip pango gcc python3-devel gcc-c++ zlib-devel libjpeg-devel openjpeg2-devel libffi-devel && npm install"
 }
