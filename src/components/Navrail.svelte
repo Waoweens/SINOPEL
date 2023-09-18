@@ -13,27 +13,27 @@
 
 <SignedIn let:user>
 	<AppRail class={'' + display}>
-		<AppRailAnchor href="/dashboard" selected={$page.url.pathname === '/dashboard'}>
+		<AppRailAnchor href="/app/dashboard" selected={$page.url.pathname === '/app/dashboard'}>
 			<IconDashboard class="text-2xl block m-auto md:text-start" />
 			<span>Dasbor</span>
 		</AppRailAnchor>
 		<AppRailAnchor
-			href="/dashboard/calendar"
-			selected={$page.url.pathname.startsWith('/dashboard/calendar')}
+			href="/app/dashboard/calendar"
+			selected={$page.url.pathname.startsWith('/app/dashboard/calendar')}
 		>
 			<IconCalendar class="text-2xl block m-auto md:text-start" />
 			<span>Kalender</span>
 		</AppRailAnchor>
 		<AppRailAnchor
-			href="/dashboard/letter/meeting"
-			selected={$page.url.pathname.startsWith('/dashboard/letter/meeting')}
+			href="/app/dashboard/letter/NotulenRapat"
+			selected={$page.url.pathname.startsWith('/app/dashboard/letter/NotulenRapat')}
 		>
 			<IconDescription class="text-2xl block m-auto" />
 			<span>Notulen<br />Rapat</span>
 		</AppRailAnchor>
 		<AppRailAnchor
-			href="/dashboard/letter/event"
-			selected={$page.url.pathname.startsWith('/dashboard/letter/event')}
+			href="/app/dashboard/letter/LaporanKegiatan"
+			selected={$page.url.pathname.startsWith('/app/dashboard/letter/LaporanKegiatan')}
 		>
 			<IconDescription class="text-2xl block m-auto" />
 			<span>Laporan<br />Kegiatan</span>
@@ -42,8 +42,8 @@
 			<Doc ref={'/users/' + user.uid} let:data>
 				{#if data.role == 'admin'}
 					<AppRailAnchor
-						href="/dashboard/admin"
-						selected={$page.url.pathname.startsWith('/dashboard/admin')}
+						href="/app/dashboard/admin"
+						selected={$page.url.pathname.startsWith('/app/dashboard/admin')}
 					>
 						<IconAdmin class="text-2xl block m-auto" />
 						<span>Admin</span>
@@ -51,8 +51,8 @@
 				{/if}
 			</Doc>
 			<AppRailAnchor
-				href="/dashboard/account"
-				selected={$page.url.pathname.startsWith('/dashboard/account')}
+				href="/app/dashboard/account"
+				selected={$page.url.pathname.startsWith('/app/dashboard/account')}
 			>
 				<IconPerson class="text-2xl block m-auto" />
 				<span>Akun</span>

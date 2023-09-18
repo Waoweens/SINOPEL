@@ -1,4 +1,7 @@
+# mac
 .DS_Store
+
+# node, vite, sveltekit
 node_modules
 /build
 /.svelte-kit
@@ -8,3 +11,14 @@ node_modules
 !.env.example
 vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
+*.secret.json
+
+# vercel
+.vercel
+
+# python
+__pycache__/
+*.py[cod]
+*$py.class
+# *.so
+venv/
