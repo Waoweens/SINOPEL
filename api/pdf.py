@@ -9,18 +9,21 @@ def eprint(*args, **kwargs):
 
 class handler(BaseHTTPRequestHandler):
 	def do_GET(self):
+		print('GET request received')
 		self.send_response(501)
 		self.send_header('Content-type', 'application/json')
 		self.end_headers()
 		self.wfile.write(b'{"message": "GET method not implemented"}')
 
 	def do_POST(self):
+		print('POST request received')
 		content_length = int(self.headers['Content-Length'])
 		body = self.rfile.read(content_length)
 
 		# check if body is gzip encoded
 		if 'gzip' in self.headers.get('Content-Encoding', ''):
 			try:
+				print('Decompressing body')
 				body = gzip.decompress(body)
 			except Exception as e:
 				eprint(f'Error decompressing body: {e}')
@@ -34,6 +37,7 @@ class handler(BaseHTTPRequestHandler):
 		# print(body_str)
 
 		try:
+			print('Generating PDF')
 			html = None
 			css = CSS(string='@page { size: 210mm 330mm; margin: 0mm 0mm 0mm 0mm; }')
 
