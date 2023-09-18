@@ -1,3 +1,4 @@
 {
-	"devCommand": "npm run dev -- --port $PORT --host"
+	"devCommand": "npm run dev -- --port $PORT --host",
+	"installCommand": "yum install -y python-pip python-pillow python-cffi python3-brotli pango && npm install"
 }
