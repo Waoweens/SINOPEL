@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { fromJson } from '$src/lib/letter';
+
 	export let name: string;
 
 	let hiddenInput: HTMLInputElement;
@@ -16,26 +18,26 @@
 		console.log('letternumber', hiddenInputValue);
 	}
 
-	let prevHiddenInputValue: string;
-
 	$: {
-		if (hiddenInputValue !== prevHiddenInputValue) {
-			hiddenInputValue = JSON.stringify([zero, one, two, three, four, five]);
-			console.log('letternumber', hiddenInputValue);
-		}
+		hiddenInputValue = JSON.stringify([zero, one, two, three, four, five]);
+		console.log('letternumber', hiddenInputValue);
 	}
 
 	$: if (hiddenInput) {
-		if (hiddenInputValue) {
+		if (hiddenInput.value) {
 			hiddenInputValue = hiddenInput.value;
 			updateValues();
-			prevHiddenInputValue = hiddenInputValue;
 		}
 	}
 
 	function updateValues() {
-		const values = JSON.parse(hiddenInputValue);
-		[zero, one, two, three, four, five] = values;
+		const values = fromJson(hiddenInputValue);
+		zero = values[0];
+		one = values[1];
+		two = values[2];
+		three = values[3];
+		four = values[4];
+		five = values[5];
 	}
 </script>
 
