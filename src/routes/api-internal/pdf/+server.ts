@@ -6,15 +6,15 @@ export const POST: RequestHandler = async ({ request, fetch }): Promise<Response
 	// compress request body to gzip, send to pdf server at /api/pdf
 	try {
 		const body = await request.text();
-		const origin = request.headers.get('x-origin-baseurl');
+		// const origin = request.headers.get('x-origin-baseurl');
 
-		console.log(origin)
+		// console.log(origin)
 
-		console.log(`${origin}`, typeof origin); // http://localhost:3000 string
+		// console.log(`${origin}`, typeof origin); // http://localhost:3000 string
 
 		const gzipBody = pako.gzip(body);
 
-		const response = await fetch(`${origin}/api/pdf`, {
+		const response = await fetch(`${import.meta.env.VITE_API_BASEURL}/api/v1/pdf`, {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'text/html',
