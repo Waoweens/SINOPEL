@@ -6,8 +6,8 @@
 	import SignaturePad from 'signature_pad';
 	import { onMount, tick } from 'svelte';
 	import dayjs, { Dayjs } from 'dayjs';
-	import 'dayjs/locale/id'
-	import customParseFormat from "dayjs/plugin/customParseFormat";
+	import 'dayjs/locale/id';
+	import customParseFormat from 'dayjs/plugin/customParseFormat';
 
 	export let liveLetter: { [key: string]: string };
 
@@ -20,14 +20,14 @@
 	let jamPenutupan: dayjs.Dayjs;
 	// $: jamPenutupan = new Date(Date.parse(`1970-01-01T${liveLetter?.jamPenutupan ?? ''}Z`));
 
-	dayjs.extend(customParseFormat)
+	dayjs.extend(customParseFormat);
 
-	$: date = dayjs(`${liveLetter?.tanggal ?? ''}`, 'YYYY-MM-DD')
-	$: time = dayjs(`${liveLetter?.jam ?? ''}`, 'HH:mm')
-	$: jamPenutupan = dayjs(`${liveLetter?.jamPenutupan ?? ''}`, 'HH:mm')
+	$: date = dayjs(`${liveLetter?.tanggal ?? ''}`, 'YYYY-MM-DD');
+	$: time = dayjs(`${liveLetter?.jam ?? ''}`, 'HH:mm');
+	$: jamPenutupan = dayjs(`${liveLetter?.jamPenutupan ?? ''}`, 'HH:mm');
 
 	$: {
-		console.log(jamPenutupan.format('HH:mm'))
+		console.log(jamPenutupan.format('HH:mm'));
 	}
 
 	console.log('view', liveLetter);
@@ -178,9 +178,9 @@
 					</div>
 				</div>
 				<div role="separator" class="mt-2">
-					<hr class="!border-black border mb-0.5" />
-					<hr class="!border-black border-[3px] mb-0.5" />
-					<hr class="!border-black border" />
+					<hr class="border mb-0.5" style="border-color: black;" />
+					<hr class="border-[3px] mb-0.5" style="border-color: black;" />
+					<hr class="border" style="border-color: black;" />
 				</div>
 			</header>
 			<section>
@@ -189,7 +189,9 @@
 				<ul class="list-style items-center list-none">
 					<h2 class="mt-4 font-bold">RAPAT</h2>
 					<li>
-						<span class="list-title">Hari/Tanggal</span>: {date.locale('id').format('dddd, DD MMMM YYYY') ?? ''}
+						<span class="list-title">Hari/Tanggal</span>: {date
+							.locale('id')
+							.format('dddd, DD MMMM YYYY') ?? ''}
 					</li>
 					<li>
 						<span class="list-title">Jam</span>: {time.format('HH:mm') ?? ''}
@@ -240,9 +242,15 @@
 					<h2 class="mt-4 font-bold">KEGIATAN RAPAT</h2>
 					<!-- <ul class="list-style items-center list-none"> -->
 					<li>
-						<span class="list-title">Pembahasan</span>: {@html (liveLetter?.pembahasan ?? '').replaceAll('\n', '<br />')}
+						<span class="list-title">Pembahasan</span>: {@html (
+							liveLetter?.pembahasan ?? ''
+						).replaceAll('\n', '<br />')}
 					</li>
-					<li><span class="list-title">Keputusan</span>: {@html (liveLetter?.keputusan ?? '').replaceAll('\n', '<br />')}</li>
+					<li>
+						<span class="list-title">Keputusan</span>: {@html (
+							liveLetter?.keputusan ?? ''
+						).replaceAll('\n', '<br />')}
+					</li>
 					<li>
 						<span class="list-title">Jam penutupan</span>:
 						{jamPenutupan.format('HH:mm') ?? ''}
