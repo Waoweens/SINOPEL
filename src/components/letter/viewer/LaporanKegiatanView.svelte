@@ -255,7 +255,7 @@
 					<p>
 						{fromJson(liveLetter.ttd)?.position ?? ''}
 					</p>
-					<img alt="Signature" src={signatureImg} />
+					<img alt="Signature" src={liveLetter?.ttdPadImg ?? ''} />
 					<p class="font-bold">{fromJson(liveLetter.ttd)?.name ?? ''}</p>
 					<p>NIP: {fromJson(liveLetter.ttd)?.number ?? ''}</p>
 				</div>

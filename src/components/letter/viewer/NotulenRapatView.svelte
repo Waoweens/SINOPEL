@@ -34,28 +34,29 @@
 	console.log('pimpinan', liveLetter?.pimpinan);
 
 	let employeeSearches: { [key: string]: string } = {};
-	let signature: HTMLCanvasElement;
-	let pad: SignaturePad;
-	let signatureImg: string;
 
-	onMount(() => {
-		pad = new SignaturePad(signature);
-	});
+	// let signature: HTMLCanvasElement;
+	// let pad: SignaturePad;
+	// let signatureImg: string;
 
-	async function updateSignature(): Promise<void> {
-		console.log('signature', liveLetter?.ttdPad);
-		console.log(fromJson(liveLetter?.ttdPad));
-		pad.fromData(fromJson(liveLetter?.ttdPad));
-		await tick();
-		signatureImg = pad.toDataURL();
-		console.log('signatureImg', signatureImg);
-	}
+	// onMount(() => {
+	// 	pad = new SignaturePad(signature);
+	// });
 
-	$: if (pad) {
-		if (liveLetter?.ttdPad) {
-			updateSignature();
-		}
-	}
+	// async function updateSignature(): Promise<void> {
+	// 	console.log('signature', liveLetter?.ttdPad);
+	// 	console.log(fromJson(liveLetter?.ttdPad));
+	// 	pad.fromData(fromJson(liveLetter?.ttdPad));
+	// 	await tick();
+	// 	signatureImg = pad.toDataURL();
+	// 	console.log('signatureImg', signatureImg);
+	// }
+
+	// $: if (pad) {
+	// 	if (liveLetter?.ttdPad) {
+	// 		updateSignature();
+	// 	}
+	// }
 
 	let uploadOne: string,
 		uploadTwo: string,
@@ -290,7 +291,7 @@
 					<p>
 						{fromJson(liveLetter.ttd)?.position ?? ''}
 					</p>
-					<img alt="Signature" src={signatureImg} />
+					<img alt="Signature" src={liveLetter?.ttdPadImg ?? ''} />
 					<p class="font-bold">{fromJson(liveLetter.ttd)?.name ?? ''}</p>
 					<p>NIP: {fromJson(liveLetter.ttd)?.number ?? ''}</p>
 				</div>
@@ -305,8 +306,6 @@
 		</article>
 	</div>
 {/if}
-
-<canvas bind:this={signature} class="hidden" width="100" height="100" />
 
 <style>
 	.letter-view {

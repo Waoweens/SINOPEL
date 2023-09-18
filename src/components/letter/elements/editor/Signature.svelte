@@ -5,14 +5,19 @@
 
 	export let containerWidth: number;
 	export let name: string;
-	// let signatureImg: string;
-	let signatureData: PointGroup[]
+	let signatureImg: string;
+	let signatureData: PointGroup[];
 	let vw: number;
 
 	let canvas: HTMLCanvasElement;
 	let signaturePad: SignaturePad;
-	let hiddenInput: HTMLInputElement;
-	let hiddenInputValue: string;
+
+	let hiddenInputData: HTMLInputElement;
+	let hiddenInputDataValue: string;
+	let hiddenInputImg: HTMLInputElement;
+	let hiddenInputImgValue: string;
+
+	let isUpdatingCanvas = false;
 
 	const dispatch = createEventDispatcher();
 
@@ -24,25 +29,43 @@
 		});
 
 		signaturePad.addEventListener('endStroke', async () => {
-			console.log('Changed');
-			// signatureImg = signaturePad.toDataURL();
-			signatureData = signaturePad.toData();
-			
-			updateCanvas();
+			// if (!isUpdatingCanvas) {
+				console.log('Changed');
+				updateCanvas();
+			// }
 		});
 	});
 
 	async function updateCanvas() {
-		hiddenInputValue = JSON.stringify(signatureData);
+		isUpdatingCanvas = true;
+		signatureImg = signaturePad.toDataURL();
+		signatureData = signaturePad.toData();
+
+		hiddenInputDataValue = JSON.stringify(signatureData);
+		hiddenInputImgValue = signatureImg;
 		console.log('SIGNATURE DATA', signatureData);
 
 		await tick();
 		dispatch('change');
 	}
 
-	$: if (hiddenInput) {
-		if (hiddenInput.value) {
-			signatureData = fromJson(hiddenInput.value);
+	$: if (hiddenInputData) {
+		if (hiddenInputData.value && !isUpdatingCanvas) {
+			signatureData = fromJson(hiddenInputData.value);
+			if (signaturePad) {
+				console.log('Updating canvas from hidden input', hiddenInputData.value, signatureData)
+				isUpdatingCanvas = true;
+				signaturePad.fromData(signatureData);
+				isUpdatingCanvas = false;
+			}
+
+			updateCanvas();
+		}
+	}
+
+	$: if (hiddenInputImg) {
+		if (hiddenInputImg.value) {
+			signatureImg = hiddenInputImg.value;
 			// hiddenInputValue = signatureImg;
 		}
 	}
@@ -76,7 +99,6 @@
 	function clear() {
 		console.log('Clearing');
 		signaturePad.clear();
-		signatureData = signaturePad.toData();
 
 		updateCanvas();
 	}
@@ -87,7 +109,6 @@
 			data.pop(); // remove the last dot or line
 			signaturePad.fromData(data);
 		}
-		signatureData = signaturePad.toData();
 
 		updateCanvas();
 	}
@@ -131,4 +152,10 @@
 	</div>
 </div>
 
-<input type="hidden" bind:this={hiddenInput} {name} bind:value={hiddenInputValue} />
+<input
+	type="hidden"
+	bind:this={hiddenInputData}
+	name="{name}Data"
+	bind:value={hiddenInputDataValue}
+/>
+<input type="hidden" bind:this={hiddenInputImg} name="{name}Img" bind:value={hiddenInputImgValue} />
