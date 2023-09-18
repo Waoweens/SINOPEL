@@ -5,16 +5,30 @@
 	import { getDownloadURL, ref } from 'firebase/storage';
 	import SignaturePad from 'signature_pad';
 	import { onMount, tick } from 'svelte';
+	import dayjs, { Dayjs } from 'dayjs';
+	import 'dayjs/locale/id'
+	import customParseFormat from "dayjs/plugin/customParseFormat";
 
 	export let liveLetter: { [key: string]: string };
 
 	export let article: HTMLElement;
 
-	let date: Date;
-	$: date = new Date(Date.parse(`${liveLetter?.tanggal ?? ''}T${liveLetter?.jam ?? ''}Z`));
+	let date: dayjs.Dayjs;
+	let time: dayjs.Dayjs;
+	// $: date = new Date(Date.parse(`${liveLetter?.tanggal ?? ''}T${liveLetter?.jam ?? ''}Z`));
 
-	let jamPenutupan: Date;
-	$: jamPenutupan = new Date(Date.parse(`1970-01-01T${liveLetter?.jamPenutupan ?? ''}Z`));
+	let jamPenutupan: dayjs.Dayjs;
+	// $: jamPenutupan = new Date(Date.parse(`1970-01-01T${liveLetter?.jamPenutupan ?? ''}Z`));
+
+	dayjs.extend(customParseFormat)
+
+	$: date = dayjs(`${liveLetter?.tanggal ?? ''}`, 'YYYY-MM-DD')
+	$: time = dayjs(`${liveLetter?.jam ?? ''}`, 'HH:mm')
+	$: jamPenutupan = dayjs(`${liveLetter?.jamPenutupan ?? ''}`, 'HH:mm')
+
+	$: {
+		console.log(jamPenutupan.format('HH:mm'))
+	}
 
 	console.log('view', liveLetter);
 	console.log('pimpinan', liveLetter?.pimpinan);
@@ -175,18 +189,10 @@
 				<ul class="list-style items-center list-none">
 					<h2 class="mt-4 font-bold">RAPAT</h2>
 					<li>
-						<span class="list-title">Hari/Tanggal</span>: {date.toLocaleDateString('id-ID', {
-							year: 'numeric',
-							month: 'long',
-							day: '2-digit',
-							weekday: 'long'
-						}) ?? ''}
+						<span class="list-title">Hari/Tanggal</span>: {date.locale('id').format('dddd, DD MMMM YYYY') ?? ''}
 					</li>
 					<li>
-						<span class="list-title">Jam</span>: {date.toLocaleTimeString('en-GB', {
-							hour: '2-digit',
-							minute: '2-digit'
-						}) ?? ''}
+						<span class="list-title">Jam</span>: {time.format('HH:mm') ?? ''}
 					</li>
 					<li><span class="list-title">Tempat</span>: {liveLetter?.tempat ?? ''}</li>
 					<li><span class="list-title">Acara</span>: {liveLetter?.acara ?? ''}</li>
@@ -239,10 +245,7 @@
 					<li><span class="list-title">Keputusan</span>: {@html (liveLetter?.keputusan ?? '').replaceAll('\n', '<br />')}</li>
 					<li>
 						<span class="list-title">Jam penutupan</span>:
-						{jamPenutupan.toLocaleTimeString('en-GB', {
-							hour: '2-digit',
-							minute: '2-digit'
-						}) ?? ''}
+						{jamPenutupan.format('HH:mm') ?? ''}
 					</li>
 				</ul>
 
