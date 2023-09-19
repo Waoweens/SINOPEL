@@ -16,9 +16,7 @@
 		initializeStores,
 		setInitialClassState,
 		storePopup,
-
 		type ModalComponent
-
 	} from '@skeletonlabs/skeleton';
 	import { computePosition, autoUpdate, offset, shift, flip, arrow } from '@floating-ui/dom';
 
@@ -31,9 +29,12 @@
 	import { navrailState } from '$stores/states';
 	import Drawers from '$components/Drawers.svelte';
 	import { FirebaseApp, SignedIn } from 'sveltefire';
-	import { navigating } from '$app/stores';
+	import { navigating, page } from '$app/stores';
 	import FileUploadModal from '$components/letter/elements/editor/FileUploadModal.svelte';
 	import type { PageData } from './$types';
+	import bgImg from '$lib/assets/bg.jpg';
+	import pemkot from '$lib/assets/Lambang_Kota_Bandung.svg';
+	import damkar from '$lib/assets/damkar.png';
 
 	export let data: PageData;
 
@@ -44,10 +45,10 @@
 
 	const modalComponentRegistry: Record<string, ModalComponent> = {
 		fileUploadBox: {
-			ref: FileUploadModal,
+			ref: FileUploadModal
 			// params: {}
 		}
-	}
+	};
 
 	// $: isLoggedIn = $authStore.currentUser !== null;
 
@@ -114,11 +115,29 @@
 		</svelte:fragment>
 		<!-- <svelte:fragment slot="sidebarRight">Sidebar Right</svelte:fragment> -->
 		<!-- Router Slot -->
-		<div class="m-3">
-			<slot />
-		</div>
+		{#if $page.url.pathname === '/app/dashboard' || $page.url.pathname === '/app'}
+			<div
+				class="w-full h-full bg-center bg-cover backdrop-brightness-50"
+				style="background-image: url({bgImg}); content: 'test';"
+			>
+				<div class="w-full h-full backdrop-brightness-50">
+					<div class="absolute m-4">
+						<img src={pemkot} alt="Pemkot" class="h-40" />
+					</div>
+					<div class="absolute mx-4 my-3 right-0">
+						<img src={damkar} alt="Damkar" class="h-[10rem]" />
+					</div>
+					<slot />
+				</div>
+			</div>
+		{:else}
+			<div class="m-3">
+				<slot />
+			</div>
+		{/if}
+
 		<!-- ---- / ---- -->
-		<svelte:fragment slot="pageFooter">Page Footer</svelte:fragment>
+		<!-- <svelte:fragment slot="pageFooter">Page Footer</svelte:fragment> -->
 		<!-- <svelte:fragment slot="footer">Footer</svelte:fragment> -->
 	</AppShell>
 </FirebaseApp>
