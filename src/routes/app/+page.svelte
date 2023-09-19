@@ -7,7 +7,7 @@
 	import { SignedIn, SignedOut } from 'sveltefire';
 
 	function gotoDashboard() {
-		console.log('called')
+		console.log('called');
 		if (browser) goto('/app/dashboard');
 	}
 </script>
@@ -17,15 +17,18 @@
 	currently, <div>s are used everywhere
 -->
 
-<div class="flex flex-col justify-center items-center">
-	<h1 class="h1 font-[600]">{appname}</h1>
-	<p>{appnameLong}</p>
+<div class="w-full h-full pb-32 flex flex-col items-center justify-center">
+	<div class="text-center">
+		<h1 class="text-6xl font-extrabold">{appname}</h1>
+		<p class="text-2xl font-semibold">{appnameLong}</p>
+		<p></p>
+	</div>
 
 	<div class="mt-4">
 		<SignedIn>
 			{gotoDashboard()}
 		</SignedIn>
-	
+
 		<SignedOut let:auth>
 			<Auth {auth} />
 		</SignedOut>
