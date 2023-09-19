@@ -184,7 +184,7 @@
 						{/if}
 					</li>
 					<li>
-						<span class="list-title">Jam</span>: {date.locale('id').format('dddd, DD MMMM YYYY') ?? ''}
+						<span class="list-title">Tanggal</span>: {date.locale('id').format('dddd, DD MMMM YYYY') ?? ''}
 					</li>
 					<li><span class="list-title">Nomor surat</span>: {nomorSurat.slice(0, 3).join('/')}-{nomorSurat.slice(3).join('/')}</li>
 					<li><span class="list-title">Sifat</span>: {liveLetter?.sifat ?? ''}</li>
