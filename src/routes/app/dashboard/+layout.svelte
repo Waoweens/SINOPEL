@@ -39,8 +39,8 @@
 	let collStore;
 	let userDoc;
 	function initFirestore(): void {
-		collStore = collectionStore<UserDoc[]>(firestore, '/users');
-		userDoc = docStore<UserDoc>(firestore, `/users/${$user?.uid}`);
+		collStore = collectionStore<UserDoc[]>(firestore, '/users/sinopel/entries');
+		userDoc = docStore<UserDoc>(firestore, `/users/sinopel/entries${$user?.uid}`);
 	}
 
 	function checkDisplayName(): void {
@@ -60,7 +60,7 @@
 						displayName: res
 					})
 						.then(() => {
-							updateDoc(doc(firestore, 'users', $user?.uid ?? 'invalid-user'), {
+							updateDoc(doc(firestore, 'users', 'sinopel', 'entries', $user?.uid ?? 'invalid-user'), {
 								displayName: res
 							})
 								.then(() => {
@@ -102,7 +102,7 @@
 
 			if ($userDoc == null) {
 				console.log('doc not found');
-				setDoc(doc(firestore, 'users', $user?.uid ?? 'invalid-user'), {
+				setDoc(doc(firestore, 'users', 'sinopel', 'entries', $user?.uid ?? 'invalid-user'), {
 					email: $user?.email ?? 'invalid-user',
 					displayName: $user?.displayName ?? 'invalid-user',
 					role: 'user'

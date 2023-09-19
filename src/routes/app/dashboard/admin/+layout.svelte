@@ -6,21 +6,21 @@
 </script>
 
 <SignedIn let:user>
-	<Doc ref={'/users/' + user.uid} let:data>
+	<Doc ref={'/users/sinopel/entries' + user.uid} let:data>
 		{#if data.role == 'admin'}
 			<TabGroup class="mb-3">
-				<TabAnchor href="/dashboard/admin" selected={$page.url.pathname === '/dashboard/admin'}>
+				<TabAnchor href="/app/dashboard/admin" selected={$page.url.pathname === '/app/dashboard/admin'}>
 					<span>Home</span>
 				</TabAnchor>
 				<TabAnchor
-					href="/dashboard/admin/users"
-					selected={$page.url.pathname === '/dashboard/admin/users'}
+					href="/app/dashboard/admin/users"
+					selected={$page.url.pathname === '/app/dashboard/admin/users'}
 				>
 					<span>Akun</span>
 				</TabAnchor>
 				<TabAnchor
-					href="/dashboard/admin/employees"
-					selected={$page.url.pathname === '/dashboard/admin/employees'}
+					href="/app/dashboard/admin/employees"
+					selected={$page.url.pathname === '/app/dashboard/admin/employees'}
 				>
 					<span>Pejabat</span>
 				</TabAnchor>

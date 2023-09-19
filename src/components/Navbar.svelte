@@ -41,7 +41,7 @@
 				<br />
 				<span>&lt;{user.email}&gt;</span>
 				<br />
-				<Doc ref={'users/' + user.uid} let:data>
+				<Doc ref={'users/sinopel/entries/' + user.uid} let:data>
 					<span class="text-xs">{(data.role).toUpperCase()}</span>
 				</Doc>
 				<hr class="my-3" />

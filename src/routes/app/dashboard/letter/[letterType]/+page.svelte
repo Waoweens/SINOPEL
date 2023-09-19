@@ -60,7 +60,7 @@
 <a class="btn variant-filled-primary my-3" href="./{data.letter.type}/new">Buat surat</a>
 
 <SignedIn let:user>
-	<Collection ref={'users'} let:data>
+	<Collection ref={'users/sinopel/entries'} let:data>
 		{#if $col.length > 0}
 			<div class="table-container">
 				<table class="table table-hover">

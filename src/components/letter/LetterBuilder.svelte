@@ -45,7 +45,7 @@
 
 	const user = userStore(auth);
 
-	const users = collectionStore(firestore, 'users');
+	const users = collectionStore(firestore, 'users/sinopel/entries');
 
 	const modalStore = getModalStore();
 
