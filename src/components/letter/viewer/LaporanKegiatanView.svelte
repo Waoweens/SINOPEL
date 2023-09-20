@@ -257,7 +257,9 @@
 			<footer>
 				<p class="-mx-4">Demikian laporan kegiatan ini kami sampaikan. Atas perhatian dan perkenan Bapak, kami ucapkan terima kasih.</p>
 				<div class="flex flex-row justify-end">
-					<div class="text-center">
+					<div class="flex-1"></div>
+					<div class="flex-1"></div>
+					<div class="text-center flex-1">
 						<p>
 							{fromJson(liveLetter.ttd)?.position ?? ''}
 						</p>
