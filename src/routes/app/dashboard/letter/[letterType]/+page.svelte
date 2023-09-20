@@ -75,32 +75,35 @@
 					</thead>
 					<tbody>
 						{#each $rows as row}
-							<tr>
-								<td class="w-1">
-									<a
-										class="btn-icon variant-filled-secondary !rounded-md"
-										href="/app/dashboard/letter/{letterType}/edit/{row.id}"
-									>
-										<IconEdit class="text-xl" />
-									</a>
-								</td>
-								<td>{row.id}</td>
-								<td>
-									{fromJson((row.letter)?.find((obj) => obj.name == 'pencatat')?.value ?? '')?.name ?? ''}
-								</td>
-								<td>
-									{data.find((obj) => obj.id == row.created.user)?.displayName ??
-										'Akun tidak valid'}
-									<br />
-									{row.created.date.toDate().toLocaleDateString('en-GB', dateOptions)}
-								</td>
-								<td>
-									{data.find((obj) => obj.id == row.modified.user)?.displayName ??
-										'Akun tidak valid'}
-									<br />
-									{row.modified.date.toDate().toLocaleDateString('en-GB', dateOptions)}
-								</td>
-							</tr>
+							{#if (data.find((obj) => obj.id == user.uid))?.role === 'admin' || row.created.user === user.uid}
+								<tr>
+									<td class="w-1">
+										<a
+											class="btn-icon variant-filled-secondary !rounded-md"
+											href="/app/dashboard/letter/{letterType}/edit/{row.id}"
+										>
+											<IconEdit class="text-xl" />
+										</a>
+									</td>
+									<td>{row.id}</td>
+									<td>
+										{fromJson(row.letter?.find((obj) => obj.name == 'pencatat')?.value ?? '')
+											?.name ?? ''}
+									</td>
+									<td>
+										{data.find((obj) => obj.id == row.created.user)?.displayName ??
+											'Akun tidak valid'}
+										<br />
+										{row.created.date.toDate().toLocaleDateString('en-GB', dateOptions)}
+									</td>
+									<td>
+										{data.find((obj) => obj.id == row.modified.user)?.displayName ??
+											'Akun tidak valid'}
+										<br />
+										{row.modified.date.toDate().toLocaleDateString('en-GB', dateOptions)}
+									</td>
+								</tr>
+							{/if}
 						{/each}
 					</tbody>
 				</table>
