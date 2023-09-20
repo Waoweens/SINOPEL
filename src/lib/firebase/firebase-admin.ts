@@ -3,8 +3,6 @@ import { FBA_PROJECT_ID, FBA_CLIENT_EMAIL, FBA_PRIVATE_KEY } from '$env/static/p
 import { getAuth } from 'firebase-admin/auth';
 import { getFirestore } from 'firebase-admin/firestore';
 
-console.log(FBA_PRIVATE_KEY)
-
 let admin: App;
 
 if (getApps().length === 0) {
