@@ -172,7 +172,9 @@
 				</div>
 			</header>
 			<section>
-				<h1 class="text-center text-[14pt] mb-4 font-bold">NOTA DINAS</h1>
+				<h1 class="text-center text-[14pt] font-bold">NOTA DINAS</h1>
+
+				<p class="my-3 -mx-4">Dipermaklumkan dengan hormat. Berikut kami sampaikan laporan kegiatan sebagai berikut:</p>
 
 				<ul class="list-style items-center list-none">
 					<li>
@@ -250,14 +252,19 @@
 					</div>
 				</section>
 			</section>
-			<footer class="flex flex-row justify-end">
-				<div class="text-center">
-					<p>
-						{fromJson(liveLetter.ttd)?.position ?? ''}
-					</p>
-					<img alt="Signature" src={liveLetter?.ttdPadImg ?? ''} />
-					<p class="font-bold">{fromJson(liveLetter.ttd)?.name ?? ''}</p>
-					<p>NIP: {fromJson(liveLetter.ttd)?.number ?? ''}</p>
+
+			
+			<footer>
+				<p class="-mx-4">Demikian laporan kegiatan ini kami sampaikan. Atas perhatian dan perkenan Bapak, kami ucapkan terima kasih.</p>
+				<div class="flex flex-row justify-end">
+					<div class="text-center">
+						<p>
+							{fromJson(liveLetter.ttd)?.position ?? ''}
+						</p>
+						<img alt="Signature" src={liveLetter?.ttdPadImg ?? ''} />
+						<p class="font-bold">{fromJson(liveLetter.ttd)?.name ?? ''}</p>
+						<p>NIP: {fromJson(liveLetter.ttd)?.number ?? ''}</p>
+					</div>
 				</div>
 			</footer>
 			<section style="page-break-before: always;">
