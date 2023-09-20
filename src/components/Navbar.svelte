@@ -1,5 +1,11 @@
 <script lang="ts">
-	import { AppBar, popup, type PopupSettings } from '@skeletonlabs/skeleton';
+	import {
+		Accordion,
+		AccordionItem,
+		AppBar,
+		popup,
+		type PopupSettings
+	} from '@skeletonlabs/skeleton';
 	import { appname } from '$stores/static';
 	import IconAccount from '~icons/ic/baseline-account-circle';
 	import IconApps from '~icons/ic/baseline-apps';
@@ -13,6 +19,7 @@
 	import { Doc, SignedIn, SignedOut } from 'sveltefire';
 	import LightSwitchX from './elements/LightSwitchX.svelte';
 	import { limitToLast } from 'firebase/firestore';
+	import { page } from '$app/stores';
 
 	const popupUser: PopupSettings = {
 		event: 'click',
@@ -23,7 +30,8 @@
 	const popupInfo: PopupSettings = {
 		event: 'click',
 		target: 'popupInfo',
-		placement: 'bottom-end'
+		placement: 'bottom-end',
+		closeQuery: '#closes-popup'
 	};
 </script>
 
@@ -45,7 +53,7 @@
 			<IconInfo class="text-3xl" />
 		</button>
 
-		<div class="card p-4 w-60 shadow-xl" data-popup="popupInfo">
+		<div class="card p-4 w-64 shadow-xl" data-popup="popupInfo">
 			<p class="flex items-center gap-2">
 				<span class="text-2xl font-bold">SINOPEL</span><a
 					target="_blank"
@@ -63,24 +71,43 @@
 						</a>
 						<a target="_blank" href="https://github.com/Waoweens/SINOPEL">
 							<span><IconBugReport /></span>
-							<span>Lapor masalah</span>
-						</a>
+							<span>Report bug<span /></span></a
+						>
 					</li>
 				</ul>
 			</nav>
 
 			<hr class="my-3" />
 
-			<nav class="list-nav m-0 p-0">
-				<ul class="m-0 p-0">
-					<li>
-						<button>
-							<span><IconSourceBranch /></span>
-							<span>Change Branch</span>
-						</button>
-					</li>
-				</ul>
-			</nav>
+			<Accordion>
+				<AccordionItem>
+					<svelte:fragment slot="lead"><IconSourceBranch /></svelte:fragment>
+					<svelte:fragment slot="summary">Change branch</svelte:fragment>
+					<svelte:fragment slot="content">
+						<nav class="list-nav m-0 p-0">
+							<ul class="m-0 p-0">
+								<li>
+									<a
+										href="https://sinopel.id"
+										class={$page.url.hostname === 'sinopel.id' ? '!bg-primary-500 text-black' : ''}
+									>
+										Stable
+									</a>
+									<a
+										href="https://dev.sinopel.id"
+										class={$page.url.hostname === 'dev.sinopel.id' ? '!bg-primary-500 text-black' : ''}
+									>
+										Dev
+									</a>
+									{#if $page.url.hostname === 'localhost'}
+										<a href={$page.url.origin} class="!bg-primary-500 text-black">Local</a>
+									{/if}
+								</li>
+							</ul>
+						</nav>
+					</svelte:fragment>
+				</AccordionItem>
+			</Accordion>
 
 			<hr class="my-3" />
 
