@@ -50,6 +50,7 @@
 		}
 
 		if (loginWithEmail) {
+			loginCred = email;
 		} else {
 			const q = query(
 				collection(firestore, 'users', 'sinopel', 'entries'),
