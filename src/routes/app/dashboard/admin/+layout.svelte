@@ -16,7 +16,7 @@
 					href="/app/dashboard/admin/users"
 					selected={$page.url.pathname === '/app/dashboard/admin/users'}
 				>
-					<span>Akun</span>
+					<span>User</span>
 				</TabAnchor>
 				<TabAnchor
 					href="/app/dashboard/admin/employees"
