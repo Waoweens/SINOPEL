@@ -37,21 +37,23 @@
 
 		<div class="card p-4 w-60 shadow-xl" data-popup="popupUser">
 			<SignedIn let:user>
-				<span class="text-xl">{user.displayName}</span>
-				<br />
-				<span>&lt;{user.email}&gt;</span>
-				<br />
 				<Doc ref={'users/sinopel/entries/' + user.uid} let:data>
-					<span class="text-xs">{(data.role).toUpperCase()}</span>
+					<span class="text-xl">{user.displayName}</span>
+					<br />
+					<span>{data.nip}</span>
+					<br />
+					<span>{user.email}</span>
+					<br />
+					<span class="text-xs">{data.role.toUpperCase()}</span>
 				</Doc>
 				<hr class="my-3" />
 				<nav class="list-nav m-0 p-0">
 					<ul class="m-0 p-0">
 						<li class="m-0 p-0">
-							<a href="/dashboard">Dasbor</a>
+							<a href="/app/dashboard">Dasbor</a>
 						</li>
 						<li>
-							<a href="/dashboard/account">Akun</a>
+							<a href="/app/dashboard/account">Akun</a>
 						</li>
 						<li>
 							<SignedIn let:signOut>
