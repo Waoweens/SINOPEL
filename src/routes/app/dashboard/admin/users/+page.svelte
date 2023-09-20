@@ -24,8 +24,8 @@
 		amounts: [5, 10, 20, 40]
 	};
 
-	function manageUser(action: string, row: Record<string, any> = {}) {
-		console.log(row)
+	function manageUser(action: 'add' | 'modify', row: Record<string, any> = {}) {
+		console.log('ROWROW', row)
 		const modalComponent: ModalComponent = { ref: UserModal, props: { action } };
 		if (action === 'modify') modalComponent.props!.formData = row;
 		const modal: ModalSettings = {
