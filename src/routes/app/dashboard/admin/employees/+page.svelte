@@ -1,12 +1,10 @@
 <script lang="ts">
 	import PaginatedTable from '$components/table/PaginatedTable.svelte';
-	import type { Employee } from '$lib/letter';
 	import { ProgressRadial, type PaginationSettings } from '@skeletonlabs/skeleton';
-
-	// ... (your existing code)
 
 	const parentDocPath = 'employees/dkpb';
 	const collectionPath = ['employees', 'dkpb', 'entries'];
+	const order = 'name';
 
 	let paginationSettings: PaginationSettings = {
 		page: 0,
@@ -16,13 +14,13 @@
 	};
 </script>
 
-<PaginatedTable {parentDocPath} {collectionPath} {paginationSettings}>
+<PaginatedTable {parentDocPath} {collectionPath} {order} {paginationSettings}>
 	<svelte:fragment slot="head">
 		<tr>
 			<th>No</th>
 			<th>ID</th>
 			<th>Nama</th>
-			<th>NIS</th>
+			<th>NIP</th>
 			<th>Jabatan</th>
 		</tr>
 	</svelte:fragment>
