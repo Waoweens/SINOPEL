@@ -3,12 +3,15 @@
 	import EmployeeSearch from '$components/letter/elements/editor/EmployeeSearch.svelte';
 	import { getFileName, type FormInput, type LetterType } from '$lib/letter';
 	import type { CollectionStore } from '$lib/sveltefire-types';
-	import { createEventDispatcher, onMount, tick } from 'svelte';
+	import { createEventDispatcher, onDestroy, onMount, tick } from 'svelte';
 	import IconClose from '~icons/ic/baseline-close';
 	import IconUploadFile from '~icons/ic/round-upload-file';
-	import { FileDropzone, getModalStore, type ModalSettings } from '@skeletonlabs/skeleton';
+	import { FileDropzone, getModalStore, ProgressRadial, type ModalSettings } from '@skeletonlabs/skeleton';
+	import IconSave from '~icons/ic/baseline-save';
+	import IconCheck from '~icons/ic/baseline-check';
 	import { ref } from 'firebase/storage';
 	import { storage } from '$lib/firebase/firebase';
+	import { letterSaving } from '$stores/states';
 
 	export let employees: CollectionStore<unknown[]>;
 	export let form: HTMLFormElement;
@@ -65,6 +68,7 @@
 
 	const dispatch = createEventDispatcher();
 	function handleSubmit(e: SubmitEvent): void {
+		letterSaving.set(true);
 		const formData = new FormData(form);
 		const valuesArray = Array.from(formData.entries()).map(([name, value]) => ({
 			name,
@@ -125,7 +129,7 @@
 		uploadFourInput: HTMLInputElement;
 	let uploadDaftarHadirInput: HTMLInputElement;
 	function openUploadBox(name: string) {
-		const tmp = {}
+		const tmp = {};
 		// modalStore.trigger(modalSettings)
 		new Promise<{ name: string; url: string }>((resolve) => {
 			const modalSettings: ModalSettings = {
@@ -142,8 +146,8 @@
 			modalStore.trigger(modalSettings);
 		}).then(async (res) => {
 			console.log('res', res);
-			console.log('name', name)
-			switch(name) {
+			console.log('name', name);
+			switch (name) {
 				case 'uploadOne':
 					uploadOne = res.url;
 					break;
@@ -171,7 +175,7 @@
 			uploadOne = uploadOneInput.value;
 		}
 	}
-	
+
 	// upload two
 	$: if (uploadTwoInput) {
 		if (uploadTwoInput.value) {
@@ -197,6 +201,21 @@
 		}
 	}
 
+	let fadeTimeout: NodeJS.Timeout;
+	let wasSaving = false;
+
+	$: {
+		if ($letterSaving) {
+			wasSaving = true;
+			fadeTimeout = setTimeout(() => {
+				wasSaving = false;
+			}, 3000);
+		}
+	}
+
+	onDestroy(() => {
+		clearTimeout(fadeTimeout);
+	});
 </script>
 
 <!-- svelte-ignore a11y-no-noninteractive-element-interactions -->
@@ -365,7 +384,12 @@
 					Upload
 				</button>
 				<p class="text-xl">{getFileName(uploadThree) ?? 'Belum ada gambar'}</p>
-				<input bind:this={uploadThreeInput} type="hidden" name="uploadThree" bind:value={uploadThree} />
+				<input
+					bind:this={uploadThreeInput}
+					type="hidden"
+					name="uploadThree"
+					bind:value={uploadThree}
+				/>
 			</div>
 
 			<div class="flex gap-3 items-center variant-ghost-secondary p-2 mb-2">
@@ -377,7 +401,12 @@
 					Upload
 				</button>
 				<p class="text-xl">{getFileName(uploadFour) ?? 'Belum ada gambar'}</p>
-				<input bind:this={uploadFourInput} type="hidden" name="uploadFour" bind:value={uploadFour} />
+				<input
+					bind:this={uploadFourInput}
+					type="hidden"
+					name="uploadFour"
+					bind:value={uploadFour}
+				/>
 			</div>
 		</div>
 	</section>
@@ -396,15 +425,42 @@
 	<section id="form-daftar-hadir">
 		<h3 class="h3 mb-2">Daftar hadir</h3>
 		<div class="flex gap-3 items-center variant-ghost-secondary p-2 mb-2">
-			<button type="button" class="btn variant-filled" on:click={() => openUploadBox('uploadDaftarHadir')}>
+			<button
+				type="button"
+				class="btn variant-filled"
+				on:click={() => openUploadBox('uploadDaftarHadir')}
+			>
 				Upload
 			</button>
 			<p class="text-xl">{getFileName(uploadDaftarHadir) ?? 'Belum ada gambar'}</p>
-			<input bind:this={uploadDaftarHadirInput} type="hidden" name="uploadDaftarHadir" bind:value={uploadDaftarHadir} />
+			<input
+				bind:this={uploadDaftarHadirInput}
+				type="hidden"
+				name="uploadDaftarHadir"
+				bind:value={uploadDaftarHadir}
+			/>
 		</div>
 	</section>
 
 	<section id="form-submit">
-		<button type="submit" class="btn variant-filled-primary mt-2">Save</button>
+		<section id="form-submit flex flex-row">
+			<button type="submit" disabled={$letterSaving} class="btn variant-filled-primary mt-2">
+				<span>
+					{#if $letterSaving}
+						<ProgressRadial width="w-6" stroke={150} meter="stroke-primary-500" />
+					{/if}
+					{#if wasSaving}
+						<div>
+							<IconCheck />
+						</div>
+					{:else}
+						<div>
+							<IconSave />
+						</div>
+					{/if}
+				</span>
+				<span>Save</span>
+			</button>
+		</section>
 	</section>
 </form>

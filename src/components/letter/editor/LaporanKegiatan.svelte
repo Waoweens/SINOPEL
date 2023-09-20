@@ -3,13 +3,22 @@
 	import EmployeeSearch from '$components/letter/elements/editor/EmployeeSearch.svelte';
 	import { getFileName, type FormInput, type LetterType } from '$lib/letter';
 	import type { CollectionStore } from '$lib/sveltefire-types';
-	import { createEventDispatcher, onMount, tick } from 'svelte';
+	import { createEventDispatcher, onDestroy, onMount, tick } from 'svelte';
 	import IconClose from '~icons/ic/baseline-close';
 	import IconUploadFile from '~icons/ic/round-upload-file';
-	import { FileDropzone, getModalStore, type ModalSettings } from '@skeletonlabs/skeleton';
+	import IconSave from '~icons/ic/baseline-save';
+	import IconCheck from '~icons/ic/baseline-check';
+	import {
+		FileDropzone,
+		getModalStore,
+		ProgressRadial,
+		type ModalSettings
+	} from '@skeletonlabs/skeleton';
 	import { ref } from 'firebase/storage';
 	import { storage } from '$lib/firebase/firebase';
 	import LetterNumber from '$components/letter/elements/editor/LetterNumber.svelte';
+	import { letterSaving } from '$stores/states';
+	import { fade } from 'svelte/transition';
 
 	export let employees: CollectionStore<unknown[]>;
 	export let form: HTMLFormElement;
@@ -68,6 +77,7 @@
 
 	const dispatch = createEventDispatcher();
 	function handleSubmit(e: SubmitEvent): void {
+		letterSaving.set(true);
 		const formData = new FormData(form);
 		const valuesArray = Array.from(formData.entries()).map(([name, value]) => ({
 			name,
@@ -161,6 +171,22 @@
 			uploadDaftarHadir = uploadDaftarHadirInput.value;
 		}
 	}
+
+	let fadeTimeout: NodeJS.Timeout;
+	let wasSaving = false;
+
+	$: {
+		if ($letterSaving) {
+			wasSaving = true;
+			fadeTimeout = setTimeout(() => {
+				wasSaving = false;
+			}, 3000);
+		}
+	}
+
+	onDestroy(() => {
+		clearTimeout(fadeTimeout);
+	});
 </script>
 
 <!-- svelte-ignore a11y-no-noninteractive-element-interactions -->
@@ -360,7 +386,23 @@
 		</div>
 	</section>
 
-	<section id="form-submit">
-		<button type="submit" class="btn variant-filled-primary mt-2">Save</button>
+	<section id="form-submit flex flex-row">
+		<button type="submit" disabled={$letterSaving} class="btn variant-filled-primary mt-2">
+			<span>
+				{#if $letterSaving}
+					<ProgressRadial width="w-6" stroke={150} meter="stroke-primary-500" />
+				{/if}
+				{#if wasSaving}
+					<div>
+						<IconCheck />
+					</div>
+				{:else}
+					<div>
+						<IconSave />
+					</div>
+				{/if}
+			</span>
+			<span>Save</span>
+		</button>
 	</section>
 </form>

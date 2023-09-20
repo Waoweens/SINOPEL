@@ -14,6 +14,7 @@
 	import { deleteDoc, doc, serverTimestamp, updateDoc } from 'firebase/firestore';
 	import { page } from '$app/stores';
 	import { goto } from '$app/navigation';
+	import { letterSaving } from '$stores/states';
 
 	export let type: LetterType;
 	export let id: string = '';
@@ -101,6 +102,8 @@
 			},
 			letter: e.detail.formInputs
 		});
+
+		letterSaving.set(false);
 	}
 
 	// linked to button
