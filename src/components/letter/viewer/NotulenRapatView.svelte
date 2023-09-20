@@ -284,14 +284,32 @@
 					</div>
 				</section>
 			</section>
-			<footer class="flex flex-row justify-end">
-				<div class="text-center">
-					<p>
-						{fromJson(liveLetter.ttd)?.position ?? ''}
-					</p>
-					<img alt="Signature" src={liveLetter?.ttdPadImg ?? ''} />
-					<p class="font-bold">{fromJson(liveLetter.ttd)?.name ?? ''}</p>
-					<p>NIP: {fromJson(liveLetter.ttd)?.number ?? ''}</p>
+			<footer>
+				<div class="flex flex-row justify-end">
+					<div class="flex-1" />
+					<div class="flex-1" />
+					<div class="text-center flex-1">
+						<p>
+							{(fromJson(liveLetter.ttd)?.position ?? '') === 'other'
+								? 'Notulen'
+								: fromJson(liveLetter.ttd)?.position ?? ''}
+						</p>
+						<img alt="Signature" src={liveLetter?.ttdPadImg ?? ''} />
+						<p class="font-bold">
+							{#if fromJson(liveLetter.ttd)?.position === 'other'}
+								{fromJson(liveLetter.ttdOther)?.name ?? ''}
+							{:else}
+								{fromJson(liveLetter.ttd)?.name ?? ''}
+							{/if}
+						</p>
+						{#if fromJson(liveLetter.ttd)?.position === 'other'}
+							{#if fromJson(liveLetter.ttdOther)?.number != 0}
+								<p>NIP: {fromJson(liveLetter.ttdOther)?.number ?? ''}</p>
+							{/if}
+						{:else if fromJson(liveLetter.ttd)?.number != 0}
+							<p>NIP: {fromJson(liveLetter.ttd)?.number ?? ''}</p>
+						{/if}
+					</div>
 				</div>
 			</footer>
 			<section style="page-break-before: always;">

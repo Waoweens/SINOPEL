@@ -21,6 +21,8 @@
 	let otherInputValue: string = '';
 	let otherInputDetails: string;
 
+	let otherInputNumber: number = 0; // Add a new variable to hold the number input
+
 	// Generate a unique ID for each component instance
 	const id = Date.now().toString(36) + Math.random().toString(36).substring(2);
 
@@ -37,7 +39,7 @@
 
 		otherShowInput = selected?.meta?.position === 'other';
 		if (otherShowInput) {
-			otherInputDetails = JSON.stringify({ name: '', number: 0, position: 'other' }); // Initialize otherInputDetails with a default value
+			otherInputDetails = JSON.stringify({ name: '', number: otherInputNumber, position: 'other' }); // Initialize otherInputDetails with a default value
 		}
 
 		await tick();
@@ -58,6 +60,7 @@
 			};
 
 		if (other) otherInputValue = currentValue.name;
+		if (other) otherInputNumber = currentValue.number;
 
 		otherShowInput = currentValue.position === 'other';
 
@@ -79,7 +82,7 @@
 	}
 
 	$: if (otherShowInput) {
-		otherInputDetails = JSON.stringify({ name: otherInputValue, number: 0, position: 'other' });
+		otherInputDetails = JSON.stringify({ name: otherInputValue, number: otherInputNumber || "0", position: 'other' });
 	}
 
 	$: otherShowInput = selected?.meta?.position === 'other';
@@ -117,7 +120,15 @@
 
 {#if otherShowInput}
 	<!-- Conditionally display the "other" input field -->
-	<input bind:value={otherInputValue} class="input" type="text" placeholder="Please specify" />
+	<div class="flex gap-2 items-center my-2">
+		<span>Nama: </span>
+		<input bind:value={otherInputValue} class="input" type="text" placeholder="Nama" />
+		<!-- Add a new input field for number -->
+	</div>
+	<div class="flex gap-2 items-center">
+		<span>NIP: </span>
+		<input bind:value={otherInputNumber} class="input" type="text" inputmode="numeric" pattern="[0-9]*" placeholder="NIP" />
+	</div>
 {/if}
 <input
 	bind:this={otherHiddenInput}

@@ -27,7 +27,9 @@ def pdf():
 	try:
 		print('Generating PDF')
 		html = None
-		css = CSS(string='@page { size: 210mm 330mm; margin: 0mm 0mm 0mm 0mm; }')
+
+		# top | right | bottom | left
+		css = CSS(string='@page { size: 210mm 330mm; margin: 20mm 0mm 20mm 0mm; } @page :first { margin-top: 0mm; }')
 
 		if body_str.startswith('data:text/html'):
 			html = HTML(body_str)
