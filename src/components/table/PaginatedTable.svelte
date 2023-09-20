@@ -19,6 +19,7 @@
 	export let parentDocPath: string;
 	export let collectionPath: string[];
 	export let paginationSettings: PaginationSettings;
+	export let order: string;
 	// export let dataType: any;
 	// dataType; // to make the linter happy
 
@@ -26,7 +27,7 @@
 	$: if ($parentDoc) paginationSettings.size = $parentDoc.count;
 
 	let handler;
-	let rows: Readable<Row[]>;
+	let rows: Readable<Record<string, any>[]>;
 	let colStartAt: any;
 	let colEndAt: any;
 	let currentPage: number = paginationSettings.page;
@@ -35,13 +36,13 @@
 	let col: any;
 
 	let out: {
-		rows: Row[];
+		rows: Record<string, any>[]
 	};
 
 	onMount(() => {
 		colQuery = query(
 			collection(firestore, ...(collectionPath as [string, ...string[]])),
-			orderBy('name'),
+			orderBy(order),
 			limit(currentLimit)
 		);
 
@@ -49,7 +50,7 @@
 	});
 
 	$: if ($col) {
-		handler = new DataHandler($col as Row[]);
+		handler = new DataHandler($col as Record<string, any>[]);
 		rows = handler.getRows();
 	}
 
