@@ -17,3 +17,5 @@ export const menuNavLinks = {
 		]
 	}
 };
+
+export const letterSaving = writable<boolean>(false);
