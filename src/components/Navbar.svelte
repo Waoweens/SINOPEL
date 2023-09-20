@@ -1,49 +1,151 @@
 <script lang="ts">
-	import { AppBar, Avatar, popup, type PopupSettings } from '@skeletonlabs/skeleton';
-	import { appname } from '../stores/static';
-	import IconAccount from '~icons/ic/baseline-account-circle'
-	import IconApps from '~icons/ic/baseline-apps'
-	import { authHandlers, authStore } from '../stores/authStore';
+	import { AppBar, popup, type PopupSettings } from '@skeletonlabs/skeleton';
+	import { appname } from '$stores/static';
+	import IconAccount from '~icons/ic/baseline-account-circle';
+	import IconApps from '~icons/ic/baseline-apps';
+	import IconInfo from '~icons/ic/baseline-info';
+	import IconCode from '~icons/ic/baseline-code';
+	import IconBugReport from '~icons/ic/baseline-bug-report';
+	import IconCopyright from '~icons/ic/baseline-copyright';
+	import IconPerson from '~icons/ic/baseline-person';
+	import IconSourceBranch from '~icons/mdi/source-branch';
+	import { navrailState } from '$stores/states';
+	import { Doc, SignedIn, SignedOut } from 'sveltefire';
+	import LightSwitchX from './elements/LightSwitchX.svelte';
+	import { limitToLast } from 'firebase/firestore';
 
 	const popupUser: PopupSettings = {
 		event: 'click',
 		target: 'popupUser',
 		placement: 'bottom-end'
-	}
+	};
 
-	let email: string;
-	authStore.subscribe(curr => {
-		email = curr?.currentUser?.email || "";
-	});
-
+	const popupInfo: PopupSettings = {
+		event: 'click',
+		target: 'popupInfo',
+		placement: 'bottom-end'
+	};
 </script>
 
 <AppBar>
 	<svelte:fragment slot="lead">
-		<IconApps class="text-2xl -my-2" />
+		<button
+			type="button"
+			class="btn p-0 -my-2"
+			on:click={() => {
+				$navrailState.toggle = !$navrailState.toggle;
+			}}
+		>
+			<IconApps class="text-2xl" />
+		</button>
 	</svelte:fragment>
-	{appname}
+	{$appname}
 	<svelte:fragment slot="trail">
-		<button class="btn p-0 -my-2" use:popup={popupUser}>
+		<button type="button" class="btn p-0 -my-2" use:popup={popupInfo}>
+			<IconInfo class="text-3xl" />
+		</button>
+
+		<div class="card p-4 w-60 shadow-xl" data-popup="popupInfo">
+			<p class="flex items-center gap-2">
+				<span class="text-2xl font-bold">SINOPEL</span><a
+					target="_blank"
+					href="https://github.com/Waoweens/SINOPEL/releases/tag/v1.0-rc1"
+					class="chip variant-filled-secondary">v1.0-rc1</a
+				>
+			</p>
+			<hr class="my-3" />
+			<nav class="list-nav m-0 p-0">
+				<ul class="m-0 p-0">
+					<li>
+						<a target="_blank" href="https://github.com/Waoweens/SINOPEL">
+							<span><IconCode /></span>
+							<span>Repository</span>
+						</a>
+						<a target="_blank" href="https://github.com/Waoweens/SINOPEL">
+							<span><IconBugReport /></span>
+							<span>Lapor masalah</span>
+						</a>
+					</li>
+				</ul>
+			</nav>
+
+			<hr class="my-3" />
+
+			<nav class="list-nav m-0 p-0">
+				<ul class="m-0 p-0">
+					<li>
+						<button>
+							<span><IconSourceBranch /></span>
+							<span>Change Branch</span>
+						</button>
+					</li>
+				</ul>
+			</nav>
+
+			<hr class="my-3" />
+
+			<nav class="list-nav m-0 p-0">
+				<ul class="m-0 p-0">
+					<li>
+						<a target="_blank" href="https://github.com/Waoweens">
+							<span><IconPerson /></span>
+							<span>View Developer</span>
+						</a>
+					</li>
+					<li>
+						<a target="_blank" href="https://www.gnu.org/licenses/gpl-3.0.en.html">
+							<span><IconCopyright /></span>
+							<span>GNU GPL v3.0</span>
+						</a>
+					</li>
+				</ul>
+			</nav>
+		</div>
+		<LightSwitchX />
+
+		<button type="button" class="btn p-0 -my-2" use:popup={popupUser}>
 			<IconAccount class="text-3xl" />
 		</button>
 
 		<div class="card p-4 w-60 shadow-xl" data-popup="popupUser">
-			<p>{email}</p>
-			<hr class="my-3">
-			<nav class="list-nav m-0 p-0">
-				<ul class="m-0 p-0">
-					<li class="m-0 p-0">
-						<a href="/dashboard">Dashboard</a>
-					</li>
-					<li>
-						<a href="/settings">Settings</a>
-					</li>
-					<li>
-						<a href="#logout" on:click={authHandlers.logout}>Logout</a>
-					</li>
-				</ul>
-			</nav>
+			<SignedIn let:user>
+				<Doc ref={'users/sinopel/entries/' + user.uid} let:data>
+					<span class="text-xl">{user.displayName}</span>
+					<br />
+					<span>{data.nip}</span>
+					<br />
+					<span>{user.email}</span>
+					<br />
+					<span class="text-xs">{data.role.toUpperCase()}</span>
+				</Doc>
+				<hr class="my-3" />
+				<nav class="list-nav m-0 p-0">
+					<ul class="m-0 p-0">
+						<li>
+							<a href="/app/dashboard">Dasbor</a>
+						</li>
+						<li>
+							<a href="/app/dashboard/account">Akun</a>
+						</li>
+						<li>
+							<SignedIn let:signOut>
+								<a href="#logout" on:click={signOut}>Logout</a>
+							</SignedIn>
+						</li>
+					</ul>
+				</nav>
+			</SignedIn>
+			<SignedOut>
+				<span>Belum login</span>
+				<hr class="my-3" />
+				<nav class="list-nav m-0 p-0">
+					<ul class="m-0 p-0">
+						<li class="m-0 p-0">
+							<a href="/">Login</a>
+						</li>
+					</ul>
+				</nav>
+			</SignedOut>
 		</div>
 	</svelte:fragment>
 </AppBar>

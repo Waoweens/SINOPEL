@@ -1,135 +1,165 @@
 <script lang="ts">
-	import { FirebaseError } from 'firebase/app';
-	import { authHandlers, authStore } from '../stores/authStore';
+	import { browser } from '$app/environment';
+	import { goto, invalidateAll } from '$app/navigation';
+	import { firestore } from '$src/lib/firebase/firebase';
+	import { ProgressRadial } from '@skeletonlabs/skeleton';
+	import { redirect } from '@sveltejs/kit';
+	import {
+		signInWithEmailAndPassword,
+		type Auth,
+		setPersistence,
+		browserLocalPersistence
+	} from 'firebase/auth';
+	import { collection, getDocs, query, where } from 'firebase/firestore';
+	import { onMount } from 'svelte';
 
-	let register: boolean = false;
+	export let auth: Auth;
+
+	let loading: boolean = true;
 	let email: string;
+	let loginWithEmail: boolean = false;
+	let nip: string;
 	let password: string;
-	let confirmPassword: string;
-	let error: string;
+	let pressed: boolean = false;
+	let error = {
+		username: '',
+		password: '',
+		all: ''
+	};
 
-	$: if ($authStore.currentUser !== null) {
-		window.location.href = '/dashboard';
-	}
+	onMount(() => {
+		auth.onAuthStateChanged((user) => {
+			loading = false;
+		});
+	});
 
-	async function handleSubmit() {
-		console.log(email, password, confirmPassword);
+	async function handleSubmit(): Promise<void> {
+		error = {
+			username: '',
+			password: '',
+			all: ''
+		};
 
-		if (!email || !password || (register && !confirmPassword)) {
+		pressed = true;
+		let loginCred: string;
+
+		if (!email && !nip) {
+			error.all = 'Kosong';
+			pressed = false;
 			return;
 		}
 
-		if (register && password === confirmPassword) {
-			try {
-				await authHandlers.register(email, password);
-			} catch (err: unknown) {
-				if (err instanceof FirebaseError) {
-					console.log(err.message);
-					handleErrors(err);
-				}
-			}
+		if (loginWithEmail) {
 		} else {
-			try {
-				await authHandlers.login(email, password);
-			} catch (err: unknown) {
-				if (err instanceof FirebaseError) {
-					console.log(err.message);
-					handleErrors(err);
-				}
-			}
-		}
-	}
+			const q = query(
+				collection(firestore, 'users', 'sinopel', 'entries'),
+				where("nip", "==", nip)
+			)
 
-	function handleErrors(err: FirebaseError) {
-		switch (err.code) {
-			case 'auth/user-not-found':
-				error = 'Account not found';
-				break;
-			case 'auth/wrong-password':
-				error = 'Incorrect password';
-				break;
-			case 'auth/email-already-in-use':
-				error = 'Account already exists';
-				break;
+			const querySnapshot = await getDocs(q);
+
+			if (querySnapshot.empty) {
+				error.all = 'NIP tidak ditemukan';
+				pressed = false;
+				return;
+			}
+
+			if (querySnapshot.size > 1) {
+				error.all = 'Beberapa akun mempunyai NIP yang sama';
+				pressed = false;
+				return;
+			}
+
+			loginCred = querySnapshot.docs[0].data().email;
+			console.log(loginCred)
 		}
+
+		setPersistence(auth, browserLocalPersistence)
+			.then(() => {
+				signInWithEmailAndPassword(auth, loginCred, password).catch((err) => {
+					error.all = err.code;
+					console.error(err.code);
+					pressed = false;
+				});
+
+				invalidateAll();
+			})
+			.catch((err) => {
+				error.all = err.message;
+				pressed = false;
+			});
 	}
 </script>
 
-<div class="bg-white p-3 rounded-lg max-w-md">
-	<h1 class="text-2xl font-bold mb-2">
-		{register ? 'Register' : 'Login'}
-	</h1>
-	<form on:submit|preventDefault={handleSubmit}>
-		<label class="label">
-			<div class="flex">
-				<span>Email</span>
-				<span>test</span>
-			</div>
-			<input
-				bind:value={email}
-				class="input"
-				name="email"
-				type="email"
-				placeholder="user@example.com"
+<div class="card p-4 md:max-w-md">
+	{#if loading}
+		<div class="m-8">
+			<ProgressRadial
+				width="w-40"
+				stroke={100}
+				meter="stroke-primary-500"
+				track="stroke-primary-500/30"
 			/>
-		</label>
-
-		<label class="label">
-			<span>Password</span>
-			<input
-				bind:value={password}
-				class="input"
-				name="password"
-				type="password"
-				placeholder="Enter password"
-			/>
-		</label>
-
-		{#if register}
-			<label class="label">
-				<span>Confirm Password</span>
-				<input
-					bind:value={confirmPassword}
-					class="input"
-					name="confirmPassword"
-					type="password"
-					placeholder="Enter passowrd again"
-				/>
-			</label>
-		{/if}
-
-		{#if error}
-			<p class="text-red-500 mt-2">{error}</p>
-		{/if}
-
-		<button type="submit" class="btn variant-filled mt-2">
-			{register ? 'Register' : 'Login'}
-		</button>
-	</form>
-
-	{#if register}
-		<p>
-			Already have an account?
-			<button
-				class="underline"
-				on:click={() => {
-					register = false;
-				}}
-			>
-				Login
-			</button>
-		</p>
+		</div>
 	{:else}
-		<p>
-			Don't have an account?
+		<h2 class="h3 font-bold text-center">Login</h2>
+		<form class="flex flex-col" on:submit|preventDefault={handleSubmit}>
+			{#if loginWithEmail}
+				<label class="label">
+					<span>Email</span>
+					<input
+						class="input variant-filled {error.username ? 'input-error' : ''}"
+						type="text"
+						autocomplete="email"
+						bind:value={email}
+					/>
+					<span aria-live="assertive" class="text-error-400">{error.username}</span>
+				</label>
+			{:else}
+				<label class="label">
+					<span>NIP</span>
+					<input
+						class="input variant-filled {error.username ? 'input-error' : ''}"
+						type="text"
+						autocomplete="username"
+						bind:value={nip}
+					/>
+					<span aria-live="assertive" class="text-error-400">{error.username}</span>
+				</label>
+			{/if}
+			<label class="label">
+				<span>Password</span>
+				<input
+					class="input variant-filled {error.password ? 'input-error' : ''}"
+					type="password"
+					autocomplete="current-password"
+					bind:value={password}
+				/>
+				<span aria-live="assertive" class="text-error-400">{error.password}</span>
+			</label>
+			{#if !pressed}
+				<button class="btn variant-filled mt-5" type="submit">Login</button>
+			{:else}
+				<div class="btn variant-filled mt-5">
+					<ProgressRadial
+						width="w-6"
+						stroke={100}
+						meter="stroke-primary-500"
+						track="stroke-primary-500/30"
+					/>
+				</div>
+			{/if}
+			<span aria-live="assertive" class="text-error-400 mt-1">{error.all}</span>
+		</form>
+		<div class="flex flex-col gap-1">
 			<button
-				class="underline"
-				on:click={() => {
-					register = true;
-				}}
+				type="button"
+				class="mt-2 text-left"
+				on:click={() => (loginWithEmail = !loginWithEmail)}
 			>
-				Register
+				{loginWithEmail ? 'Login dengan NIP' : 'Login dengan email'}
 			</button>
-		</p>
+			<button type="button" class="mt-2 text-left">Lupa password</button>
+		</div>
 	{/if}
 </div>
