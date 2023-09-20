@@ -174,15 +174,14 @@
 			<section>
 				<h1 class="text-center text-[14pt] font-bold">NOTA DINAS</h1>
 
-				<p class="my-3 -mx-4">Dipermaklumkan dengan hormat. Berikut kami sampaikan laporan kegiatan sebagai berikut:</p>
-
+				
 				<ul class="list-style items-center list-none">
 					<li>
 						<span class="list-title">Kepada:</span>:
 						{#if fromJson(liveLetter.kepada)?.position === 'other'}
-							{fromJson(liveLetter.kepadaOther)?.name ?? ''}
+						{fromJson(liveLetter.kepadaOther)?.name ?? ''}
 						{:else}
-							{fromJson(liveLetter.kepada)?.name ?? ''}
+						{fromJson(liveLetter.kepada)?.name ?? ''}
 						{/if}
 					</li>
 					<li>
@@ -193,10 +192,11 @@
 					<li><span class="list-title">Lampiran</span>: {liveLetter?.lampiran ?? ''}</li>
 					<li><span class="list-title">Perihal</span>: {liveLetter?.perihal ?? ''}</li>
 				</ul>
-
+				
 				<hr class="my-2 border-[2px] -mx-[15px]" style="border-color: black;" />
-
+				
 				<ol class="list-bold list-decimal">
+					<p class="my-3 -mx-4">Dipermaklumkan dengan hormat. Berikut kami sampaikan laporan kegiatan sebagai berikut:</p>
 					<li>
 						<span class="font-bold">Dasar Hukum</span>:
 						<p>{@html (liveLetter?.dasarHukum ?? '').replaceAll('\n', '<br />')}</p>
