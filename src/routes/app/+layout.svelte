@@ -122,10 +122,10 @@
 			>
 				<div class="w-full h-full backdrop-brightness-50">
 					<div class="absolute m-4">
-						<img src={pemkot} alt="Pemkot" class="h-40" />
+						<img src={pemkot} alt="Pemkot" class="h-[7.5rem]" />
 					</div>
 					<div class="absolute mx-4 my-3 right-0">
-						<img src={damkar} alt="Damkar" class="h-[10rem]" />
+						<img src={damkar} alt="Damkar" class="h-[7.5rem]" />
 					</div>
 					<slot />
 				</div>
