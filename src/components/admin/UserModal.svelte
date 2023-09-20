@@ -1,11 +1,12 @@
 <script lang="ts">
 	import { ProgressRadial, getModalStore } from '@skeletonlabs/skeleton';
 	import IconWarning from '~icons/ic/baseline-warning';
+	import IconTrash from '~icons/ic/baseline-delete';
 
 	const modalStore = getModalStore();
 
 	export let formData = {
-		uid: '',
+		id: '',
 		email: '',
 		displayName: '',
 		nip: '',
@@ -24,21 +25,21 @@
 
 		let method: string;
 
-		switch(action) {
+		switch (action) {
 			case 'add':
 				method = 'POST';
 				break;
 			case 'modify':
-				if (!formData.uid) return;
+				if (!formData.id) return;
 				method = 'PUT';
 				break;
 			default:
 				return;
 		}
 
-		console.log(method)
+		console.log(method);
 
-		const res = await fetch('/api-internal/fba/adduser', {
+		const res = await fetch('/api-internal/fba/user', {
 			method,
 			headers: {
 				'Content-Type': 'application/json'
@@ -47,7 +48,30 @@
 		});
 
 		if (res.ok) {
-			console.log(await res.json())
+			console.log(await res.json());
+			loading = false;
+			modalStore.close();
+		} else {
+			loading = false;
+			error = await res.text();
+		}
+	}
+
+	async function deleteUser() {
+		if (!formData.id) return;
+
+		loading = true;
+
+		const res = await fetch('/api-internal/fba/user', {
+			method: 'DELETE',
+			headers: {
+				'Content-Type': 'application/json'
+			},
+			body: JSON.stringify({ id: formData.id })
+		});
+
+		if (res.ok) {
+			console.log(await res.json());
 			loading = false;
 			modalStore.close();
 		} else {
@@ -59,7 +83,7 @@
 
 <div class="w-modal flex flex-col gap-3 card p-3">
 	<header>
-		<h3 class="h3">Tambah user</h3>
+		<h3 class="h3">{action === 'add' ? 'Tambah' : 'Edit'} user</h3>
 	</header>
 	<section>
 		<form
@@ -97,9 +121,9 @@
 			<hr class="my-1" />
 
 			<label class="label">
-				<span>Initial Password</span>
+				<span>{action === 'add' ? 'Initial ' : ''}Password</span>
 				<input
-					required
+					required={action === 'add'}
 					type="password"
 					class="input"
 					autocomplete="new-password"
@@ -107,42 +131,61 @@
 				/>
 			</label>
 
-			<aside class="alert variant-ghost-warning">
-				<div><IconWarning /></div>
-				<div class="alert-message">
-					<p>User diharapkan mengganti password setelah pembuatan akun.</p>
-				</div>
-			</aside>
+			{#if action === 'add'}
+				<aside class="alert variant-ghost-warning">
+					<div><IconWarning /></div>
+					<div class="alert-message">
+						<p>User diharapkan mengganti password setelah pembuatan akun.</p>
+					</div>
+				</aside>
+			{/if}
 		</form>
 	</section>
-	<footer class="flex flex-col items-end gap-2">
-		<div class="flex gap-3">
-			{#if loading}
-				<div class="flex items-center">
-					<ProgressRadial stroke={100} width="w-8" meter="stroke-primary-500" track="stroke-primary-500/30" />
-				</div>
+	<footer class="flex">
+		<div class="flex flex-col items-start gap-2">
+			{#if action === 'modify'}
+				<button type="button" class="btn variant-filled-error" on:click={deleteUser}>
+					<span><IconTrash /></span>
+					<span>Hapus</span>
+				</button>
 			{/if}
-			<button
-				type="button"
-				class="btn variant-ghost-surface"
-				disabled={loading}
-				on:click={() => modalStore.close()}
-			>
-				Batal
-			</button>
-			<button
-				type="submit"
-				form="formAddUser"
-				class="btn variant-filled-primary"
-				disabled={loading}
-			>
-				Tambah
-			</button>
 		</div>
-		<div>
-			{#if error}
-				<p class="text-error-500">Failed to create user: {error}</p>
-			{/if}
+		<div class="flex flex-col items-end ml-auto gap-2">
+			<div class="flex gap-3">
+				{#if loading}
+					<div class="flex items-center">
+						<ProgressRadial
+							stroke={100}
+							width="w-8"
+							meter="stroke-primary-500"
+							track="stroke-primary-500/30"
+						/>
+					</div>
+				{/if}
+				<button
+					type="button"
+					class="btn variant-ghost-surface"
+					disabled={loading}
+					on:click={() => modalStore.close()}
+				>
+					Batal
+				</button>
+				<button
+					type="submit"
+					form="formAddUser"
+					class="btn variant-filled-primary"
+					disabled={loading}
+				>
+					{action === 'add' ? 'Tambah' : 'Edit'}
+				</button>
+			</div>
+			<div>
+				{#if error}
+					<p class="text-error-500">
+						Failed to {action === 'add' ? 'add' : 'modify'} user: {error}
+					</p>
+				{/if}
+			</div>
 		</div>
 	</footer>
 </div>
