@@ -5,7 +5,7 @@
 </script>
 
 <svelte:head>
-	<title>Kalender - {appname}</title>
+	<title>Kalender - {$appname}</title>
 </svelte:head>
 
 <SignedIn let:user>

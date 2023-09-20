@@ -91,7 +91,7 @@
 </script>
 
 <svelte:head>
-	<title>{appname}</title>
+	<title>{$appname}</title>
 </svelte:head>
 
 <svelte:window bind:innerWidth />

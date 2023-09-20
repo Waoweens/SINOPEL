@@ -27,7 +27,7 @@
 			<IconApps class="text-2xl" />
 		</button>
 	</svelte:fragment>
-	{appname}
+	{$appname}
 	<svelte:fragment slot="trail">
 		<LightSwitchX />
 

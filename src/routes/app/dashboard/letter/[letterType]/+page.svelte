@@ -50,7 +50,7 @@
 </script>
 
 <svelte:head>
-	<title>{pageName()} - {appname}</title>
+	<title>{pageName()} - {$appname}</title>
 </svelte:head>
 
 <svelte:window bind:innerWidth={vw} />

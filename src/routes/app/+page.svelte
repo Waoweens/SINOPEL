@@ -19,8 +19,8 @@
 
 <div class="w-full h-full pb-32 flex flex-col items-center justify-center">
 	<div class="text-center text-white">
-		<h1 class="text-6xl font-extrabold">{appname}</h1>
-		<p class="text-2xl font-semibold">{appnameLong}</p>
+		<h1 class="text-6xl font-extrabold">{$appname}</h1>
+		<p class="text-2xl font-semibold">{$appnameLong}</p>
 		<p></p>
 	</div>
 
