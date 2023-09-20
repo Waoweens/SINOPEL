@@ -6,14 +6,14 @@
 	import SignaturePad from 'signature_pad';
 	import { onMount, tick } from 'svelte';
 	import dayjs, { Dayjs } from 'dayjs';
-	import 'dayjs/locale/id'
+	import 'dayjs/locale/id';
 
 	export let liveLetter: { [key: string]: string };
 
 	export let article: HTMLElement;
 
 	let date: dayjs.Dayjs;
-	$: date = dayjs(`${liveLetter?.tanggal ?? ''}`, 'YYYY-MM-DD')
+	$: date = dayjs(`${liveLetter?.tanggal ?? ''}`, 'YYYY-MM-DD');
 
 	let nomorSurat: string[];
 	$: nomorSurat = fromJson(liveLetter?.nomorSurat);
@@ -174,29 +174,36 @@
 			<section>
 				<h1 class="text-center text-[14pt] font-bold">NOTA DINAS</h1>
 
-				
 				<ul class="list-style items-center list-none">
 					<li>
 						<span class="list-title">Kepada:</span>:
 						{#if fromJson(liveLetter.kepada)?.position === 'other'}
-						{fromJson(liveLetter.kepadaOther)?.name ?? ''}
+							{fromJson(liveLetter.kepadaOther)?.name ?? ''}
 						{:else}
-						{fromJson(liveLetter.kepada)?.name ?? ''}
+							{fromJson(liveLetter.kepada)?.name ?? ''}
 						{/if}
 					</li>
 					<li>
-						<span class="list-title">Tanggal</span>: {date.locale('id').format('dddd, DD MMMM YYYY') ?? ''}
+						<span class="list-title">Tanggal</span>: {date
+							.locale('id')
+							.format('dddd, DD MMMM YYYY') ?? ''}
 					</li>
-					<li><span class="list-title">Nomor surat</span>: {nomorSurat.slice(0, 3).join('/')}-{nomorSurat.slice(3).join('/')}</li>
+					<li>
+						<span class="list-title">Nomor surat</span>: {nomorSurat
+							.slice(0, 3)
+							.join('/')}-{nomorSurat.slice(3).join('/')}
+					</li>
 					<li><span class="list-title">Sifat</span>: {liveLetter?.sifat ?? ''}</li>
 					<li><span class="list-title">Lampiran</span>: {liveLetter?.lampiran ?? ''}</li>
 					<li><span class="list-title">Perihal</span>: {liveLetter?.perihal ?? ''}</li>
 				</ul>
-				
+
 				<hr class="my-2 border-[2px] -mx-[15px]" style="border-color: black;" />
-				
+
 				<ol class="list-bold list-decimal">
-					<p class="my-3 -mx-4">Dipermaklumkan dengan hormat. Berikut kami sampaikan laporan kegiatan sebagai berikut:</p>
+					<p class="my-3 -mx-4">
+						Dipermaklumkan dengan hormat. Berikut kami sampaikan laporan kegiatan sebagai berikut:
+					</p>
 					<li>
 						<span class="font-bold">Dasar Hukum</span>:
 						<p>{@html (liveLetter?.dasarHukum ?? '').replaceAll('\n', '<br />')}</p>
@@ -253,19 +260,35 @@
 				</section>
 			</section>
 
-			
 			<footer>
-				<p class="-mx-4">Demikian laporan kegiatan ini kami sampaikan. Atas perhatian dan perkenan Bapak, kami ucapkan terima kasih.</p>
+				<p class="-mx-4">
+					Demikian laporan kegiatan ini kami sampaikan. Atas perhatian dan perkenan Bapak, kami
+					ucapkan terima kasih.
+				</p>
 				<div class="flex flex-row justify-end">
-					<div class="flex-1"></div>
-					<div class="flex-1"></div>
+					<div class="flex-1" />
+					<div class="flex-1" />
 					<div class="text-center flex-1">
 						<p>
-							{fromJson(liveLetter.ttd)?.position ?? ''}
+							{(fromJson(liveLetter.ttd)?.position ?? '') === 'other'
+								? 'Notulen'
+								: fromJson(liveLetter.ttd)?.position ?? ''}
 						</p>
 						<img alt="Signature" src={liveLetter?.ttdPadImg ?? ''} />
-						<p class="font-bold">{fromJson(liveLetter.ttd)?.name ?? ''}</p>
-						<p>NIP: {fromJson(liveLetter.ttd)?.number ?? ''}</p>
+						<p class="font-bold">
+							{#if fromJson(liveLetter.ttd)?.position === 'other'}
+								{fromJson(liveLetter.ttdOther)?.name ?? ''}
+							{:else}
+								{fromJson(liveLetter.ttd)?.name ?? ''}
+							{/if}
+						</p>
+						{#if fromJson(liveLetter.ttd)?.position === 'other'}
+							{#if fromJson(liveLetter.ttdOther)?.number != 0}
+								<p>NIP: {fromJson(liveLetter.ttdOther)?.number ?? ''}</p>
+							{/if}
+						{:else if fromJson(liveLetter.ttd)?.number != 0}
+							<p>NIP: {fromJson(liveLetter.ttd)?.number ?? ''}</p>
+						{/if}
 					</div>
 				</div>
 			</footer>
