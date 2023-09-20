@@ -40,7 +40,7 @@
 	let userDoc;
 	function initFirestore(): void {
 		collStore = collectionStore<UserDoc[]>(firestore, '/users/sinopel/entries');
-		userDoc = docStore<UserDoc>(firestore, `/users/sinopel/entries${$user?.uid}`);
+		userDoc = docStore<UserDoc>(firestore, `/users/sinopel/entries/${$user?.uid}`);
 	}
 
 	function checkDisplayName(): void {

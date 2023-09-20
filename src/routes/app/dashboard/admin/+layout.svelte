@@ -6,7 +6,7 @@
 </script>
 
 <SignedIn let:user>
-	<Doc ref={'/users/sinopel/entries' + user.uid} let:data>
+	<Doc ref={'/users/sinopel/entries/' + user.uid} let:data>
 		{#if data.role == 'admin'}
 			<TabGroup class="mb-3">
 				<TabAnchor href="/app/dashboard/admin" selected={$page.url.pathname === '/app/dashboard/admin'}>

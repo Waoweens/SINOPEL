@@ -39,7 +39,7 @@
 			<span>Laporan<br />Kegiatan</span>
 		</AppRailAnchor>
 		<svelte:fragment slot="trail">
-			<Doc ref={'/users/sinopel/entries/' + user.uid} let:data>
+			<Doc ref={'users/sinopel/entries/' + user.uid} let:data>
 				{#if data.role == 'admin'}
 					<AppRailAnchor
 						href="/app/dashboard/admin"
