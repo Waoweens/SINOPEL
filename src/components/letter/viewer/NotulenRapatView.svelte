@@ -199,29 +199,26 @@
 					</li>
 					<li><span class="list-title">Tempat</span>: {liveLetter?.tempat ?? ''}</li>
 					<li><span class="list-title">Acara</span>: {liveLetter?.acara ?? ''}</li>
-				</ul>
+					<!-- </ul> -->
 
-				<h2 class="mt-4 font-bold">PIMPINAN RAPAT</h2>
-				<ul class="list-style items-center list-none">
+					<h2 class="mt-4 font-bold">PIMPINAN RAPAT</h2>
+					<!-- <ul class="list-style items-center list-none"> -->
 					<li>
-						<span class="list-title">Pimpinan</span>:
-						{#if fromJson(liveLetter.pimpinan)?.position === 'other'}
+						<span class="list-title">Pimpinan</span>: {#if fromJson(liveLetter.pimpinan)?.position === 'other'}
 							{fromJson(liveLetter.pimpinanOther)?.name ?? ''}
 						{:else}
 							{fromJson(liveLetter.pimpinan)?.name ?? ''}
 						{/if}
 					</li>
 					<li>
-						<span class="list-title">Moderator</span>:
-						{#if fromJson(liveLetter.moderator)?.position === 'other'}
+						<span class="list-title">Moderator</span>: {#if fromJson(liveLetter.moderator)?.position === 'other'}
 							{fromJson(liveLetter.moderatorOther).name ?? ''}
 						{:else}
 							{fromJson(liveLetter.moderator)?.name ?? ''}
 						{/if}
 					</li>
 					<li>
-						<span class="list-title">Pencatat</span>:
-						{#if fromJson(liveLetter.pencatat)?.position === 'other'}
+						<span class="list-title">Pencatat</span>: {#if fromJson(liveLetter.pencatat)?.position === 'other'}
 							{fromJson(liveLetter.pencatatOther)?.name ?? ''}
 						{:else}
 							{fromJson(liveLetter.pencatat)?.name ?? ''}
@@ -243,16 +240,16 @@
 				<h2 class="mt-4 font-bold">KEGIATAN RAPAT</h2>
 				<ul class="list-style items-center list-none">
 					<li>
-						<span class="list-title font-semibold">Pembahasan</span>:
+						<span class="list-title font-semibold">Pembahasan:</span>
 					</li>
 					<p>{@html (liveLetter?.pembahasan ?? '').replaceAll('\n', '<br />')}</p>
 					<li>
-						<span class="list-title font-semibold">Keputusan</span>:
+						<span class="list-title font-semibold">Keputusan:</span>
 					</li>
 					<p>{@html (liveLetter?.keputusan ?? '').replaceAll('\n', '<br />')}</p>
 					<li>
-						<span class="list-title font-semibold">Jam penutupan</span>:
-						{jamPenutupan.format('HH:mm') ?? ''}
+						<span class="font-semibold pr-1">Jam penutupan:</span>
+						<span>{jamPenutupan.format('HH:mm') ?? ''}</span>
 					</li>
 				</ul>
 
