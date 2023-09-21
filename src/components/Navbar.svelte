@@ -99,7 +99,7 @@
 									>
 										Dev
 									</a>
-									{#if $page.url.hostname === 'localhost'}
+									{#if $page.url.hostname.match(/^(localhost|local|192\.168|127\.0\.0\.1|10\.|172\.(1[6-9]|2[0-9]|3[0-1])\.|::1|fc00::|fd[0-9a-f]{2}:)/)}
 										<a href={$page.url.origin} class="!bg-primary-500 text-black">Local</a>
 									{/if}
 								</li>
