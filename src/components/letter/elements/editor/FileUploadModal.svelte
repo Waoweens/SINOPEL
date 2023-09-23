@@ -34,9 +34,10 @@
 		alert.body = '';
 		disabled = false;
 
-		if (file.size > 2097152) {
+		// 5 MiB
+		if (file.size > 5242880) {
 			alert.head = 'File terlalu besar';
-			alert.body = 'Ukuran file maksimal 2 MiB';
+			alert.body = 'Ukuran file maksimal 5 MiB';
 			disabled = true;
 		}
 
@@ -124,7 +125,7 @@
 			<svelte:fragment slot="message">
 				<span class="font-bold">Klik atau drag</span> untuk upload file
 			</svelte:fragment>
-			<svelte:fragment slot="meta">JPG, PNG, dan GIF. Maksimal 2 MiB</svelte:fragment>
+			<svelte:fragment slot="meta">JPG, PNG, dan GIF. Maksimal 5 MiB</svelte:fragment>
 		</FileDropzone>
 		<div class="flex gap-3 items-center variant-ghost-surface p-2">
 			{#if file}
