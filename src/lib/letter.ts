@@ -456,6 +456,8 @@ export const getFileExt = (mimeType: string): string => {
 			return '.png';
 		case 'image/gif':
 			return '.gif';
+		case 'application/pdf':
+			return '.pdf';
 		default:
 			return 'unknown';
 	}

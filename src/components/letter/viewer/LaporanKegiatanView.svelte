@@ -189,9 +189,12 @@
 							.format('dddd, DD MMMM YYYY') ?? ''}
 					</li>
 					<li>
-						<span class="list-title">Nomor surat</span>: {nomorSurat
+						<!--
+							<span class="list-title">Nomor surat</span>: {nomorSurat
 							.slice(0, 3)
 							.join('/')}-{nomorSurat.slice(3).join('/')}
+						-->
+						<span class="list-title">Nomor Surat</span>: {liveLetter?.nomorSurat ?? ''}
 					</li>
 					<li><span class="list-title">Sifat</span>: {liveLetter?.sifat ?? ''}</li>
 					<li><span class="list-title">Lampiran</span>: {liveLetter?.lampiran ?? ''}</li>

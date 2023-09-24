@@ -122,6 +122,8 @@
 					<input
 						class="input variant-filled {error.username ? 'input-error' : ''}"
 						type="text"
+						inputmode="numeric"
+						pattern="[0-9]*"
 						autocomplete="username"
 						bind:value={nip}
 					/>

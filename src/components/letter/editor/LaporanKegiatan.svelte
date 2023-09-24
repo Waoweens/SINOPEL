@@ -19,6 +19,7 @@
 	import LetterNumber from '$components/letter/elements/editor/LetterNumber.svelte';
 	import { letterSaving } from '$stores/states';
 	import { fade } from 'svelte/transition';
+	import { persist } from 'svelte-use-persist';
 
 	export let employees: CollectionStore<unknown[]>;
 	export let form: HTMLFormElement;
@@ -195,6 +196,7 @@
 	on:submit|preventDefault={handleSubmit}
 	on:input={updatePreview}
 	on:keydown={preventEnterSubmit}
+	use:persist={{ key: id }}
 >
 	<section id="form-rapat">
 		<h3 class="h3 mb-2">Kepala</h3>
@@ -213,7 +215,8 @@
 		<!-- svelte-ignore a11y-label-has-associated-control -->
 		<label class="label mb-2">
 			<span>Nomor surat</span>
-			<LetterNumber name="nomorSurat" />
+			<!-- <LetterNumber name="nomorSurat" /> -->
+			<input type="text" class="input" name="nomorSurat">
 		</label>
 
 		<label class="label mb-2">

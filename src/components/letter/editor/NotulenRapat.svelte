@@ -12,6 +12,7 @@
 	import { ref } from 'firebase/storage';
 	import { storage } from '$lib/firebase/firebase';
 	import { letterSaving } from '$stores/states';
+	import { persist } from 'svelte-use-persist';
 
 	export let employees: CollectionStore<unknown[]>;
 	export let form: HTMLFormElement;
@@ -224,6 +225,7 @@
 	on:submit|preventDefault={handleSubmit}
 	on:input={updatePreview}
 	on:keydown={preventEnterSubmit}
+	use:persist={{ key: id }}
 >
 	<section id="form-rapat">
 		<h3 class="h3 mb-2">Rapat</h3>
