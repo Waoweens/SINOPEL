@@ -108,7 +108,7 @@
 			</label>
 			<label class="label">
 				<span>NIP</span>
-				<input required type="number" class="input" bind:value={formData.nip} />
+				<input required type="text" inputmode="numeric" pattern="[0-9]*" class="input" bind:value={formData.nip} />
 			</label>
 			<label class="label">
 				<span>Role</span>
