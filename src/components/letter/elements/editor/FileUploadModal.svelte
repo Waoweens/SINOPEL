@@ -8,6 +8,8 @@
 	import { storage } from '$lib/firebase/firebase';
 	import { gsRoot } from '$stores/static';
 	import { v4 as uuidv4 } from 'uuid';
+	import { getDocument } from 'pdfjs-dist';
+	import 'pdfjs-dist/build/pdf.worker.entry';
 
 	const modalStore = getModalStore();
 	// export let parent: unknown;
@@ -41,18 +43,51 @@
 			disabled = true;
 		}
 
-		if (!file.type.match(/image\/(jpeg|png|gif)/)) {
+		if (!file.type.match(/(application\/pdf|image\/(jpeg|png|gif))/)) {
 			alert.head = 'File tidak didukung';
-			alert.body = 'Hanya file JPG, PNG, dan GIF yang didukung';
+			alert.body = 'Hanya file JPG, PNG, GIF dan PDF yang didukung';
 			disabled = true;
 		}
 	}
 
-	function upload(): void {
+	async function upload(): Promise<void> {
 		if (file) {
+			let curFile: File;
+
+			if (file.type === 'application/pdf') {
+				// convert to jpg
+
+				const pdfBytes = await file.arrayBuffer();
+				const pdf = await getDocument(pdfBytes).promise;
+
+				const page = await pdf.getPage(1);
+				const viewport = page.getViewport({ scale: 1.0 });
+
+				const canvas = document.createElement('canvas');
+				const context = canvas.getContext('2d')!;
+				canvas.height = viewport.height;
+				canvas.width = viewport.width;
+				const renderContext = {
+					canvasContext: context,
+					viewport: viewport
+				};
+
+				await page.render(renderContext).promise;
+
+				const img = canvas.toDataURL('image/jpeg', 1.0);
+
+				const blob = await (await fetch(img)).blob();
+
+				curFile = new File([blob], file.name.replace(/\.pdf$/, '.jpg'), {
+					type: 'image/jpeg'
+				});
+			} else {
+				curFile = file;
+			}
+
 			// repalce file name with name.ext
 			// const fileName = $modalStore[0].meta?.name + getFileExt(file.type);
-			const fileName = uuidv4() + getFileExt(file.type);
+			const fileName = uuidv4() + getFileExt(curFile.type);
 			console.log(fileName);
 
 			const storageRef = ref(
@@ -60,15 +95,7 @@
 				`${gsRoot}/letters/${$modalStore[0].meta?.letterType}/${$modalStore[0].meta?.letterId}/${fileName}`
 			);
 
-			console.log(storageRef.toString());
-
-			// uploadBytes(storageRef, file).then((snapshot) => {
-			// 	console.log('Uploaded a blob or file!', snapshot);
-			// 	clear();
-			// 	// modalStore.close();
-			// });
-
-			const uploadTask = uploadBytesResumable(storageRef, file);
+			const uploadTask = uploadBytesResumable(storageRef, curFile);
 			uploading = true;
 			disabled = true;
 
@@ -86,10 +113,11 @@
 				() => {
 					console.log('Upload is complete');
 
-					if ($modalStore[0].response) $modalStore[0]?.response({
-						name: fileName,
-						url: uploadTask.snapshot.ref.toString()
-					});
+					if ($modalStore[0].response)
+						$modalStore[0]?.response({
+							name: fileName,
+							url: uploadTask.snapshot.ref.toString()
+						});
 
 					modalStore.close();
 				}
@@ -125,7 +153,7 @@
 			<svelte:fragment slot="message">
 				<span class="font-bold">Klik atau drag</span> untuk upload file
 			</svelte:fragment>
-			<svelte:fragment slot="meta">JPG, PNG, dan GIF. Maksimal 5 MiB</svelte:fragment>
+			<svelte:fragment slot="meta">JPG, PNG, GIF, dan PDF. Maksimal 5 MiB</svelte:fragment>
 		</FileDropzone>
 		<div class="flex gap-3 items-center variant-ghost-surface p-2">
 			{#if file}
@@ -137,7 +165,7 @@
 					<button type="button" class="btn-icon btn-icon-sm variant-filled-error" on:click={clear}>
 						<IconClose />
 					</button>
-					{/if}
+				{/if}
 				<p>{file.name} ({getFileSize(file.size)})</p>
 			{/if}
 		</div>
