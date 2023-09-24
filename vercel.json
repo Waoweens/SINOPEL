@@ -1,3 +1,4 @@
 {
-	"devCommand": "npm run dev -- --port $PORT --host"
+	"devCommand": "npm run dev -- --port $PORT --host",
+	"installCommand": "npm install --force"
 }
