@@ -26,6 +26,10 @@ export const POST: RequestHandler = async ({ request }): Promise<Response> => {
 			role: body.role
 		});
 
+		// update count
+		const currentCount = (await adminFirestore.doc('users/sinopel').get()).data()?.count || 0;
+		await adminFirestore.doc('users/sinopel').set({ count: currentCount + 1 });
+
 		return json({ message: 'User added', user }, { status: 200 });
 	} catch (error) {
 

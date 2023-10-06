@@ -74,21 +74,21 @@
 		if (direction === 'next') {
 			colQuery = query(
 				collection(firestore, ...(collectionPath as [string, ...string[]])),
-				orderBy('name'),
+				orderBy(order),
 				limit(currentLimit),
-				startAfter(colEndAt.name)
+				startAfter(colEndAt[order])
 			);
 		} else if (direction === 'prev') {
 			colQuery = query(
 				collection(firestore, ...(collectionPath as [string, ...string[]])),
-				orderBy('name'),
+				orderBy(order),
 				limitToLast(currentLimit),
-				endBefore(colStartAt.name)
+				endBefore(colStartAt[order])
 			);
 		} else {
 			colQuery = query(
 				collection(firestore, ...(collectionPath as [string, ...string[]])),
-				orderBy('name'),
+				orderBy(order),
 				limit(currentLimit)
 			);
 		}
