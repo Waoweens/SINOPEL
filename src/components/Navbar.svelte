@@ -57,8 +57,8 @@
 			<p class="flex items-center gap-2">
 				<span class="text-2xl font-bold">SINOPEL</span><a
 					target="_blank"
-					href="https://github.com/Waoweens/SINOPEL/releases/tag/v1.0-rc4"
-					class="chip variant-filled-secondary">v1.0-rc4</a
+					href="https://github.com/Waoweens/SINOPEL/releases/tag/v1.0-rc5"
+					class="chip variant-filled-secondary">v1.0-rc5</a
 				>
 			</p>
 			<hr class="my-3" />

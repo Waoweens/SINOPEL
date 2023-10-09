@@ -19,6 +19,10 @@ export const POST: RequestHandler = async ({ request }): Promise<Response> => {
 			position: body.position
 		});
 
+		// update count
+		const currentCount = (await adminFirestore.doc('employees/dkpb').get()).data()?.count || 0;
+		await adminFirestore.doc('employees/dkpb').set({ count: currentCount + 1 });
+
 		return json({ message: 'Employee added' }, { status: 200 });
 	} catch (error) {
 		console.error(error);

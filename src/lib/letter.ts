@@ -477,27 +477,30 @@ export const snapshotElement = (element: Element): string => {
 		img.src = img.src; // This will set the src attribute to the absolute URL
 	});
 
-	const stylesheets = Array.from(document.styleSheets)
-		.map((stylesheet: any) => {
-			try {
-				return Array.from(stylesheet.cssRules)
-					.map((rule: any) => rule.cssText)
-					.join('');
-			} catch (e) {
-				// Cross-origin stylesheets are inaccessible, we ignore them
-				return '';
-			}
-		})
-		.join('');
+	// do not include stylesheets, they bloat the file size
 
-	const styledHTML = `
-		<style>
-			${stylesheets}
-		</style>
-		${clone.outerHTML}
-	`;
+	// const stylesheets = Array.from(document.styleSheets)
+	// 	.map((stylesheet: any) => {
+	// 		try {
+	// 			return Array.from(stylesheet.cssRules)
+	// 				.map((rule: any) => rule.cssText)
+	// 				.join('');
+	// 		} catch (e) {
+	// 			// Cross-origin stylesheets are inaccessible, we ignore them
+	// 			return '';
+	// 		}
+	// 	})
+	// 	.join('');
 
-	const encodedHTML = encodeURIComponent(styledHTML);
+	// const styledHTML = `
+	// 	<style>
+	// 		${stylesheets}
+	// 	</style>
+	// 	${clone.outerHTML}
+	// `;
+
+	// const encodedHTML = encodeURIComponent(styledHTML);
+	const encodedHTML = encodeURIComponent(clone.outerHTML);
 	const dataURL = `data:text/html;charset=UTF-8,${encodedHTML}`;
 	return dataURL;
 };
