@@ -1,4 +1,5 @@
 {
-	"devCommand": "npm run dev -- --port $PORT --host",
-	"installCommand": "npm install --force"
+	"devCommand": "bun --bun run dev -- --port $PORT --host",
+	"installCommand": "bun install",
+	"buildCommand": "bun --bun run build"
 }
