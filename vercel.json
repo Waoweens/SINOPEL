@@ -1,5 +1,5 @@
 {
-	"devCommand": "bun --bun run dev -- --port $PORT --host",
-	"installCommand": "bun install",
-	"buildCommand": "bun --bun run build"
+	"devCommand": "~/.bun/bin/bun --bun run dev -- --port $PORT --host",
+	"installCommand": "curl -fsSL https://bun.sh/install | bash && ~/.bun/bin/bun install --frozen-lockfile",
+	"buildCommand": "~/.bun/bin/bun --bun run build"
 }
