@@ -74,5 +74,10 @@
     "vitest": "^1.4.0"
   },
   "type": "module",
-  "browserslist": "> 0.5%, last 2 versions, Firefox ESR, not dead"
+  "browserslist": "> 0.5%, last 2 versions, Firefox ESR, not dead",
+  "trustedDependencies": [
+    "core-js",
+    "protobufjs",
+    "svelte-preprocess"
+  ]
 }
